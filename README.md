@@ -14,9 +14,10 @@ O Caminheiros é um projeto completo que integra um banco de dados com uma inter
 
 O Caminheiros utiliza uma combinação poderosa de tecnologias:
 
-- **MySQL**: Sistema de gerenciamento de banco de dados relacional confiável e escalável.
-- **Vue.js**: Framework JavaScript progressivo para construção de interfaces de usuário interativas.
-- **Quasar Framework**: Framework Vue.js que permite o desenvolvimento de aplicações web e mobile responsivas.
+- [![MySQL](https://skillicons.dev/svg/mysql-5.svg)](https://skillicons.dev) **MySQL**: Sistema de gerenciamento de banco de dados relacional confiável e escalável.
+- [![Vue.js](https://skillicons.dev/svg/vue-9.svg)](https://skillicons.dev) **Vue.js**: Framework JavaScript progressivo para construção de interfaces de usuário interativas.
+- <a href="https://skillicons.dev"><img src="https://www.svgrepo.com/show/374024/quasar.svg" width="55px"></a> **Quasar Framework**: Framework Vue.js que permite o desenvolvimento de aplicações web e mobile responsivas.
+
 
 ## Uso
 
