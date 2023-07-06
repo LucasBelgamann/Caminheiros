@@ -17,6 +17,7 @@ O Caminheiros utiliza uma combinação poderosa de tecnologias:
 - **MySQL**: Sistema de gerenciamento de banco de dados relacional confiável e escalável.
 - **Vue.js**: Framework JavaScript progressivo para construção de interfaces de usuário interativas.
 - **Quasar Framework**: Framework Vue.js que permite o desenvolvimento de aplicações web e mobile responsivas.
+- **Docker**: Plataforma de contêinerização que simplifica o desenvolvimento, implantação e execução de aplicativos.
 
 ## Uso
 
