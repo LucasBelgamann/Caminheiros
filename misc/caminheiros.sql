@@ -47,6 +47,23 @@ CREATE TABLE caminheirosdb.Meetings_has_users (
 INSERT INTO caminheirosdb.Users (name, phone, email, password, role, created_at, updated_at)
 VALUES
 ('Lucas Gabriel Agostinho Belgamann', '(41) 98830-9378', 'lucasbelgamann@hotmail.com', 'lucaspass', 'admin', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
-('Usuário 2', '987654321', 'usuario2@example.com', 'senha2', 'user', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
-('Usuário 3', '987654321', 'usuario3@example.com', 'senha3', 'user', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
-('Usuário 4', '987654321', 'usuario4@example.com', 'senha4', 'user', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'));
+('José Roberto', '987654321', 'usuario2@example.com', 'senha2', 'admin', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
+('Maria da Silva', '987654321', 'usuario3@example.com', 'senha3', 'admin', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
+('Carlos Eduardo', '987654321', 'usuario4@example.com', 'senha4', 'user', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
+('Pedro', '987654321', 'usuario4@example.com', 'senha4', 'user', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
+('Jefferson Eduardo', '987654321', 'usuario4@example.com', 'senha4', 'user', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
+('Dirceu Eduardo', '987654321', 'usuario4@example.com', 'senha4', 'user', CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'));
+
+INSERT INTO caminheirosdb.Groups (name, userId, created_at, updated_at)
+VALUES
+('André Luiz', 1, CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
+('ESDE TOMO 1', 3, CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo')),
+('ESDE TOMO 2', 2, CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'), CONVERT_TZ(NOW(), 'UTC', 'America/Sao_Paulo'));
+
+
+INSERT INTO caminheirosdb.Groups_has_users (groupId, userId)
+VALUES
+(1, 4),
+(1, 5),
+(2, 6),
+(2, 7);
