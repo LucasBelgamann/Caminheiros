@@ -21,11 +21,12 @@ O Caminheiros utiliza uma combinação poderosa de tecnologias:
 
 ## Uso
 
-1. Certifique-se de ter o Docker e o Docker Compose instalados na sua máquina.
-2. Navegue até a raiz do projeto no terminal.
-3. Execute o comando `docker-compose up --build` para construir e iniciar os contêineres do Docker.
-4. Aguarde até que todos os contêineres sejam iniciados com sucesso.
-5. Acesse o sistema por meio de um navegador web utilizando o endereços indicados pelo sistema.
+1. Abra o terminal da sua máquina e execute o seguinte códico `git clone git@github.com:"seu_usuário"/Caminheiros.git`.  Certifique-se de substituir "seu_usuário" pelo seu nome de usuário do GitHub.
+2. Certifique-se de ter o Docker e o Docker Compose instalados na sua máquina.
+3. Navegue até a raiz do projeto no terminal.
+4. Execute o comando `docker-compose up --build` para construir e iniciar os contêineres do Docker.
+5. Aguarde até que todos os contêineres sejam iniciados com sucesso.
+6. Acesse o sistema por meio de um navegador web utilizando o endereços indicados pelo sistema.
 
 
 ## Contribuição
