@@ -17,6 +17,14 @@ class LoginModel {
     return result as any as IUser[];
   }
 
+  public async getAll(): Promise<IUser[]> {
+    const [result] = await this.connection.execute(
+      "SELECT * FROM caminheirosdb.Users",
+    );
+
+    return result as any as IUser[];
+  }
+
   public async create(
     name: string,
     phone: string,
@@ -73,6 +81,7 @@ class LoginModel {
   
     return users;
   }
+
   public async insertUserInGroup(groupId: number, userId: number): Promise<void> {
     await this.connection.execute(
       "INSERT INTO caminheiros.Group_has_users (groupId, userId) VALUES (?, ?)",
