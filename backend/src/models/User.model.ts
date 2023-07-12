@@ -1,4 +1,9 @@
-import { Pool, ResultSetHeader, FieldPacket, RowDataPacket } from "mysql2/promise";
+import {
+  Pool,
+  ResultSetHeader,
+  FieldPacket,
+  RowDataPacket,
+} from "mysql2/promise";
 import { IUser } from "../interface/IUser";
 
 class LoginModel {
@@ -19,7 +24,7 @@ class LoginModel {
 
   public async getAll(): Promise<IUser[]> {
     const [result] = await this.connection.execute(
-      "SELECT * FROM caminheirosdb.Users",
+      "SELECT * FROM caminheirosdb.Users"
     );
 
     return result as any as IUser[];
@@ -42,11 +47,12 @@ class LoginModel {
   }
 
   public async getUsersByGroupId(groupId: number): Promise<IUser[]> {
-    const [rows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute(
-      'SELECT u.* FROM caminheirosdb.Users AS u JOIN caminheirosdb.Groups_has_users AS gu ON u.id = gu.userId WHERE gu.groupId = ?',
-      [groupId],
-    );
-  
+    const [rows]: [RowDataPacket[], FieldPacket[]] =
+      await this.connection.execute(
+        "SELECT u.* FROM caminheirosdb.Users AS u JOIN caminheirosdb.Groups_has_users AS gu ON u.id = gu.userId WHERE gu.groupId = ?",
+        [groupId]
+      );
+
     const users: IUser[] = rows.map((row: RowDataPacket) => {
       return {
         id: row.id,
@@ -55,7 +61,7 @@ class LoginModel {
         email: row.email,
       };
     });
-  
+
     return users;
   }
 
@@ -67,9 +73,10 @@ class LoginModel {
       JOIN caminheirosdb.Meetings AS m ON m.id = mu.meetingsId
       WHERE m.date = ? AND mu.frequency = true;
     `;
-  
-    const [rows]: [RowDataPacket[], FieldPacket[]] = await this.connection.execute(query, [date]);
-  
+
+    const [rows]: [RowDataPacket[], FieldPacket[]] =
+      await this.connection.execute(query, [date]);
+
     const users: IUser[] = rows.map((row: RowDataPacket) => {
       return {
         id: row.id,
@@ -78,11 +85,14 @@ class LoginModel {
         email: row.email,
       };
     });
-  
+
     return users;
   }
 
-  public async insertUserInGroup(groupId: number, userId: number): Promise<void> {
+  public async insertUserInGroup(
+    groupId: number,
+    userId: number
+  ): Promise<void> {
     await this.connection.execute(
       "INSERT INTO caminheiros.Group_has_users (groupId, userId) VALUES (?, ?)",
       [groupId, userId]

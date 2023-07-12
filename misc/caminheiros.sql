@@ -23,7 +23,7 @@ CREATE TABLE caminheirosdb.Groups (
 
 CREATE TABLE caminheirosdb.Meetings (
   id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  date TEXT NOT NULL,
+  date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   groupId INTEGER,
   FOREIGN KEY (groupId) REFERENCES caminheirosdb.Groups (id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
