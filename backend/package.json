@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "watch": "nodemon --exec 'npm run build' --watch src",
+    "watch": "nodemon --exec 'npm run build' --watch src --ext ts",
     "start": "ts-node-dev src/index.ts",
     "predev": "npm install",
     "dev": "nodemon src/index.ts"
