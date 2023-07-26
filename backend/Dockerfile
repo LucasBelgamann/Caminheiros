@@ -2,10 +2,12 @@ FROM node:16-alpine
 
 WORKDIR /app-back
 
-COPY package.json ./
+COPY package.json package-lock.json /app-back/
 
 RUN npm install --silent
 
-COPY . .
+COPY . /app-back
 
-CMD ["npm", "start"]
+EXPOSE 3001
+
+CMD ["npm", "run", "watch"]
