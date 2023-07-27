@@ -10,12 +10,7 @@ class LoginModel {
 
   async getAllUsers(): Promise<IUser[]> {
     const [result] = await this.connection.execute(
-      `
-      SELECT u.*
-      FROM caminheirosdb.Users u
-      INNER JOIN caminheirosdb.Groups_has_users gu ON u.id = gu.userId
-      WHERE gu.groupId = 2
-    `
+      `SELECT * FROM caminheirosdb.Users`
     );
 
     return result as any as IUser[];
@@ -28,7 +23,8 @@ class LoginModel {
       FROM caminheirosdb.Users u
       INNER JOIN caminheirosdb.Groups_has_users gu ON u.id = gu.userId
       WHERE gu.groupId = ?
-    `, groupId
+    `,
+      [groupId]
     );
 
     return result as any as IUser[];

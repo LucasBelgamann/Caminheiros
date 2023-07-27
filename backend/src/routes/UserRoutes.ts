@@ -6,6 +6,6 @@ const router = Router();
 const userController = new UserController();
 
 router.get('/', userController.getAllUsers);
-router.get('/groups/:id', userController.getUsersByGroupId);
+router.get('/groups/:id', userController.getUsersInGroup);
 
 export default router;
