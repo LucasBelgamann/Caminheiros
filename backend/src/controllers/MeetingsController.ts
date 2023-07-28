@@ -11,6 +11,15 @@ class MeetingController {
 
     return res.status(200).json({ message: "Meeting created successfully." });
   };
+
+  public updateFrequencyToTrue = async (req: Request, res: Response) => {
+    const meetingId = Number(req.params.meetingId);
+    const userId = Number(req.params.userId);
+
+    await this.meetingService.updateFrequencyToTrue(meetingId, userId);
+
+    return res.status(200).json({ message: "Frequency updated to true." });
+  };
 }
 
 export default MeetingController;

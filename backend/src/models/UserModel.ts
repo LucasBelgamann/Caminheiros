@@ -1,5 +1,6 @@
 import { Pool } from "mysql2/promise";
 import { IUser } from "../interfaces/IUser";
+import bcrypt from "bcrypt";
 
 class LoginModel {
   private connection: Pool;
@@ -28,6 +29,31 @@ class LoginModel {
     );
 
     return result as any as IUser[];
+  }
+
+  public async createUser(
+    name: string,
+    phone: string,
+    email: string,
+    password: string,
+    role: "user" | "admin"
+  ): Promise<void> {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await this.connection.execute(
+      "INSERT INTO users (name, phone, email, password, role) VALUES (?, ?, ?, ?, ?)",
+      [name, phone, email, hashedPassword, role]
+    );
+  }
+
+  public async insertUserInGroup(
+    groupId: number,
+    userId: number
+  ): Promise<void> {
+    await this.connection.execute(
+      "INSERT INTO caminheiros.Group_has_users (groupId, userId) VALUES (?, ?)",
+      [groupId, userId]
+    );
   }
 }
 
