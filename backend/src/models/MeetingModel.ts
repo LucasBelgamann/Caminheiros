@@ -1,5 +1,6 @@
 import { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import UserModel from "./UserModel";
+// import { IUser } from "../interfaces/IUser";
 
 class MeetingModel {
   private connection: Pool;
@@ -59,6 +60,24 @@ class MeetingModel {
     );
 
     return rows as RowDataPacket[];
+  }
+
+  public async getHistory(
+    meetingDate: string,
+    groupId: number
+  ): Promise<any[]> {
+    const [result] = await this.connection.execute<RowDataPacket[]>(
+      `
+    SELECT u.*
+    FROM caminheirosdb.Users AS u
+    JOIN caminheirosdb.Meetings_has_users AS mu ON u.id = mu.userId
+    JOIN caminheirosdb.Meetings AS m ON mu.meetingId = m.id
+    WHERE DATE(m.created_at) = ? AND m.groupId = ?;
+  `,
+      [meetingDate, groupId]
+    );
+
+    return result;
   }
 }
 
