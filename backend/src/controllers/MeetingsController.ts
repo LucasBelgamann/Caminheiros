@@ -7,7 +7,7 @@ class MeetingController {
   public createMeeting = async (req: Request, res: Response) => {
     const groupId = req.params.id;
 
-    await this.meetingService.createMeeting(Number(groupId))
+    await this.meetingService.createMeeting(Number(groupId));
 
     return res.status(200).json({ message: "Meeting created successfully." });
   };
@@ -19,6 +19,14 @@ class MeetingController {
     await this.meetingService.updateFrequencyToTrue(meetingId, userId);
 
     return res.status(200).json({ message: "Frequency updated to true." });
+  };
+
+  public getRecentMeetings = async (req: Request, res: Response) => {
+    const groupId = req.params.id;
+
+    const result = await this.meetingService.getRecentMeetings(Number(groupId));
+
+    return res.status(200).json(result);
   };
 }
 

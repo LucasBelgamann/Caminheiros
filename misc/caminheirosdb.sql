@@ -26,8 +26,8 @@ CREATE TABLE caminheirosdb.Meetings (
   date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   groupId INTEGER,
   FOREIGN KEY (groupId) REFERENCES caminheirosdb.Groups (id),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE caminheirosdb.Groups_has_users (
@@ -41,7 +41,9 @@ CREATE TABLE caminheirosdb.Meetings_has_users (
   meetingsId INTEGER,
   userId INTEGER,
   frequency TINYINT,
-  FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id)
+  FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 INSERT INTO caminheirosdb.Users (name, phone, email, password, role, created_at, updated_at)

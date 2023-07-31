@@ -12,8 +12,16 @@ class MeetingService {
     await this.model.createMeeting(groupId);
   }
 
-  public async updateFrequencyToTrue(meetingId: number, userId: number): Promise<void> {
-    await this.model.updateFrequencyToTrue(meetingId, userId)
+  public async updateFrequencyToTrue(
+    meetingId: number,
+    userId: number
+  ): Promise<void> {
+    await this.model.updateFrequencyToTrue(meetingId, userId);
+  }
+
+  public async getRecentMeetings(groupId: number): Promise<any> {
+    const result = await this.model.getRecentMeetings(groupId);
+    return result;
   }
 }
 

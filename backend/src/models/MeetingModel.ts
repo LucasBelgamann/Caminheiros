@@ -11,12 +11,16 @@ class MeetingModel {
   }
 
   public async createMeeting(groupId: number): Promise<void> {
-    const currentDateTime = new Date();
+    const recentMeetings = await this.getRecentMeetings(groupId);
 
-    const formattedDateTime = `CONVERT_TZ('${currentDateTime.toISOString()}', '+00:00', '-03:00')`;
+    if (recentMeetings.length > 0) {
+      throw new Error(
+        "Já existe uma reunião para o mesmo grupo nas últimas duas horas."
+      );
+    }
 
     const [result] = await this.connection.execute(
-      `INSERT INTO caminheirosdb.Meetings (groupId, created_at) VALUES (?, ${formattedDateTime})`,
+      `INSERT INTO caminheirosdb.Meetings (groupId) VALUES (?)`,
       [groupId]
     );
 
@@ -26,7 +30,7 @@ class MeetingModel {
 
     const promises = users.map(async (user) => {
       await this.connection.execute(
-        `INSERT INTO caminheirosdb.Meetings_has_users (meetingsId, userId, frequency, created_at) VALUES (?, ?, ?, ${formattedDateTime})`,
+        `INSERT INTO caminheirosdb.Meetings_has_users (meetingsId, userId, frequency) VALUES (?, ?, ?)`,
         [meetingId, user.id, false]
       );
     });
@@ -45,12 +49,13 @@ class MeetingModel {
   }
 
   public async getRecentMeetings(groupId: number): Promise<RowDataPacket[]> {
-    const twoHoursAgo = new Date();
-    twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
-
     const [rows] = await this.connection.execute(
-      "SELECT * FROM caminheirosdb.Meetings WHERE groupId = ? AND created_at >= ?",
-      [groupId, twoHoursAgo]
+      `
+      SELECT * FROM caminheirosdb.Meetings
+      WHERE groupId = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
+      AND DATE(created_at) = DATE(NOW());
+    `,
+      [groupId]
     );
 
     return rows as RowDataPacket[];
