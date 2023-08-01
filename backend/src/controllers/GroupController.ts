@@ -11,6 +11,14 @@ class GroupController {
 
     return res.status(200).json(result);
   };
+
+  public getGroupsByUserId = async (req: Request, res: Response) => {
+    const groupId = req.params.id;
+
+    const result = await this.groupService.getGroupsByUserId(Number(groupId))
+
+    return res.status(200).json(result);
+  };
 }
 
 export default GroupController;

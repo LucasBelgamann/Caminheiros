@@ -21,6 +21,20 @@ class GroupModel {
 
     return result;
   }
+
+  public async getGroupsByUserId(userId: number): Promise<any[]> {
+    const [result] = await this.connection.execute<RowDataPacket[]>(
+      `
+    SELECT g.*
+    FROM caminheirosdb.Groups AS g
+    JOIN caminheirosdb.Groups_has_users AS gu ON g.id = gu.groupId
+    WHERE gu.userId = ?;
+  `,
+      [userId]
+    );
+
+    return result;
+  }
 }
 
 export default GroupModel;

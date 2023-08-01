@@ -67,5 +67,6 @@ INSERT INTO caminheirosdb.Groups_has_users (groupId, userId)
 VALUES
 (1, 4),
 (1, 5),
+(2, 4),
 (2, 6),
 (2, 7);
