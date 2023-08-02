@@ -18,6 +18,26 @@ class UserService {
     const result = await this.model.getUsersInGroup(groupId);
     return result;
   }
+
+  public async createUser(
+    name: string,
+    phone: string,
+    email: string,
+    password: string,
+    role: "user" | "admin"
+  ): Promise<void> {
+    await this.model.createUser(
+      name,
+      phone,
+      email,
+      password,
+      role
+    );
+  }
+
+  public async insertUserInGroup(groupId: number, userId: number): Promise<void> {
+    await this.model.insertUserInGroup(groupId, userId)
+  }
 }
 
 export default UserService;
