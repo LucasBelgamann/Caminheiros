@@ -5,19 +5,35 @@ class GroupController {
   constructor(private groupService = new GroupService()) {}
 
   public getGroupsByOwnerId = async (req: Request, res: Response) => {
-    const groupId = req.params.id;
+    const ownerId = Number(req.params.id);
 
-    const result = await this.groupService.getGroupsByOwnerId(Number(groupId))
+    if (isNaN(ownerId)) {
+      return res.status(400).json({ message: "Invalid ownerId." });
+    }
 
-    return res.status(200).json(result);
+    try {
+      const result = await this.groupService.getGroupsByOwnerId(ownerId);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("Error getting groups by ownerId:", error);
+      return res.status(500).json({ message: "Failed to get groups by ownerId." });
+    }
   };
 
   public getGroupsByUserId = async (req: Request, res: Response) => {
-    const groupId = req.params.id;
+    const userId = Number(req.params.id);
 
-    const result = await this.groupService.getGroupsByUserId(Number(groupId))
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid userId." });
+    }
 
-    return res.status(200).json(result);
+    try {
+      const result = await this.groupService.getGroupsByUserId(userId);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("Error getting groups by userId:", error);
+      return res.status(500).json({ message: "Failed to get groups by userId." });
+    }
   };
 }
 

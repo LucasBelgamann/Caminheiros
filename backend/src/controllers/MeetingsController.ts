@@ -5,37 +5,69 @@ class MeetingController {
   constructor(private meetingService = new MeetingService()) {}
 
   public createMeeting = async (req: Request, res: Response) => {
-    const groupId = req.params.id;
+    const groupId = Number(req.params.id);
 
-    await this.meetingService.createMeeting(Number(groupId));
+    if (isNaN(groupId)) {
+      return res.status(400).json({ message: "Invalid groupId." });
+    }
 
-    return res.status(200).json({ message: "Meeting created successfully." });
+    try {
+      await this.meetingService.createMeeting(groupId);
+      return res.status(200).json({ message: "Meeting created successfully." });
+    } catch (error) {
+      console.error("Error creating meeting:", error);
+      return res.status(500).json({ message: "Failed to create meeting." });
+    }
   };
 
   public updateFrequencyToTrue = async (req: Request, res: Response) => {
     const meetingId = Number(req.params.meetingId);
     const userId = Number(req.params.userId);
 
-    await this.meetingService.updateFrequencyToTrue(meetingId, userId);
+    if (isNaN(meetingId) || isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid meetingId or userId." });
+    }
 
-    return res.status(200).json({ message: "Frequency updated to true." });
+    try {
+      await this.meetingService.updateFrequencyToTrue(meetingId, userId);
+      return res.status(200).json({ message: "Frequency updated to true." });
+    } catch (error) {
+      console.error("Error updating frequency:", error);
+      return res.status(500).json({ message: "Failed to update frequency." });
+    }
   };
 
   public getRecentMeetings = async (req: Request, res: Response) => {
-    const groupId = req.params.id;
+    const groupId = Number(req.params.id);
 
-    const result = await this.meetingService.getRecentMeetings(Number(groupId));
+    if (isNaN(groupId)) {
+      return res.status(400).json({ message: "Invalid groupId." });
+    }
 
-    return res.status(200).json(result);
+    try {
+      const result = await this.meetingService.getRecentMeetings(groupId);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("Error getting recent meetings:", error);
+      return res.status(500).json({ message: "Failed to get recent meetings." });
+    }
   };
 
   public getHistory = async (req: Request, res: Response) => {
     const meetingDate = req.body;
     const groupId = Number(req.params.id);
 
-    const result = await this.meetingService.getHistory(meetingDate, groupId)
+    if (isNaN(groupId)) {
+      return res.status(400).json({ message: "Invalid groupId." });
+    }
 
-    return res.status(200).json(result);
+    try {
+      const result = await this.meetingService.getHistory(meetingDate, groupId);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("Error getting meeting history:", error);
+      return res.status(500).json({ message: "Failed to get meeting history." });
+    }
   };
 }
 
