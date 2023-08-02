@@ -23,6 +23,11 @@ class MeetingService {
     const result = await this.model.getRecentMeetings(groupId);
     return result;
   }
+
+  public async getHistory(meetingDate: string, groupId: number): Promise<any> {
+    const result = await this.model.getHistory(meetingDate, groupId)
+    return result;
+  }
 }
 
 export default MeetingService;

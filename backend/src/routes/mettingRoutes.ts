@@ -8,5 +8,6 @@ const meetingController = new MeetingController();
 router.post('/:id', meetingController.createMeeting);
 router.put("/update-frequency/:meetingId/users/:userId", meetingController.updateFrequencyToTrue);
 router.get('/recent/:id', meetingController.getRecentMeetings);
+router.get('/history/:id', meetingController.getHistory);
 
 export default router;

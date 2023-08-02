@@ -28,6 +28,15 @@ class MeetingController {
 
     return res.status(200).json(result);
   };
+
+  public getHistory = async (req: Request, res: Response) => {
+    const meetingDate = req.body;
+    const groupId = Number(req.params.id);
+
+    const result = await this.meetingService.getHistory(meetingDate, groupId)
+
+    return res.status(200).json(result);
+  };
 }
 
 export default MeetingController;
