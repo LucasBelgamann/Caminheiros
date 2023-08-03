@@ -9,5 +9,6 @@ router.get('/', userController.getAllUsers);
 router.get('/groups/:id', userController.getUsersInGroup);
 router.post("/groups/:groupId/users/:userId", userController.insertUserInGroup);
 router.post('/create-user', userController.createUser);
+router.get('/login', userController.login);
 
 export default router;

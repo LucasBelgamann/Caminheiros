@@ -1,4 +1,4 @@
-import { Pool } from "mysql2/promise";
+import { Pool, RowDataPacket } from "mysql2/promise";
 import { IUser } from "../interfaces/IUser";
 import bcrypt from "bcrypt";
 
@@ -41,7 +41,7 @@ class LoginModel {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await this.connection.execute(
-      "INSERT INTO users (name, phone, email, password, role) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO caminheirosdb.Users (name, phone, email, password, role) VALUES (?, ?, ?, ?, ?)",
       [name, phone, email, hashedPassword, role]
     );
   }
@@ -54,6 +54,24 @@ class LoginModel {
       "INSERT INTO caminheiros.Group_has_users (groupId, userId) VALUES (?, ?)",
       [groupId, userId]
     );
+  }
+
+  public async findUserByEmailAndPassword(email: string): Promise<IUser | null> {
+    const [result] = await this.connection.execute(
+      `
+      SELECT * FROM caminheirosdb.Users
+      WHERE email = ?;
+      `,
+      [email]
+    );
+  
+    if (!Array.isArray(result) || result.length === 0) {
+      return null;
+    }
+  
+    const user = result[0] as RowDataPacket;
+  
+    return user as IUser;
   }
 }
 

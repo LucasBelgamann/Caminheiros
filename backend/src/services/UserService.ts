@@ -1,6 +1,7 @@
 import { IUser } from "../interfaces/IUser";
 import connection from "../models/connection";
 import UserModel from "../models/UserModel";
+import bcrypt from 'bcrypt';
 
 class UserService {
   public model: UserModel;
@@ -37,6 +38,11 @@ class UserService {
 
   public async insertUserInGroup(groupId: number, userId: number): Promise<void> {
     await this.model.insertUserInGroup(groupId, userId)
+  }
+
+  public async findUserByEmailAndPassword(email: string): Promise<IUser | null> {
+    const user = await this.model.findUserByEmailAndPassword(email)
+    return user;
   }
 }
 

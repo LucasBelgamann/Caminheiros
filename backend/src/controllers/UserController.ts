@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import UserService from "../services/UserService";
+import bcrypt from 'bcrypt';
 
 class UserController {
   constructor(private userService = new UserService()) {}
@@ -21,25 +22,17 @@ class UserController {
   };
 
   public createUser = async (req: Request, res: Response) => {
-    const body = req.body;
-
-    if (!body.name || !body.phone || !body.email || !body.password || !body.role) {
-      return res.status(400).json({ message: "All fields are required." });
-    }
+    const { name, phone, email, password, role } = req.body;
 
     try {
-      await this.userService.createUser(
-        body.name,
-        body.phone,
-        body.email,
-        body.password,
-        body.role
-      );
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      await this.userService.createUser(name, phone, email, hashedPassword, role);
 
       return res.status(200).json({ message: "User created successfully." });
     } catch (error) {
-      console.error("Error creating user:", error);
-      return res.status(500).json({ message: "Failed to create user." });
+      console.error("Error during user creation:", error);
+      return res.status(500).json({ message: "Internal server error." });
     }
   };
 
@@ -56,9 +49,38 @@ class UserController {
       return res.status(200).json({ message: "User entered successfully." });
     } catch (error) {
       console.error("Error inserting user in group:", error);
-      return res.status(500).json({ message: "Failed to insert user in group." });
+      return res
+        .status(500)
+        .json({ message: "Failed to insert user in group." });
     }
   };
+
+  public login = async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    if (typeof password !== 'string') {
+      console.log("Password is missing or invalid.", password)
+      return res.status(400).json({ message: "Password is missing or invalid." });
+    }
+  
+    try {
+      const user = await this.userService.findUserByEmailAndPassword(email);
+      if (!user) {
+        console.log("User not found.", user)
+        return res.status(401).json({ message: "User not found." });
+      }
+      const isPasswordValid = bcrypt.compareSync(password, user.password || '');
+      if (!isPasswordValid) {
+        console.log("Invalid password.", isPasswordValid, "senha", user.password)
+        return res.status(401).json({ message: "Invalid password." });
+      }
+  
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error("Error during login:", error);
+      return res.status(500).json({ message: "Internal server error." });
+    }
+  }
 }
 
 export default UserController;
