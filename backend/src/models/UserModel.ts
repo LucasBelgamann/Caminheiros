@@ -70,6 +70,10 @@ class LoginModel {
     }
   
     const user = result[0] as RowDataPacket;
+
+    if (typeof user.password !== 'string') {
+      return null;
+    }
   
     return user as IUser;
   }
