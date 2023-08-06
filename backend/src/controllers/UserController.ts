@@ -24,7 +24,13 @@ class UserController {
   public createUser = async (req: Request, res: Response) => {
     const { name, phone, email, password, role } = req.body;
 
+    const user = await this.userService.findUserByEmailAndPassword(email);
+
+    if (user) {
+      return res.status(400).json({ message: "Já existe um usuário com o seguinte email"})
+    }
     try {
+      
       const hashedPassword = await hash(password, 10);
 
       await this.userService.createUser(
@@ -80,10 +86,11 @@ class UserController {
       if (!user) {
         return res.status(401).json({ message: 'Incorrect email or password' });
       }
-  
+
       const isPasswordValid = await compare(password, user.password);
   
       if (!isPasswordValid) {
+        console.log(password, user.password)
         return res.status(401).json({ message: 'Invalid password' });
       }
   
