@@ -7,8 +7,14 @@ class MeetingController {
   public createMeeting = async (req: Request, res: Response) => {
     const groupId = Number(req.params.id);
 
+    const result = await this.meetingService.getRecentMeetings(groupId);
+
     if (isNaN(groupId)) {
       return res.status(400).json({ message: "Invalid groupId." });
+    }
+
+    if (result.length > 0) {
+      return res.status(400).json({  message: "Já existe uma reunião para o mesmo grupo nas últimas duas horas." })
     }
 
     try {
