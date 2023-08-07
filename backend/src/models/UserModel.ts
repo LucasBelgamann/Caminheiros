@@ -1,6 +1,5 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { IUser } from "../interfaces/IUser";
-import bcrypt from "bcrypt";
 
 class LoginModel {
   private connection: Pool;
@@ -38,11 +37,10 @@ class LoginModel {
     password: string,
     role: "user" | "admin"
   ): Promise<void> {
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     await this.connection.execute(
       "INSERT INTO caminheirosdb.Users (name, phone, email, password, role) VALUES (?, ?, ?, ?, ?)",
-      [name, phone, email, hashedPassword, role]
+      [name, phone, email, password, role]
     );
   }
 

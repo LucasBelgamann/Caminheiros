@@ -1,6 +1,6 @@
 <template>
   <Header />
-  <ListCard />
+  <ActiveListCard />
   <UserCards />
   <History />
   <Participantes />
@@ -9,19 +9,20 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ListCard from "src/components/listCard.vue";
-import Header from "src/components/Header.vue";
-import UserCards from "src/components/UserCards.vue";
-import History from "src/components/History.vue";
-import Participantes from "src/components/Participants.vue";
-import Footer from "src/components/Footer.vue";
+import ListCard from "../components/listCard.vue";
+import Header from "../components/Header.vue";
+import UserCards from "../components/UserCards.vue";
+import History from "../components/History.vue";
+import Participantes from "../components/Participants.vue";
+import Footer from "../components/Footer.vue";
+import ActiveListCard from '../components/ActiveListCard.vue'
 
 export default defineComponent({
   name: "IndexPage",
 
   setup() {
-    return { ListCard, Header, UserCards, History, Participantes, Footer };
+    return { ActiveListCard, Header, UserCards, History, Participantes, Footer };
   },
-  components: { ListCard, Header, UserCards, History, Participantes, Footer },
+  components: { ActiveListCard, Header, UserCards, History, Participantes, Footer },
 });
 </script>

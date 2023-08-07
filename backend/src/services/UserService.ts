@@ -1,7 +1,7 @@
 import { IUser } from "../interfaces/IUser";
 import connection from "../models/connection";
 import UserModel from "../models/UserModel";
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 class UserService {
   public model: UserModel;
