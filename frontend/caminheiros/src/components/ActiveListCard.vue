@@ -1,21 +1,24 @@
 <template>
-  <div class="q-pa-md row items-start q-gutter-md">
-    <q-card class="my-card" flat bordered>
-      <q-card-section>
-        <div class="text-overline text-orange-9">Overline</div>
-        <div class="text-h5 q-mt-sm q-mb-xs">Title</div>
-        <div class="text-caption text-grey">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+  <div class="q-pa-md row items-center justify-center q-gutter-md">
+    <q-card
+      class="my-card"
+      flat
+      style="border-radius: 20px"
+      :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+    >
+      <q-card-section class="row items-center">
+        <div class="list-title">
+          <q-icon name="list_alt" class="" color="white" />
+        </div>
+        <div class="list-info" v-for="meeting in meetings" :key="meeting.id">
+          <h4>Lista de presença</h4>
+          <p>{{ `Grupo: ${meeting.groupName}` }}</p>
+          <p>{{ `Término da chamada: ${formatMeetingTime(meeting.date)}` }}</p>
         </div>
       </q-card-section>
 
       <q-card-actions>
-        <q-btn flat color="primary" label="Share" />
-        <q-btn flat color="secondary" label="Book" />
-
         <q-space />
-
         <q-btn
           color="grey"
           round
@@ -30,10 +33,8 @@
         <div v-show="expanded">
           <q-separator />
           <q-card-section class="text-subitle2">
-            <div>
-              <div v-for="user in users" :key="user.id">
-                {{ user.name }} - {{ user.email }}
-              </div>
+            <div v-for="user in usersToRender" :key="user.id">
+              <q-checkbox v-model="user.frequency" :label="user.name" />
             </div>
           </q-card-section>
         </div>
@@ -49,33 +50,52 @@ import axios from "axios";
 export default defineComponent({
   setup() {
     const expanded = ref(false);
-    const groupId = 1;
-    const users = ref<Array<User>>([]);
+    const meetings = ref<Array<Meeting>>([]);
+    const usersToRender = ref<Array<User>>([]);
 
     interface User {
       id: number;
       name: string;
-      email: string;
+      frequency: number;
     }
 
-    const fetchUsers = async () => {
+    interface Meeting {
+      id: number;
+      date: string;
+      groupId: number;
+      created_at: string;
+      updated_at: string;
+      groupName: string;
+      users: User[];
+    }
+
+    const fetchMeetings = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/users");
-        // Convert the Proxy(Array) to a regular array using Array.from()
-        users.value = Array.from(response.data);
+        const response = await axios.get(
+          `http://localhost:3001/meetings/recent/${1}`
+        );
+        meetings.value = Array.from(response.data);
+
+        usersToRender.value = meetings.value.flatMap(
+          (meeting) => meeting.users
+        );
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching meeting:", error);
       }
     };
 
     onMounted(() => {
-      fetchUsers();
+      fetchMeetings();
+      const interval = setInterval(fetchMeetings, 2 * 60 * 1000);
+
+      return () => clearInterval(interval);
     });
 
     return {
       expanded,
-      groupId,
-      users,
+      meetings,
+      usersToRender,
+      val: ref(true),
     };
   },
   computed: {
@@ -83,10 +103,41 @@ export default defineComponent({
       return this.$q.dark.isActive;
     },
   },
+  methods: {
+    formatMeetingTime(dateString: string) {
+      const dateObject = new Date(dateString);
+      const localDate = new Date(
+        dateObject.getTime() + dateObject.getTimezoneOffset() * 60000
+      );
+      localDate.setHours(localDate.getHours() + 2);
+      const hora = localDate.getHours();
+      const minutos = localDate.getMinutes();
+      return `${hora}:${minutos}`;
+    },
+  },
 });
 </script>
 
 <style lang="scss">
+.my-card {
+  width: 90vw;
+  box-shadow: none;
+  color: white;
+}
+
+.list-title {
+  margin-right: 25px;
+}
+
+.list-title i {
+  font-size: 100px;
+}
+
+.list-info h4 {
+  font-weight: 900;
+  font-size: 17px;
+  margin: 0;
+}
 @media screen and (max-width: 599.99px) {
 }
 
