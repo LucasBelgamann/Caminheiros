@@ -48,17 +48,39 @@ class MeetingModel {
       [true, meetingId, userId]
     );
   }
-
-  public async getRecentMeetings(groupId: number): Promise<RowDataPacket[]> {
+  public async getRecentMeetings(groupId: number): Promise<any[]> {
     const [rows] = await this.connection.execute(
       `
-      SELECT * FROM caminheirosdb.Meetings
-      WHERE groupId = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
-      AND DATE(created_at) = DATE(NOW());
-    `,
+      SELECT M.*, G.name AS groupName
+      FROM caminheirosdb.Meetings AS M
+      JOIN caminheirosdb.Groups AS G ON M.groupId = G.id
+      WHERE M.groupId = ? AND M.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
+      AND DATE(M.created_at) = DATE(NOW());
+      `,
       [groupId]
     );
-
+  
+    const meetingsWithGroup = rows as RowDataPacket[];
+  
+    const meetingsWithUsers = await Promise.all(meetingsWithGroup.map(async (meeting) => {
+      const users = await this.getUsersInMeeting(meeting.id);
+      return { ...meeting, users };
+    }));
+  
+    return meetingsWithUsers;
+  }
+  
+  public async getUsersInMeeting(meetingId: number): Promise<any[]> {
+    const [rows] = await this.connection.execute(
+      `
+      SELECT U.id, U.name, MU.frequency
+      FROM caminheirosdb.Users AS U
+      JOIN caminheirosdb.Meetings_has_users AS MU ON U.id = MU.userId
+      WHERE MU.meetingsId = ?;
+      `,
+      [meetingId]
+    );
+  
     return rows as RowDataPacket[];
   }
 
