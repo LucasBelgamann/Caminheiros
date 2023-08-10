@@ -39,15 +39,18 @@ class MeetingModel {
     await Promise.all(promises);
   }
 
-  public async updateFrequencyToTrue(
+  public async updateFrequency(
     meetingId: number,
-    userId: number
+    userId: number,
+    newFrequency: boolean
   ): Promise<void> {
     await this.connection.execute(
       "UPDATE caminheirosdb.Meetings_has_users SET frequency = ? WHERE meetingsId = ? AND userId = ?",
-      [true, meetingId, userId]
+      [newFrequency, meetingId, userId]
     );
   }
+  
+
   public async getRecentMeetings(groupId: number): Promise<any[]> {
     const [rows] = await this.connection.execute(
       `

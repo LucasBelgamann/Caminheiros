@@ -40,7 +40,7 @@ CREATE TABLE caminheirosdb.Groups_has_users (
 CREATE TABLE caminheirosdb.Meetings_has_users (
   meetingsId INTEGER,
   userId INTEGER,
-  frequency TINYINT,
+  frequency BOOLEAN,
   FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

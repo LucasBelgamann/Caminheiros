@@ -27,19 +27,16 @@ class MeetingController {
   };
 
   public updateFrequencyToTrue = async (req: Request, res: Response) => {
-    const meetingId = Number(req.params.meetingId);
-    const userId = Number(req.params.userId);
-
-    if (isNaN(meetingId) || isNaN(userId)) {
-      return res.status(400).json({ message: "Invalid meetingId or userId." });
-    }
-
+    const meetingId = parseInt(req.params.meetingId, 10);
+    const userId = parseInt(req.params.userId, 10);
+    const newFrequency = req.body.newFrequency;
+  
     try {
-      await this.meetingService.updateFrequencyToTrue(meetingId, userId);
-      return res.status(200).json({ message: "Frequency updated to true." });
+      await this.meetingService.updateFrequency(meetingId, userId, newFrequency);
+      res.status(200).json(newFrequency);
     } catch (error) {
       console.error("Error updating frequency:", error);
-      return res.status(500).json({ message: "Failed to update frequency." });
+      res.status(500).json({ message: "Error updating frequency" });
     }
   };
 
