@@ -6,7 +6,7 @@
       style="border-radius: 20px"
       :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
     >
-      <q-card-section class="row items-center">
+      <q-card-section class="row items-center meeting-content">
         <div class="list-title">
           <q-icon name="list_alt" class="" color="white" />
         </div>
@@ -20,6 +20,7 @@
       <q-card-actions>
         <q-space />
         <q-btn
+          class="sub-class"
           color="grey"
           round
           flat
@@ -33,8 +34,15 @@
         <div v-show="expanded">
           <q-separator />
           <q-card-section class="text-subitle2">
+            <p>Participantes</p>
             <div v-for="user in usersToRender" :key="user.id">
-              <q-checkbox v-model="user.frequency" :label="user.name" />
+              <q-checkbox
+                v-model="user.frequency"
+                :label="user.name"
+                :true-value="1"
+                :false-value="0"
+                @click="() => handleFrequencyChange(user.id, user.frequency)"
+              />
             </div>
           </q-card-section>
         </div>
@@ -84,8 +92,27 @@ export default defineComponent({
       }
     };
 
+    const handleFrequencyChange = async (
+      userId: number,
+      newFrequency: number
+    ) => {
+      console.log(newFrequency)
+      try {
+        for (const meeting of meetings.value) {
+          const response = await axios.put(
+            `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${userId}`,
+            { newFrequency }
+          );
+          console.log("Frequency updated:", response.data);
+        }
+      } catch (error) {
+        console.error("Error updating frequency:", error);
+      }
+    };
+
     onMounted(() => {
       fetchMeetings();
+      console.log(usersToRender);
       const interval = setInterval(fetchMeetings, 2 * 60 * 1000);
 
       return () => clearInterval(interval);
@@ -96,6 +123,7 @@ export default defineComponent({
       meetings,
       usersToRender,
       val: ref(true),
+      handleFrequencyChange,
     };
   },
   computed: {
@@ -125,6 +153,10 @@ export default defineComponent({
   color: white;
 }
 
+.meeting-content {
+  height: 14vh;
+}
+
 .list-title {
   margin-right: 25px;
 }
@@ -138,6 +170,7 @@ export default defineComponent({
   font-size: 17px;
   margin: 0;
 }
+
 @media screen and (max-width: 599.99px) {
 }
 
