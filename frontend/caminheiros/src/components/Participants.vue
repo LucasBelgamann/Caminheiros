@@ -19,41 +19,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import axios from "axios";
+import { defineComponent, onMounted, ref } from "vue";
 
 export default defineComponent({
   setup() {
-    return {
-      users: [
-        {
-          name: "José",
-        },
-        {
-          name: "Pedro",
-        },
-        {
-          name: "Socrates",
-        },
-        {
-          name: "Platão",
-        },
-        {
-          name: "José",
-        },
-        {
-          name: "Pedro",
-        },
-        {
-          name: "Socrates",
-        },
-        {
-          name: "Platão",
-        },
-        {
-          name: "José",
-        },
-      ],
+    const users = ref<Array<User>>([]);
+
+    interface User {
+      id: number;
+      name: string
+    }
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/users/groups/${1}`
+        );
+        users.value = Array.from(response.data);
+      } catch (error) {
+        console.error("Error fetching meeting:", error);
+      }
     };
+
+
+    onMounted(() => {
+      fetchUsers();
+    });
+
+    return { users };
   },
 
   computed: {

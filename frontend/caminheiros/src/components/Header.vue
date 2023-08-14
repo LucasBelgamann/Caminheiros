@@ -139,4 +139,12 @@ h5 {
     font-size: 25px;
   }
 }
+
+.dark-theme {
+  background-color: #262c30;
+}
+
+.ligth-theme {
+  background-color: #314B68;
+}
 </style>

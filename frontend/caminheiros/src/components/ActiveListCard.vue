@@ -1,13 +1,15 @@
 <template>
-  <div class="q-pa-md row items-center justify-center q-gutter-md">
+  <div class="row items-center justify-center">
+    <component v-if="meetings.length === 0" :is="ListCard" />
     <q-card
+      v-else
       class="my-card"
       flat
       style="border-radius: 20px"
       :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
     >
       <q-card-section class="row items-center meeting-content">
-        <div class="list-title">
+        <div class="list-title-two">
           <q-icon name="list_alt" class="" color="white" />
         </div>
         <div class="list-info" v-for="meeting in meetings" :key="meeting.id">
@@ -32,7 +34,7 @@
 
       <q-slide-transition>
         <div v-show="expanded">
-          <q-separator />
+          <q-separator class="line" />
           <q-card-section class="text-subitle2">
             <p>Participantes</p>
             <div v-for="user in usersToRender" :key="user.id">
@@ -52,8 +54,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
 import axios from "axios";
+import ListCard from "./listCard.vue";
 
 export default defineComponent({
   setup() {
@@ -96,7 +99,7 @@ export default defineComponent({
       userId: number,
       newFrequency: number
     ) => {
-      console.log(newFrequency)
+      console.log(newFrequency);
       try {
         for (const meeting of meetings.value) {
           const response = await axios.put(
@@ -112,8 +115,7 @@ export default defineComponent({
 
     onMounted(() => {
       fetchMeetings();
-      console.log(usersToRender);
-      const interval = setInterval(fetchMeetings, 2 * 60 * 1000);
+      const interval = setInterval(fetchMeetings, 1 * 60 * 1000);
 
       return () => clearInterval(interval);
     });
@@ -124,6 +126,7 @@ export default defineComponent({
       usersToRender,
       val: ref(true),
       handleFrequencyChange,
+      ListCard,
     };
   },
   computed: {
@@ -143,6 +146,7 @@ export default defineComponent({
       return `${hora}:${minutos}`;
     },
   },
+  components: { ListCard },
 });
 </script>
 
@@ -157,12 +161,12 @@ export default defineComponent({
   height: 14vh;
 }
 
-.list-title {
+.list-title-two {
   margin-right: 25px;
 }
 
-.list-title i {
-  font-size: 100px;
+.list-title-two i {
+  font-size: 80px;
 }
 
 .list-info h4 {

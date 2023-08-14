@@ -27,7 +27,13 @@
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
-            <q-btn flat color="positive" label="Confirmar" @click="secondDialog = true" />
+            <q-btn
+              flat
+              color="positive"
+              v-close-popup
+              label="Confirmar"
+              @click="handleCreateMeeting"
+            />
             <q-btn flat color="primary" label="Cancelar" v-close-popup />
           </q-card-actions>
         </q-card>
@@ -37,13 +43,27 @@
 </template>
 
 <script lang="ts">
+import axios from "axios";
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   setup() {
+    const handleCreateMeeting = async (groupId: number) => {
+      try {
+        const response = await axios.post(
+          `http://localhost:3001/meetings/${1}`
+        );
+        console.log("Created Meeting!:", response.data);
+        location.reload();
+      } catch (error) {
+        console.error("Error creating meeting:", error);
+      }
+    };
+
     return {
       inception: ref(false),
       secondDialog: ref(false),
+      handleCreateMeeting,
     };
   },
   computed: {
@@ -96,7 +116,7 @@ export default defineComponent({
 @media screen and (max-width: 599.99px) {
   .list_container {
     height: 12vh;
-    width: 90%;
+    width: 92%;
   }
 
   .list-title i {

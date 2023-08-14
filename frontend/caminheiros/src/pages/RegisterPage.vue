@@ -1,5 +1,14 @@
 <template>
-  <div class="background" :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'">
+  <div
+    class="background"
+    :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+  >
+    <q-btn
+      class="arrow-btn-header"
+      :class="mode ? 'dark-theme' : 'ligth-theme'"
+      icon="arrow_back_ios_new"
+      to="/Home"
+    />
     <img
       src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png"
     />
@@ -50,7 +59,13 @@
         />
       </template>
     </q-input>
-    <q-btn to="/Home" class="login-btn" color="secondary" label="Cadastrar" />
+    <q-btn
+      to="/Home"
+      @click="handleCadastro"
+      class="login-btn"
+      color="secondary"
+      label="Cadastrar"
+    />
   </div>
   <Footer />
 </template>
@@ -58,24 +73,50 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ref } from "vue";
-import Footer from "src/components/Footer.vue";
+import Footer from "../components/Footer.vue";
+import axios from "axios";
 
 export default defineComponent({
   setup() {
+    const password = ref("");
+    const isPwd = ref(true);
+    const email = ref("");
+    const nome = ref("");
+    const telefone = ref("");
+
+    const handleCadastro = async () => {
+      const newUser = {
+        name: nome.value,
+        phone: telefone.value,
+        email: email.value,
+        password: password.value,
+        role: "user",
+      };
+      try {
+        if (!newUser) { console.log("não foi possivel")}
+        await axios.post("http://localhost:3001/users/create-user", newUser);
+        console.log("User created successfully!");
+      } catch (error) {
+        console.error("Error creating user:", error);
+      }
+    };
+
     return {
-      password: ref(""),
-      isPwd: ref(true),
-      email: ref(""),
-      nome: ref(""),
-      telefone: ref(""),
+      Footer,
+      password,
+      isPwd,
+      email,
+      nome,
+      telefone,
+      handleCadastro,
     };
   },
-  components: { Footer },
   computed: {
     mode: function () {
       return this.$q.dark.isActive;
     },
   },
+  components: { Footer },
 });
 </script>
 
@@ -107,6 +148,15 @@ export default defineComponent({
   margin-bottom: 40px;
   padding: 10px 35px;
   border-radius: 10px;
+}
+
+.arrow-btn-header {
+  border-radius: 50%;
+  color: white;
+  height: 6vh;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 @media screen and (max-width: 599.99px) {
