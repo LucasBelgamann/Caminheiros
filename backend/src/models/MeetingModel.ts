@@ -93,11 +93,11 @@ class MeetingModel {
   ): Promise<any[]> {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
-    SELECT u.*
-    FROM caminheirosdb.Users AS u
-    JOIN caminheirosdb.Meetings_has_users AS mu ON u.id = mu.userId
-    JOIN caminheirosdb.Meetings AS m ON mu.meetingId = m.id
-    WHERE DATE(m.created_at) = ? AND m.groupId = ?;
+      SELECT u.id, u.name
+      FROM caminheirosdb.Users AS u
+      JOIN caminheirosdb.Meetings_has_users AS mu ON u.id = mu.userId
+      JOIN caminheirosdb.Meetings AS m ON mu.meetingsId = m.id
+      WHERE DATE(m.created_at) = ? AND m.groupId = ? AND mu.frequency = true;          
   `,
       [meetingDate, groupId]
     );

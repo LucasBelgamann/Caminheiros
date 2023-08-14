@@ -57,7 +57,7 @@ class MeetingController {
   };
 
   public getHistory = async (req: Request, res: Response) => {
-    const meetingDate = req.body;
+    const meetingDate = req.params.meetingDate;
     const groupId = Number(req.params.id);
 
     if (isNaN(groupId)) {
