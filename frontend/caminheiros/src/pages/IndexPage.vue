@@ -9,7 +9,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ListCard from "../components/listCard.vue";
 import Header from "../components/Header.vue";
 import UserCards from "../components/UserCards.vue";
 import History from "../components/History.vue";

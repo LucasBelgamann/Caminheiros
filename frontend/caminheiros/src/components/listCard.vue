@@ -136,20 +136,4 @@ export default defineComponent({
     margin-right: 20px;
   }
 }
-
-.default-card-color-ligth {
-  background-color: #182634;
-}
-
-.default-card-color-dark {
-  background-color: #000000;
-}
-
-.white-text {
-  color: white;
-}
-
-.black-text {
-  color: black;
-}
 </style>

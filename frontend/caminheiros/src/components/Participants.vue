@@ -1,18 +1,56 @@
 <template>
   <div class="participants-container">
-    <h4>Participantes</h4>
+    <q-card class="my-card" flat>
+      <q-card-actions>
+        <q-card-title
+          class="text-h6"
+          :class="mode ? 'white-text' : 'black-text'"
+          >Participantes</q-card-title
+        >
+
+        <q-space />
+
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          :icon="expanded ? 'keyboard_arrow_up' : 'add'"
+          @click="expanded = !expanded"
+        />
+      </q-card-actions>
+
+      <q-slide-transition>
+        <div v-show="expanded">
+          <q-separator />
+
+          <q-card-section class="q-gutter-md">
+            <q-select
+              v-model="selectedOption1"
+              :options="allUsers.map(user => ({ label: user.name, value: user.id.toString() }))"
+              label="Participantes"
+              @update:modelValue="handleUserSelection"
+            />
+            <q-btn label="Adicionar" color="secondary" @click="addUser" />
+          </q-card-section>
+        </div>
+      </q-slide-transition>
+    </q-card>
     <div
       class="user-line"
       :class="mode ? 'default-card-color-ligth' : 'default-card-color-dark'"
     ></div>
     <div class="users-container">
-      <div
-        class="user-link"
-        :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-        v-for="user in users"
-      >
-        <h6>{{ user.name }}</h6>
-        <q-icon name="navigate_next" />
+      <div>
+        <p
+          class="user-link"
+          :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+          v-for="user in users"
+          :key="user.id"
+        >
+          {{ user.name }}
+          <q-icon name="navigate_next" />
+        </p>
       </div>
     </div>
   </div>
@@ -25,11 +63,14 @@ import { defineComponent, onMounted, ref } from "vue";
 export default defineComponent({
   setup() {
     const users = ref<Array<User>>([]);
+    const allUsers = ref<Array<User>>([]);
+    const selectedUserId = ref<number | null>(null);
 
     interface User {
       id: number;
-      name: string
+      name: string;
     }
+
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
@@ -37,16 +78,44 @@ export default defineComponent({
         );
         users.value = Array.from(response.data);
       } catch (error) {
-        console.error("Error fetching meeting:", error);
+        console.error("Error fetching users of group:", error);
       }
     };
 
+    const fetchAllUsers = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/users/${1}`);
+        allUsers.value = Array.from(response.data);
+      } catch (error) {
+        console.error("Error fetching all users:", error);
+      }
+    };
+
+    const handleUserSelection = (value: { label: string; value: number }) => {
+      selectedUserId.value = value.value;
+    };
+
+    const addUser = async () => {
+      console.log(selectedUserId.value)
+      if (selectedUserId.value !== null) {
+        await axios.post(`http://localhost:3001/users/groups/${1}/users/${selectedUserId.value}`);
+        location.reload();
+      }
+    };
 
     onMounted(() => {
       fetchUsers();
+      fetchAllUsers();
     });
 
-    return { users };
+    return {
+      users,
+      allUsers,
+      expanded: ref(false),
+      selectedOption1: null,
+      handleUserSelection,
+      addUser,
+    };
   },
 
   computed: {
@@ -58,6 +127,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.my-card {
+  background-color: transparent;
+}
+
 .participants-container {
   display: flex;
   flex-direction: column;
@@ -92,14 +165,12 @@ export default defineComponent({
   border-radius: 10px;
   cursor: pointer;
   margin: 5px 0;
+  height: 7vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.user-link h6 {
-  margin: 15px;
-  font-weight: 300;
+  font-size: 15px;
+  padding: 12px;
 }
 
 .user-link i {
