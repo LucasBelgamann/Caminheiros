@@ -9,9 +9,20 @@ class LoginModel {
     this.connection = connection;
   }
 
-  async getAllUsers(): Promise<IUser[]> {
+  async getAllUsers(groupId: number): Promise<IUser[]> {
     const [result] = await this.connection.execute(
-      `SELECT * FROM caminheirosdb.Users`
+      `SELECT id, name
+      FROM caminheirosdb.Users
+      WHERE id NOT IN (
+        SELECT userId
+        FROM caminheirosdb.Groups_has_users
+        WHERE groupId = ?
+      )
+      AND id <> (
+        SELECT userId
+        FROM caminheirosdb.Groups
+        WHERE id = ?
+      )`, [groupId, groupId]
     );
 
     return result as any as IUser[];
@@ -50,7 +61,7 @@ class LoginModel {
     userId: number
   ): Promise<void> {
     await this.connection.execute(
-      "INSERT INTO caminheiros.Group_has_users (groupId, userId) VALUES (?, ?)",
+      "INSERT INTO caminheirosdb.Groups_has_users (groupId, userId) VALUES (?, ?)",
       [groupId, userId]
     );
   }

@@ -10,8 +10,8 @@ class UserService {
     this.model = new UserModel(connection);
   }
 
-  public async getAllUsers(): Promise<IUser[]> {
-    const result = await this.model.getAllUsers();
+  public async getAllUsers(groupId: number): Promise<IUser[]> {
+    const result = await this.model.getAllUsers(groupId);
     return result;
   }
 
