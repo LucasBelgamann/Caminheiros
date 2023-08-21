@@ -80,26 +80,32 @@ class UserController {
   
     try {
       if (!email || !password) {
-        return res.status(400).json({ message: 'All fields must be filled' });
+        return res.status(400).json({ message: 'Todos os campos devem ser preenchidos' });
       }
   
       const user = await this.userService.findUserByEmailAndPassword(email);
   
       if (!user) {
-        return res.status(401).json({ message: 'Incorrect email or password' });
+        return res.status(401).json({ message: 'Senha ou email incorretos' });
       }
 
       const isPasswordValid = await compare(password, user.password);
   
       if (!isPasswordValid) {
         console.log(password, user.password)
-        return res.status(401).json({ message: 'Invalid password' });
+        return res.status(401).json({ message: 'Senha inválida' });
+      }
+
+      const result = {
+        id: user.id,
+        name: user.name,
+        role: user.role
       }
   
-      return res.status(200).json(user);
+      return res.status(200).json(result);
     } catch (error) {
       console.error('Error during login:', error);
-      return res.status(500).json({ message: 'Internal server error' });
+      return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 }

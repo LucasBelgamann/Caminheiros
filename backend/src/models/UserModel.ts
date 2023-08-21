@@ -47,7 +47,7 @@ class LoginModel {
     phone: string,
     email: string,
     password: string,
-    role: "user" | "admin"
+    role: "user" | "admin" | "manager"
   ): Promise<void> {
     console.log(name);
     await this.connection.execute(
