@@ -59,6 +59,24 @@
         />
       </template>
     </q-input>
+
+    <q-select
+      filled
+      v-model="typeUser"
+      :options="options"
+      label="Tipo do usuário"
+      class="in-register"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+    />
+    <q-input
+      class="in-register"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      clearable
+      filled
+      color="primary"
+      v-model="nome"
+      label="Nome do grupo"
+    />
     <q-btn
       to="/Home"
       @click="handleCadastro"
@@ -82,7 +100,9 @@ export default defineComponent({
     const isPwd = ref(true);
     const email = ref("");
     const nome = ref("");
+    const nomeGrupo = ref("");
     const telefone = ref("");
+    const typeUser = ref("");
 
     const handleCadastro = async () => {
       const newUser = {
@@ -93,7 +113,9 @@ export default defineComponent({
         role: "user",
       };
       try {
-        if (!newUser) { console.log("não foi possivel")}
+        if (!newUser) {
+          console.log("não foi possivel");
+        }
         await axios.post("http://localhost:3001/users/create-user", newUser);
         console.log("User created successfully!");
       } catch (error) {
@@ -109,6 +131,9 @@ export default defineComponent({
       nome,
       telefone,
       handleCadastro,
+      typeUser,
+      nomeGrupo,
+      options: ["user", "admin", "manager"],
     };
   },
   computed: {

@@ -1,5 +1,8 @@
 <template>
-  <div class="background" :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'">
+  <div
+    class="background"
+    :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+  >
     <img
       src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png"
     />
@@ -32,7 +35,13 @@
         />
       </template>
     </q-input>
-    <q-btn to="/Home" class="login-btn" color="secondary" label="Entrar" />
+    <span class="error-response" v-if="errorMessage">{{ errorMessage }}</span>
+    <q-btn
+      @click="handleLogin"
+      class="login-btn"
+      color="secondary"
+      label="Entrar"
+    />
     <span class="forgot-pass">Esqueceu a senha?</span>
   </div>
   <Footer />
@@ -41,14 +50,45 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ref } from "vue";
-import Footer from "src/components/Footer.vue";
+import Footer from "../components/Footer.vue";
+import axios from "axios";
 
 export default defineComponent({
   setup() {
+    const password = ref("");
+    const email = ref("");
+    const errorMessage = ref("");
+
+    const handleLogin = async () => {
+      const user = {
+        email: email.value,
+        password: password.value,
+      };
+
+      try {
+        const response = await axios.post(
+          "http://localhost:3001/users/login/auth",
+          user
+        );
+        console.log("Login realizado com sucesso!", response.data);
+
+        localStorage.setItem("userData", JSON.stringify(response.data));
+
+        window.location.href = "/home";
+      } catch (error) {
+        console.error("Erro no login:", error);
+        if (error.response && error.response.data) {
+          errorMessage.value = error.response.data.message;
+        }
+      }
+    };
+
     return {
-      password: ref(""),
+      password,
       isPwd: ref(true),
-      email: ref(""),
+      email,
+      handleLogin,
+      errorMessage,
     };
   },
   components: { Footer },
@@ -99,6 +139,14 @@ export default defineComponent({
   margin-top: 15px;
   margin-bottom: 100px;
   cursor: pointer;
+}
+
+.error-response {
+  color: white;
+  background-color: rgb(119, 16, 16);
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 @media screen and (max-width: 599.99px) {

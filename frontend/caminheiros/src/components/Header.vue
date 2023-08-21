@@ -2,7 +2,7 @@
   <div class="header">
     <div>
       <h5>Olá,</h5>
-      <h2>Agostinho</h2>
+      <h2>{{ userName }}</h2>
     </div>
     <div>
       <q-btn
@@ -13,7 +13,7 @@
         <q-menu>
           <div class="row no-wrap q-pa-md">
             <q-btn
-              to="/"
+              @click="handleLogout"
               style="border-radius: 10px; color: white"
               :class="darkMode ? 'dark-theme' : 'ligth-theme'"
               icon="logout"
@@ -49,24 +49,46 @@ export default defineComponent({
   setup() {
     const darkMode = ref(false);
     const $q = useQuasar();
+    const userName = ref("");
+
+    const handleLogout = () => {
+      localStorage.removeItem("userData");
+
+      window.location.href = "/";
+    };
+
     const toggleDarkMode = () => {
       darkMode.value = !darkMode.value;
     };
+
     watch(darkMode, (darkMode) => {
       $q.dark.set(darkMode);
       $q.localStorage.set("darkMode", darkMode);
     });
+
     onMounted(() => {
       const darkModeIsActive = $q.localStorage.getItem("darkMode");
       if (darkModeIsActive) {
         darkMode.value = true;
       }
+
+      const userDataString = localStorage.getItem("userData");
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        if (userData.name) {
+          const firstName = userData.name.split(" ")[0];
+          userName.value = firstName;
+        }
+      }
     });
+
     return {
       darkMode,
       toggleDarkMode,
       mobileData: ref(true),
       bluetooth: ref(false),
+      handleLogout,
+      userName
     };
   },
   components: {},
