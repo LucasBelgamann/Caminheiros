@@ -142,9 +142,10 @@ export default defineComponent({
 }
 
 .error-response {
-  color: white;
-  background-color: rgb(119, 16, 16);
+  color: rgb(143, 6, 6);
+  background-color: rgb(238, 84, 84);
   padding: 5px;
+  border: solid 1px red;
   border-radius: 10px;
   margin-bottom: 10px;
 }

@@ -64,6 +64,7 @@
       filled
       v-model="typeUser"
       :options="options"
+      v-if="role === 'manager'"
       label="Tipo do usuário"
       class="in-register"
       :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
@@ -73,8 +74,9 @@
       :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
       clearable
       filled
+      v-if="role === 'manager'"
       color="primary"
-      v-model="nome"
+      v-model="nomeGrupo"
       label="Nome do grupo"
     />
     <q-btn
@@ -89,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { ref } from "vue";
 import Footer from "../components/Footer.vue";
 import axios from "axios";
@@ -103,6 +105,7 @@ export default defineComponent({
     const nomeGrupo = ref("");
     const telefone = ref("");
     const typeUser = ref("");
+    const role = ref("");
 
     const handleCadastro = async () => {
       const newUser = {
@@ -110,7 +113,7 @@ export default defineComponent({
         phone: telefone.value,
         email: email.value,
         password: password.value,
-        role: "user",
+        role: role.value === '' ? 'user' : role.value,
       };
       try {
         if (!newUser) {
@@ -123,6 +126,17 @@ export default defineComponent({
       }
     };
 
+    onMounted(() => {
+      const userDataString = localStorage.getItem("userData");
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        if (userData.role) {
+          const roleUser = userData.role;
+          userData.value = roleUser;
+        }
+      }
+    });
+
     return {
       Footer,
       password,
@@ -134,6 +148,7 @@ export default defineComponent({
       typeUser,
       nomeGrupo,
       options: ["user", "admin", "manager"],
+      role
     };
   },
   computed: {

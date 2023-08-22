@@ -23,25 +23,28 @@
       </div>
     </div>
   </div>
-  <p
-    v-if="historyData.length === 0"
-    style="height: 30vh"
-    class="row items-center justify-center"
-  >
-    Não existe nehuma chamada para este dia!
-  </p>
+  <div v-if="historyData.length === 0 && !errorMessage" class="no-search-results">
+      <p style="height: 30vh" class="row items-center justify-center">
+        Digite a data para poder encontrar sua chamada!
+      </p>
+    </div>
+    <div v-else-if="errorMessage" class="error-container">
+      <div style="height: 30vh" class="row items-center justify-center">
+        <span class="error-response">{{ errorMessage }}</span>
+      </div>
+    </div>
   <div
-    v-else
-    class="history-result-container"
-    :class="mode ? 'default-card-color-dark' : 'default-card-color-light'"
+  v-else-if="historyData.length > 0"
+  class="history-result-container"
+  :class="mode ? 'default-card-color-dark' : 'default-card-color-light'"
   >
-    <p class="header-history-result">{{ date }}</p>
-    <div class="participants-result-history">
-      <p
+  <p class="header-history-result">{{ date }}</p>
+  <div class="participants-result-history">
+    <p
         :class="mode ? 'dark-theme' : 'ligth-theme'"
         v-for="user in historyData"
         :key="user.id"
-      >
+        >
         {{ user.name }}
       </p>
     </div>
@@ -59,6 +62,7 @@ export default defineComponent({
   setup() {
     const date = ref("");
     const historyData = ref<Array<User>>([]);
+    const errorMessage = ref('');
 
     interface User {
       id: number;
@@ -66,16 +70,17 @@ export default defineComponent({
     }
 
     const searchHistory = async () => {
-      console.log(date);
-      const newDate = date.value;
       try {
         const response = await axios.get(
-          `http://localhost:3001/meetings/history/1/date/${newDate}`
+          `http://localhost:3001/meetings/history/1/date/${date.value}`
         );
         historyData.value = response.data;
         console.log("History fetched:", historyData.value);
       } catch (error) {
         console.error("Error fetching history:", error);
+        if (error.response && error.response.data) {
+          errorMessage.value = error.response.data.message;
+        }
       }
     };
 
@@ -83,6 +88,7 @@ export default defineComponent({
       date,
       historyData,
       searchHistory,
+      errorMessage
     };
   },
   methods: {
@@ -138,6 +144,16 @@ export default defineComponent({
   background-color: red;
   color: white;
 }
+
+.error-response {
+  color: rgb(143, 6, 6);
+  background-color: rgb(238, 84, 84);
+  padding: 8px;
+  border: solid 1px red;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
 
 @media screen and (max-width: 599.99px) {
   .history-result-container {
