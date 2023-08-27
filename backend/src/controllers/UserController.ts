@@ -7,8 +7,9 @@ class UserController {
 
   public getAllUsers = async (req: Request, res: Response) => {
     const groupId =Number(req.params.id);
+    const userId =Number(req.params.userId);
     console.log(groupId)
-    const result = await this.userService.getAllUsers(groupId);
+    const result = await this.userService.getAllUsers(groupId, userId);
     return res.status(200).json(result);
   };
 

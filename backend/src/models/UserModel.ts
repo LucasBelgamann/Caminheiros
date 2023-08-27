@@ -9,7 +9,7 @@ class LoginModel {
     this.connection = connection;
   }
 
-  async getAllUsers(groupId: number): Promise<IUser[]> {
+  async getAllUsers(groupId: number, userId: number): Promise<IUser[]> {
     const [result] = await this.connection.execute(
       `SELECT id, name
       FROM caminheirosdb.Users
@@ -22,7 +22,7 @@ class LoginModel {
         SELECT userId
         FROM caminheirosdb.Groups
         WHERE id = ?
-      )`, [groupId, groupId]
+      ) AND id <> ?`, [groupId, groupId, userId]
     );
 
     return result as any as IUser[];
