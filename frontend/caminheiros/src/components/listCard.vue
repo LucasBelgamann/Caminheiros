@@ -44,14 +44,16 @@
 
 <script lang="ts">
 import axios from "axios";
+import { parse } from "path";
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   setup() {
     const handleCreateMeeting = async (groupId: number) => {
+      const user = JSON.parse(localStorage.getItem("userData"));
       try {
         const response = await axios.post(
-          `http://localhost:3001/meetings/${1}`
+          `http://localhost:3001/meetings/${user.groupId}`
         );
         console.log("Created Meeting!:", response.data);
         location.reload();

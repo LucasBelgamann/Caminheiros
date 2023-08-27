@@ -20,6 +20,14 @@ const routes: RouteRecordRaw[] = [
     component: () => import("pages/HistoryPage.vue"),
   },
   {
+    path: "/Groups",
+    component: () => import("pages/GroupsPage.vue"),
+  },
+  {
+    path: "/User",
+    component: () => import("pages/UserPage.vue"),
+  },
+  {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
   },

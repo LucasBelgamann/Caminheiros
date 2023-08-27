@@ -4,7 +4,7 @@
       2023 Associação Beneficente Espírita Caminheiros do Bem Rua Ivo Ferro, 130
       -Curitiba, PR CNPJ: 03.481.891/0001-33
     </p>
-    <div class="line"></div>
+    <div class="line" :class="mode ? 'white' : 'black'"></div>
     <span>Developed by Lucas Agostinho</span>
   </div>
 </template>
@@ -26,54 +26,35 @@ export default defineComponent({
 
 <style lang="scss">
 .footer-container {
-  font-weight: 200;
-  width: 100%;
   display: flex;
-  align-items: center;
+  height: 12vh;
   flex-direction: column;
-  margin: auto;
-}
-
-.line {
-  background-color: rgb(70, 70, 70);
-  height: 1px;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .footer-container p {
+  font-size: 10px;
   text-align: center;
-  width: 20vw;
-  margin-top: 30px;
+  width: 60%;
 }
 
 .footer-container span {
-  margin: 10px auto;
+  font-size: 10px;
 }
 
-@media screen and (max-width: 599.99px) {
-  .in-pass {
-    width: 80vw;
-  }
-
-  .in-email {
-    margin: 40px auto 20px auto;
-    width: 80vw;
-  }
-
-  .footer-container p {
-    width: 70vw;
-    font-size: 12px;
-  }
-
-  .footer-container span {
-    font-size: 12px;
-  }
-}
-.white-text {
-  color: white;
+.line {
+  height: 1px;
+  margin-bottom: 5px;
+  width: 100%;
 }
 
-.black-text {
-  color: black;
+.white {
+  background-color: white;
 }
+
+.black {
+  background-color: black;
+}
+
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div
     class="background"
-    :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+    :class="darkMode ? 'default-card-color-dark' : 'default-card-color-ligth'"
   >
     <img
       src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png"
@@ -10,7 +10,9 @@
   <div class="form-login">
     <q-input
       class="in-email"
-      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      :class="
+        darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
+      "
       clearable
       filled
       color="primary"
@@ -20,7 +22,9 @@
     <q-input
       :type="isPwd ? 'password' : 'text'"
       class="in-pass"
-      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      :class="
+        darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
+      "
       clearable
       filled
       color="primary"
@@ -48,16 +52,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { ref } from "vue";
 import Footer from "../components/Footer.vue";
 import axios from "axios";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   setup() {
     const password = ref("");
     const email = ref("");
     const errorMessage = ref("");
+    const darkMode = ref(false);
+    const $q = useQuasar();
 
     const handleLogin = async () => {
       const user = {
@@ -74,8 +81,8 @@ export default defineComponent({
 
         localStorage.setItem("userData", JSON.stringify(response.data));
 
-        window.location.href = "/home";
-      } catch (error) {
+        window.location.href = "/groups";
+      } catch (error: any) {
         console.error("Erro no login:", error);
         if (error.response && error.response.data) {
           errorMessage.value = error.response.data.message;
@@ -83,18 +90,27 @@ export default defineComponent({
       }
     };
 
+    onMounted(() => {
+      const darkModeIsActive = localStorage.getItem("darkMode");
+      if (darkModeIsActive) {
+        darkMode.value = darkModeIsActive === "true";
+        $q.dark.set(darkMode.value);
+      }
+    });
+
     return {
       password,
       isPwd: ref(true),
       email,
       handleLogin,
       errorMessage,
+      darkMode,
     };
   },
   components: { Footer },
   computed: {
     mode: function () {
-      return this.$q.dark.isActive;
+      return localStorage.getItem("darkMode") === "true";
     },
   },
 });
@@ -102,7 +118,7 @@ export default defineComponent({
 
 <style lang="scss">
 .background {
-  height: 35vh;
+  height: 33vh;
   width: 100vw;
   border-radius: 0 0 50% 50%;
   display: flex;
@@ -123,6 +139,7 @@ export default defineComponent({
 }
 
 .form-login {
+  height: 55vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -137,16 +154,11 @@ export default defineComponent({
   color: #aaaaaa;
   text-decoration: underline;
   margin-top: 15px;
-  margin-bottom: 100px;
   cursor: pointer;
 }
 
 .error-response {
-  color: rgb(143, 6, 6);
-  background-color: rgb(238, 84, 84);
-  padding: 5px;
-  border: solid 1px red;
-  border-radius: 10px;
+  color: rgb(255, 0, 0);
   margin-bottom: 10px;
 }
 

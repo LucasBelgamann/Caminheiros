@@ -57,6 +57,7 @@
 import { defineComponent, ref, onMounted, watch } from "vue";
 import axios from "axios";
 import ListCard from "./listCard.vue";
+import { log } from "console";
 
 export default defineComponent({
   setup() {
@@ -81,17 +82,24 @@ export default defineComponent({
     }
 
     const fetchMeetings = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/meetings/recent/${1}`
-        );
-        meetings.value = Array.from(response.data);
+      const userData = localStorage.getItem("userData");
 
-        usersToRender.value = meetings.value.flatMap(
-          (meeting) => meeting.users
-        );
-      } catch (error) {
-        console.error("Error fetching meeting:", error);
+      if (userData !== null) {
+        const user = JSON.parse(userData);
+        try {
+          const response = await axios.get(
+            `http://localhost:3001/meetings/recent/${user.groupId}`
+          );
+          meetings.value = Array.from(response.data);
+
+          usersToRender.value = meetings.value.flatMap(
+            (meeting) => meeting.users
+          );
+        } catch (error) {
+          console.error("Error fetching meeting:", error);
+        }
+      } else {
+        console.error("User data not found in localStorage");
       }
     };
 
@@ -102,11 +110,10 @@ export default defineComponent({
       console.log(newFrequency);
       try {
         for (const meeting of meetings.value) {
-          const response = await axios.put(
+          axios.put(
             `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${userId}`,
             { newFrequency }
           );
-          console.log("Frequency updated:", response.data);
         }
       } catch (error) {
         console.error("Error updating frequency:", error);

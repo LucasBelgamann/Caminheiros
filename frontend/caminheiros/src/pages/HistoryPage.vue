@@ -1,6 +1,7 @@
 <template>
   <SecondHeader />
   <SearchHistory />
+  <Footer />
 </template>
 
 <script lang="ts">

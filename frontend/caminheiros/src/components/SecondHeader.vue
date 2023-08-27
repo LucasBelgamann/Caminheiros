@@ -2,7 +2,7 @@
   <div class="header-second-container">
     <div>
       <h5>Grupo,</h5>
-      <h2>André Luiz</h2>
+      <h2>{{ groupName }}</h2>
     </div>
     <div>
       <q-btn
@@ -26,24 +26,33 @@ export default defineComponent({
   setup() {
     const darkMode = ref(false);
     const $q = useQuasar();
+    const groupName = ref<string | null>(null);
+
     const toggleDarkMode = () => {
       darkMode.value = !darkMode.value;
     };
+
     watch(darkMode, (darkMode) => {
       $q.dark.set(darkMode);
       $q.localStorage.set("darkMode", darkMode);
     });
+
     onMounted(() => {
       const darkModeIsActive = $q.localStorage.getItem("darkMode");
       if (darkModeIsActive) {
         darkMode.value = true;
       }
+      const userData = localStorage.getItem("userData");
+      if (userData !== null) {
+        const user = JSON.parse(userData);
+        groupName.value = user.groupName;
+      }
     });
+
     return {
       darkMode,
       toggleDarkMode,
-      mobileData: ref(true),
-      bluetooth: ref(false),
+      groupName
     };
   },
   components: {},

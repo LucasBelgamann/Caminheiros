@@ -26,8 +26,13 @@
 
           <q-card-section class="q-gutter-md">
             <q-select
-              v-model="selectedOption1"
-              :options="allUsers.map(user => ({ label: user.name, value: user.id.toString() }))"
+              v-model="groupName"
+              :options="
+                allUsers.map((user) => ({
+                  label: user.name,
+                  value: user.id.toString(),
+                }))
+              "
               label="Participantes"
               @update:modelValue="handleUserSelection"
             />
@@ -65,6 +70,7 @@ export default defineComponent({
     const users = ref<Array<User>>([]);
     const allUsers = ref<Array<User>>([]);
     const selectedUserId = ref<number | null>(null);
+    const groupName = ref<string | null>(null);
 
     interface User {
       id: number;
@@ -72,33 +78,55 @@ export default defineComponent({
     }
 
     const fetchUsers = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/users/groups/${1}`
-        );
-        users.value = Array.from(response.data);
-      } catch (error) {
-        console.error("Error fetching users of group:", error);
+      const userData = localStorage.getItem("userData");
+
+      if (userData !== null) {
+        const user = JSON.parse(userData);
+        try {
+          const response = await axios.get(
+            `http://localhost:3001/users/groups/${user.groupId}`
+          );
+          users.value = Array.from(response.data);
+        } catch (error) {
+          console.error("Error fetching users of group:", error);
+        }
+      } else {
+        console.error("User data not found in localStorage");
       }
     };
 
     const fetchAllUsers = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3001/users/${1}`);
-        allUsers.value = Array.from(response.data);
-      } catch (error) {
-        console.error("Error fetching all users:", error);
+      const userData = localStorage.getItem("userData");
+
+      if (userData !== null) {
+        const user = JSON.parse(userData);
+        try {
+          const response = await axios.get(
+            `http://localhost:3001/users/${user.groupId}/user/${user.id}`
+          );
+          allUsers.value = Array.from(response.data);
+        } catch (error) {
+          console.error("Error fetching all users:", error);
+        }
+      } else {
+        console.error("User data not found in localStorage");
       }
     };
 
     const handleUserSelection = (value: { label: string; value: number }) => {
       selectedUserId.value = value.value;
+      groupName.value = value.label;
     };
 
     const addUser = async () => {
-      console.log(selectedUserId.value)
-      if (selectedUserId.value !== null) {
-        await axios.post(`http://localhost:3001/users/groups/${1}/users/${selectedUserId.value}`);
+      const userData = localStorage.getItem("userData");
+      if (selectedUserId.value && userData !== null) {
+        const user = JSON.parse(userData);
+        await axios.post(
+          `http://localhost:3001/users/groups/${user.groupId}/users/${
+            selectedUserId.value
+          }`
+        );
         location.reload();
       }
     };
@@ -112,9 +140,9 @@ export default defineComponent({
       users,
       allUsers,
       expanded: ref(false),
-      selectedOption1: null,
       handleUserSelection,
       addUser,
+      groupName,
     };
   },
 
@@ -133,6 +161,7 @@ export default defineComponent({
 
 .participants-container {
   display: flex;
+  height: 35vh;
   flex-direction: column;
   margin: auto;
   align-items: flex-start;

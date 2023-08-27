@@ -113,7 +113,7 @@ export default defineComponent({
         phone: telefone.value,
         email: email.value,
         password: password.value,
-        role: role.value === '' ? 'user' : role.value,
+        role: role.value === "" ? "user" : role.value,
       };
       try {
         if (!newUser) {
@@ -148,7 +148,7 @@ export default defineComponent({
       typeUser,
       nomeGrupo,
       options: ["user", "admin", "manager"],
-      role
+      role,
     };
   },
   computed: {
@@ -202,6 +202,10 @@ export default defineComponent({
 @media screen and (max-width: 599.99px) {
   .in-register {
     width: 80vw;
+  }
+
+  .form-login {
+    height: 65vh;
   }
 }
 
