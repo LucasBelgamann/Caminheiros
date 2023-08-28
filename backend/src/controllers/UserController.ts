@@ -25,31 +25,36 @@ class UserController {
   };
 
   public createUser = async (req: Request, res: Response) => {
-    const { name, phone, email, password, role } = req.body;
-
-    const user = await this.userService.findUserByEmailAndPassword(email);
-
-    if (user) {
-      return res.status(400).json({ message: "Já existe um usuário com o seguinte email"})
-    }
+    const userData = Array.isArray(req.body) ? req.body : [req.body];
+  
     try {
-      
-      const hashedPassword = await hash(password, 10);
-
-      await this.userService.createUser(
-        name,
-        phone,
-        email,
-        hashedPassword,
-        role
-      );
-
-      return res.status(200).json({ message: "User created successfully." });
+      for (const userObject of userData) {
+        const { name, phone, email, password, role } = userObject;
+  
+        const user = await this.userService.findUserByEmailAndPassword(email);
+  
+        if (user) {
+          return res.status(400).json({ message: "Já existe um usuário com o seguinte email" });
+        }
+  
+        const hashedPassword = await hash(password, 10);
+  
+        await this.userService.createUser(
+          name,
+          phone,
+          email,
+          hashedPassword,
+          role
+        );
+      }
+  
+      return res.status(200).json({ message: "Users created successfully." });
     } catch (error) {
       console.error("Error during user creation:", error);
       return res.status(500).json({ message: "Internal server error." });
     }
   };
+  
 
   public insertUserInGroup = async (req: Request, res: Response) => {
     const groupId = Number(req.params.groupId);
