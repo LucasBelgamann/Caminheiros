@@ -24,18 +24,20 @@
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn
-          v-if="!userFrequency"
-          style="border-radius: 10px; margin: 10px"
-          icon="done"
-          @click="handleFrequencyChange"
-          :class="mode ? 'dark-theme' : 'ligth-theme'"
-        ></q-btn>
-        <q-icon
-          v-else
-          name="check_circle"
-          style="color: green; font-size: 40px; margin: 10px"
-        />
+        <div v-for="user in usersToRender" :key="user.id">
+          <q-btn
+            v-if="user.frequency === 0"
+            style="border-radius: 10px; margin: 10px"
+            icon="done"
+            @click="handleFrequencyChange"
+            :class="mode ? 'dark-theme' : 'ligth-theme'"
+          ></q-btn>
+          <q-icon
+            v-else
+            name="check_circle"
+            style="color: green; font-size: 40px; margin: 10px"
+          />
+        </div>
       </q-card-actions>
     </q-card>
   </div>
@@ -56,7 +58,7 @@ export default defineComponent({
     const darkMode = ref(false);
     const meetings = ref<Array<Meeting>>([]);
     const usersToRender = ref<Array<User>>([]);
-    const userFrequency = ref(false);
+    const userFrequency = ref<number>(0);
 
     interface User {
       id: number;
@@ -84,11 +86,20 @@ export default defineComponent({
           );
 
           meetings.value = Array.from(response.data);
-          console.log(response.data);
 
           usersToRender.value = meetings.value.flatMap(
             (meeting) => meeting.users
           );
+
+          const userData = localStorage.getItem("userData");
+          if (userData !== null) {
+            const user = JSON.parse(userData);
+            usersToRender.value = usersToRender.value.filter(
+              (userToRender) => userToRender.id === user.id
+            );
+          }
+
+          console.log(usersToRender.value);
         } catch (error) {
           console.error("Error fetching meeting:", error);
         }
@@ -102,20 +113,23 @@ export default defineComponent({
         try {
           for (const userToRender of usersToRender.value) {
             if (userToRender.id === user.id) {
-              const newFrequencyValue = !userToRender.frequency;
-              userFrequency.value = !userFrequency.value;
-              axios.put(
-                `http://localhost:3001/meetings/update-frequency/${5}/users/${
-                  user.id
-                }`,
-                { newFrequency: newFrequencyValue }
-              );
+              const newFrequencyValue = userToRender.frequency === 1 ? 0 : 1;
+
+              userFrequency.value = newFrequencyValue;
+
+              for (const meeting of meetings.value) {
+                axios.put(
+                  `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${
+                    user.id
+                  }`,
+                  { newFrequency: newFrequencyValue }
+                );
+              }
 
               userToRender.frequency = newFrequencyValue;
             }
           }
         } catch (error) {
-          console.log(usersToRender);
           console.error("Error updating frequency:", error);
         }
       }
@@ -127,19 +141,12 @@ export default defineComponent({
       if (darkModeIsActive) {
         darkMode.value = darkModeIsActive === "true";
         $q.dark.set(darkMode.value);
-      }
-
-      const userData = localStorage.getItem("userData");
-      if (userData !== null) {
-        const user = JSON.parse(userData);
-        const userToRender = usersToRender.value.find(u => u.id === user.id);
-        console.log(usersToRender.value)
-        if (userToRender) {
-          userFrequency.value = !userToRender.frequency;
-        }
+      } else {
+        $q.dark.set(false);
       }
     });
-    return { meetings, handleFrequencyChange, userFrequency };
+
+    return { meetings, handleFrequencyChange, userFrequency, usersToRender };
   },
   computed: {
     mode: function () {

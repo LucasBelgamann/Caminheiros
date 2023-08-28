@@ -30,6 +30,8 @@ export default defineComponent({
       if (darkModeIsActive) {
         darkMode.value = darkModeIsActive === "true";
         $q.dark.set(darkMode.value);
+      } else {
+        $q.dark.set(false);
       }
     });
 

@@ -68,11 +68,17 @@ export default defineComponent({
       if (userData !== null) {
         const user = JSON.parse(userData);
         try {
-          const response = await axios.get(
-            `http://localhost:3001/groups/user/${4}`
-          );
-          console.log(response.data);
-          allGroups.value = Array.from(response.data);
+          if (user.role === "manager" || user.role === "admin") {
+            const response = await axios.get(
+              `http://localhost:3001/groups/owner/${user.id}`
+            );
+            allGroups.value = Array.from(response.data);
+          } else {
+            const response = await axios.get(
+              `http://localhost:3001/groups/user/${user.id}`
+            );
+            allGroups.value = Array.from(response.data);
+          }
         } catch (error) {
           console.error("Error fetching all users:", error);
         }
@@ -110,6 +116,8 @@ export default defineComponent({
       if (darkModeIsActive) {
         darkMode.value = darkModeIsActive === "true";
         $q.dark.set(darkMode.value);
+      } else {
+        $q.dark.set(false);
       }
     });
 

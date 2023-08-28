@@ -132,7 +132,7 @@ export default defineComponent({
         const userData = JSON.parse(userDataString);
         if (userData.role) {
           const roleUser = userData.role;
-          userData.value = roleUser;
+          role.value = roleUser;
         }
       }
     });

@@ -77,7 +77,6 @@ export default defineComponent({
           "http://localhost:3001/users/login/auth",
           user
         );
-        console.log("Login realizado com sucesso!", response.data);
 
         localStorage.setItem("userData", JSON.stringify(response.data));
 
@@ -95,6 +94,8 @@ export default defineComponent({
       if (darkModeIsActive) {
         darkMode.value = darkModeIsActive === "true";
         $q.dark.set(darkMode.value);
+      } else {
+        $q.dark.set(false);
       }
     });
 
