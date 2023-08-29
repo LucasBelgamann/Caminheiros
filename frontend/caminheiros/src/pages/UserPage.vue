@@ -119,9 +119,7 @@ export default defineComponent({
 
               for (const meeting of meetings.value) {
                 axios.put(
-                  `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${
-                    user.id
-                  }`,
+                  `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${user.id}`,
                   { newFrequency: newFrequencyValue }
                 );
               }
@@ -148,6 +146,7 @@ export default defineComponent({
 
     return { meetings, handleFrequencyChange, userFrequency, usersToRender };
   },
+
   computed: {
     mode: function () {
       return this.$q.dark.isActive;

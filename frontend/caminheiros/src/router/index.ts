@@ -1,4 +1,5 @@
 import { route } from 'quasar/wrappers';
+import '@fortawesome/fontawesome-free/css/all.css'
 import {
   createMemoryHistory,
   createRouter,

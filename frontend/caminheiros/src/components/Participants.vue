@@ -54,7 +54,14 @@
           :key="user.id"
         >
           {{ user.name }}
-          <q-icon name="navigate_next" />
+          <a
+            :href="getWhatsAppLink(user.phone)"
+            target="_blank"
+            rel="noreferrer"
+            ><q-icon
+              style="font-size: 30px; color: white; margin: 10px"
+              name="fab fa-whatsapp"
+          /></a>
         </p>
       </div>
     </div>
@@ -123,9 +130,7 @@ export default defineComponent({
       if (selectedUserId.value && userData !== null) {
         const user = JSON.parse(userData);
         await axios.post(
-          `http://localhost:3001/users/groups/${user.groupId}/users/${
-            selectedUserId.value
-          }`
+          `http://localhost:3001/users/groups/${user.groupId}/users/${selectedUserId.value}`
         );
         location.reload();
       }
@@ -145,7 +150,25 @@ export default defineComponent({
       groupName,
     };
   },
+  methods: {
+    formatPhoneNumber(phoneNumber) {
+      const cleanedNumber = phoneNumber
+        .replace(/\s/g, "")
+        .replace(/[\(\)\-]/g, "");
 
+      if (cleanedNumber.startsWith("0")) {
+        return cleanedNumber.substring(1);
+      }
+
+      return cleanedNumber;
+    },
+    getWhatsAppLink(phone) {
+      const formattedPhone = this.formatPhoneNumber(phone);
+
+      // Constrói o URL do WhatsApp
+      return `https://wa.me/55${formattedPhone}?text=Olá`;
+    },
+  },
   computed: {
     mode: function () {
       return this.$q.dark.isActive;
@@ -200,11 +223,6 @@ export default defineComponent({
   justify-content: space-between;
   font-size: 15px;
   padding: 12px;
-}
-
-.user-link i {
-  font-size: 30px;
-  margin-right: 15px;
 }
 
 @media screen and (max-width: 599.99px) {
