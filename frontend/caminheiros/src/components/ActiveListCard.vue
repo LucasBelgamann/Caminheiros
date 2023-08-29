@@ -1,6 +1,6 @@
 <template>
   <div class="row items-center justify-center">
-    <component v-if="meetings.length === 0" :is="ListCard" />
+    <component v-if="meetings.length === 0" :is="ListCard" :fetchMeetings="fetchMeetings"/>
     <q-card
       v-else
       class="my-card"
@@ -57,7 +57,6 @@
 import { defineComponent, ref, onMounted, watch } from "vue";
 import axios from "axios";
 import ListCard from "./listCard.vue";
-import { log } from "console";
 
 export default defineComponent({
   setup() {
@@ -133,6 +132,7 @@ export default defineComponent({
       usersToRender,
       val: ref(true),
       handleFrequencyChange,
+      fetchMeetings,
       ListCard,
     };
   },

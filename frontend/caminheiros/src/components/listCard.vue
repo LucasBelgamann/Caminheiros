@@ -47,8 +47,14 @@ import axios from "axios";
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  setup() {
-    const handleCreateMeeting = async (groupId: number) => {
+  props: {
+    fetchMeetings: {
+      type: Function,
+      required: true,
+    }
+  },
+  setup(props) {
+    const handleCreateMeeting = async () => {
       const userData = localStorage.getItem("userData");
       if (userData !== null) {
         const user = JSON.parse(userData);
@@ -57,7 +63,7 @@ export default defineComponent({
             `http://localhost:3001/meetings/${user.groupId}`
           );
           console.log("Created Meeting!:", response.data);
-          location.reload();
+          props.fetchMeetings();
         } catch (error) {
           console.error("Error creating meeting:", error);
         }

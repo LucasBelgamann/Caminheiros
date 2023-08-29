@@ -78,6 +78,7 @@ export default defineComponent({
     const allUsers = ref<Array<User>>([]);
     const selectedUserId = ref<number | null>(null);
     const groupName = ref<string | null>(null);
+    const expanded = ref(false);
 
     interface User {
       id: number;
@@ -132,7 +133,10 @@ export default defineComponent({
         await axios.post(
           `http://localhost:3001/users/groups/${user.groupId}/users/${selectedUserId.value}`
         );
-        location.reload();
+        fetchUsers();
+        fetchAllUsers();
+        groupName.value = "";
+        expanded.value = false;
       }
     };
 
@@ -144,7 +148,7 @@ export default defineComponent({
     return {
       users,
       allUsers,
-      expanded: ref(false),
+      expanded,
       handleUserSelection,
       addUser,
       groupName,
