@@ -1,6 +1,10 @@
 <template>
   <div class="row items-center justify-center">
-    <component v-if="meetings.length === 0" :is="ListCard" :fetchMeetings="fetchMeetings"/>
+    <component
+      v-if="!users.data.meetings.length"
+      :is="ListCard"
+      :fetchMeetings="users.fetchMeetings"
+    />
     <q-card
       v-else
       class="my-card"
@@ -12,7 +16,11 @@
         <div class="list-title-two">
           <q-icon name="list_alt" class="" color="white" />
         </div>
-        <div class="list-info" v-for="meeting in meetings" :key="meeting.id">
+        <div
+          class="list-info"
+          v-for="meeting in users.data.meetings"
+          :key="meeting.id"
+        >
           <h4>Lista de presença</h4>
           <p>{{ `Grupo: ${meeting.groupName}` }}</p>
           <p>{{ `Término da chamada: ${formatMeetingTime(meeting.date)}` }}</p>
@@ -27,24 +35,33 @@
           round
           flat
           dense
-          :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-          @click="expanded = !expanded"
+          :icon="
+            users.data.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
+          "
+          @click="users.data.expanded = !users.data.expanded"
         />
       </q-card-actions>
 
       <q-slide-transition>
-        <div v-show="expanded">
-          <q-separator class="line" />
+        <div v-show="users.data.expanded">
+          <q-separator :class="mode ? 'dark-theme' : 'ligth-theme'" />
           <q-card-section class="text-subitle2">
             <p>Participantes</p>
-            <div v-for="user in usersToRender" :key="user.id">
-              <q-checkbox
-                v-model="user.frequency"
-                :label="user.name"
-                :true-value="1"
-                :false-value="0"
-                @click="() => handleFrequencyChange(user.id, user.frequency)"
-              />
+            <div style="height: 28vh; overflow-y: scroll">
+              <div
+                v-for="user in users.data.selectedUsers"
+                :key="user.id"
+                style="padding: 2px; border-radius: 10px; margin-bottom: 8px"
+                :class="mode ? 'dark-theme' : 'ligth-theme'"
+              >
+                <q-checkbox
+                  v-model="user.frequency"
+                  :label="user.name"
+                  :true-value="1"
+                  :false-value="0"
+                  @click="handleFrequencyChange(user.id, user.frequency)"
+                />
+              </div>
             </div>
           </q-card-section>
         </div>
@@ -54,61 +71,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from "vue";
+import { defineComponent, ref, onMounted, inject } from "vue";
 import axios from "axios";
 import ListCard from "./listCard.vue";
+import Participants from "./Participants.vue";
+import Users from "../services/users";
 
 export default defineComponent({
   setup() {
-    const expanded = ref(false);
-    const meetings = ref<Array<Meeting>>([]);
-    const usersToRender = ref<Array<User>>([]);
-
-    interface User {
-      id: number;
-      name: string;
-      frequency: number;
-    }
-
-    interface Meeting {
-      id: number;
-      date: string;
-      groupId: number;
-      created_at: string;
-      updated_at: string;
-      groupName: string;
-      users: User[];
-    }
-
-    const fetchMeetings = async () => {
-      const userData = localStorage.getItem("userData");
-
-      if (userData !== null) {
-        const user = JSON.parse(userData);
-        try {
-          const response = await axios.get(
-            `http://localhost:3001/meetings/recent/${user.groupId}`
-          );
-          meetings.value = Array.from(response.data);
-
-          usersToRender.value = meetings.value.flatMap(
-            (meeting) => meeting.users
-          );
-        } catch (error) {
-          console.error("Error fetching meeting:", error);
-        }
-      } else {
-        console.error("User data not found in localStorage");
-      }
-    };
+    const users = inject("users") as Users;
 
     const handleFrequencyChange = async (
       userId: number,
       newFrequency: number
     ) => {
-      console.log(newFrequency);
       try {
-        for (const meeting of meetings.value) {
+        for (const meeting of users.data.meetings) {
           axios.put(
             `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${userId}`,
             { newFrequency }
@@ -120,20 +98,15 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      fetchMeetings();
-      const interval = setInterval(fetchMeetings, 1 * 60 * 1000);
-
-      return () => clearInterval(interval);
+      users.fetchMeetings();
     });
 
     return {
-      expanded,
-      meetings,
-      usersToRender,
       val: ref(true),
       handleFrequencyChange,
-      fetchMeetings,
       ListCard,
+      Participants,
+      users,
     };
   },
   computed: {
@@ -153,7 +126,7 @@ export default defineComponent({
       return `${hora}:${minutos}`;
     },
   },
-  components: { ListCard },
+  components: { ListCard, Participants },
 });
 </script>
 

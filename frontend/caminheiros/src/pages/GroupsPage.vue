@@ -25,17 +25,20 @@
       >
         <q-card-title>Selecione o grupo que deseja ingressar!</q-card-title>
         <q-select
+          filled
           v-model="groupName"
           label="Grupos"
-          :class="
-            darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
-          "
           :options="
             allGroups.map((user) => ({
               label: user.name,
               value: user.id.toString(),
             }))
           "
+          :class="
+            darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
+          "
+          style="width: 250px"
+          behavior="dialog"
           @update:modelValue="handleGroupSelection"
         />
       </q-card-section>

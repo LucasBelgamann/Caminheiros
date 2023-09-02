@@ -14,8 +14,7 @@
           <div class="row no-wrap q-pa-md">
             <q-btn
               @click="handleLogout"
-              style="border-radius: 10px; color: white"
-              :class="darkMode ? 'dark-theme' : 'ligth-theme'"
+              style="border-radius: 10px; color: white; background-color: red;"
               icon="logout"
             ></q-btn>
 

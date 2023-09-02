@@ -2,14 +2,11 @@
   <div class="participants-container">
     <q-card class="my-card" flat>
       <q-card-actions>
-        <q-card-title
+        <span
           class="text-h6"
           :class="mode ? 'white-text' : 'black-text'"
-          >Participantes</q-card-title
-        >
-
-        <q-space />
-
+          >Participantes</span>
+          <q-space />
         <q-btn
           color="grey"
           round
@@ -23,19 +20,25 @@
       <q-slide-transition>
         <div v-show="expanded">
           <q-separator />
-
           <q-card-section class="q-gutter-md">
             <q-select
               v-model="groupName"
-              :options="
-                allUsers.map((user) => ({
-                  label: user.name,
-                  value: user.id.toString(),
-                }))
-              "
+              :options="options"
+              use-input
+              input-debounce="300"
               label="Participantes"
+              behavior="menu"
+              @filter="filterFn"
               @update:modelValue="handleUserSelection"
-            />
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
             <q-btn label="Adicionar" color="secondary" @click="addUser" />
           </q-card-section>
         </div>
@@ -70,7 +73,9 @@
 
 <script lang="ts">
 import axios from "axios";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, computed, inject } from "vue";
+import Users from "../services/users";
+import {useQuasar} from 'quasar'
 
 export default defineComponent({
   setup() {
@@ -79,11 +84,16 @@ export default defineComponent({
     const selectedUserId = ref<number | null>(null);
     const groupName = ref<string | null>(null);
     const expanded = ref(false);
+    const usersService = inject("users") as Users;
+    const $q = useQuasar()
 
     interface User {
       id: number;
       name: string;
+      phone: string;
     }
+
+    const mode = computed(() => $q.dark.isActive)
 
     const fetchUsers = async () => {
       const userData = localStorage.getItem("userData");
@@ -128,6 +138,7 @@ export default defineComponent({
 
     const addUser = async () => {
       const userData = localStorage.getItem("userData");
+      console.log(selectedUserId.value);
       if (selectedUserId.value && userData !== null) {
         const user = JSON.parse(userData);
         await axios.post(
@@ -135,10 +146,35 @@ export default defineComponent({
         );
         fetchUsers();
         fetchAllUsers();
+        usersService.fetchMeetings();
         groupName.value = "";
         expanded.value = false;
       }
     };
+
+    const options = ref<Array<{ label: string; value: string }>>([]);
+    const stringOptions = computed(() => {
+      return allUsers.value.map((user) => ({
+        label: user.name,
+        value: user.id.toString(),
+      }));
+    });
+
+    function filterFn(val, update) {
+      if (val === "") {
+        update(() => {
+          options.value = stringOptions.value;
+        });
+        return;
+      }
+
+      update(() => {
+        const needle = val.toLowerCase();
+        options.value = stringOptions.value.filter((user) =>
+          user.label.toLowerCase().includes(needle)
+        );
+      });
+    }
 
     onMounted(() => {
       fetchUsers();
@@ -152,6 +188,9 @@ export default defineComponent({
       handleUserSelection,
       addUser,
       groupName,
+      options,
+      filterFn,
+      mode
     };
   },
   methods: {
@@ -169,13 +208,7 @@ export default defineComponent({
     getWhatsAppLink(phone) {
       const formattedPhone = this.formatPhoneNumber(phone);
 
-      // Constrói o URL do WhatsApp
       return `https://wa.me/55${formattedPhone}?text=Olá`;
-    },
-  },
-  computed: {
-    mode: function () {
-      return this.$q.dark.isActive;
     },
   },
 });
