@@ -1,46 +1,23 @@
 <template>
-  <div
-    class="background"
-    :class="darkMode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-  >
+  <div class="background" :class="darkMode ? 'default-card-color-dark' : 'default-card-color-ligth'">
     <img
-      src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png"
-    />
+      src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png" />
   </div>
-  <div
-    class="q-pa-md row items-center justify-center q-gutter-md"
-    style="height: 40vh"
-  >
-    <q-card
-      class="my-group-card"
-      :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-    >
-      <q-card-section
-        style="
+  <div class="q-pa-md row items-center justify-center q-gutter-md" style="height: 40vh">
+    <q-card flat class="my-group-card" :class="darkMode ? 'default-card-color-dark' : 'default-card-color-ligth'">
+      <q-card-section style="
           display: flex;
           flex-direction: column;
           justify-content: space-around;
           height: 20vh;
-        "
-      >
+        ">
         <q-card-title>Selecione o grupo que deseja ingressar!</q-card-title>
-        <q-select
-          filled
-          v-model="groupName"
-          label="Grupos"
-          :options="
-            allGroups.map((user) => ({
-              label: user.name,
-              value: user.id.toString(),
-            }))
-          "
-          :class="
-            darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
-          "
-          style="width: 250px"
-          behavior="dialog"
-          @update:modelValue="handleGroupSelection"
-        />
+        <q-select filled v-model="groupName" label="Grupos" :options="allGroups.map((user) => ({
+          label: user.name,
+          value: user.id.toString(),
+        }))
+          " :class="darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
+    " style="width: 250px" behavior="dialog" @update:modelValue="handleGroupSelection" />
       </q-card-section>
     </q-card>
   </div>
@@ -81,6 +58,7 @@ export default defineComponent({
               `http://localhost:3001/groups/user/${user.id}`
             );
             allGroups.value = Array.from(response.data);
+            console.log(response.data)
           }
         } catch (error) {
           console.error("Error fetching all users:", error);
@@ -114,14 +92,14 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      fetchGroups();
       const darkModeIsActive = localStorage.getItem("darkMode");
       if (darkModeIsActive) {
-        darkMode.value = darkModeIsActive === "true";
+        darkMode.value = darkModeIsActive === "__q_bool|1";
         $q.dark.set(darkMode.value);
       } else {
         $q.dark.set(false);
       }
+      fetchGroups();
     });
 
     return { allGroups, handleGroupSelection, groupId, groupName, darkMode };

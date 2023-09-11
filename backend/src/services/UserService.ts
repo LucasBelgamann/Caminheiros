@@ -40,6 +40,10 @@ class UserService {
     await this.model.insertUserInGroup(groupId, userId)
   }
 
+  public async deleteUserInGroup(groupId: number, userId: number): Promise<void> {
+    await this.model.deleteUserInGroup(groupId, userId)
+  }
+
   public async findUserByEmailAndPassword(email: string): Promise<IUser | null> {
     const user = await this.model.findUserByEmailAndPassword(email)
     return user;

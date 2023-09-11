@@ -7,5 +7,6 @@ const groupController = new GroupController();
 
 router.get('/owner/:id', groupController.getGroupsByOwnerId);
 router.get('/user/:id', groupController.getGroupsByUserId);
+router.get('/all/:id', groupController.getAllGroups);
 
 export default router;

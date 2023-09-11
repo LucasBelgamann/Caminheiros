@@ -75,6 +75,25 @@ class UserController {
     }
   };
 
+  public deleteUserInGroup = async (req: Request, res: Response) => {
+    const groupId = Number(req.params.groupId);
+    const userId = Number(req.params.userId);
+
+    if (isNaN(groupId) || isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid groupId or userId." });
+    }
+
+    try {
+      await this.userService.deleteUserInGroup(groupId, userId);
+      return res.status(200).json({ message: "User deleted successfully." });
+    } catch (error) {
+      console.error("Error deleting user in group:", error);
+      return res
+        .status(500)
+        .json({ message: "Failed to delete user in group." });
+    }
+  };
+
   public login = async (req: Request, res: Response) => {
     const { email } = req.body;
     const user = await this.userService.findUserByEmailAndPassword(email);

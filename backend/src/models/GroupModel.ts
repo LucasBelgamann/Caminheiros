@@ -35,6 +35,19 @@ class GroupModel {
 
     return result;
   }
+
+  public async getAllGroups(userId: number): Promise<any[]> {
+    const [result] = await this.connection.execute<RowDataPacket[]>(
+      `
+      SELECT *
+      FROM caminheirosdb.Groups
+      WHERE id NOT IN (SELECT groupId FROM caminheirosdb.Groups_has_users WHERE userId = ?);      
+  `,
+      [userId]
+    );
+
+    return result;
+  }
 }
 
 export default GroupModel;

@@ -23,7 +23,8 @@ class LoginModel {
         SELECT userId
         FROM caminheirosdb.Groups
         WHERE id = ?
-      ) AND id <> ?`, [groupId, groupId, userId]
+      ) AND id <> ?`,
+      [groupId, groupId, userId]
     );
 
     return result as any as IUser[];
@@ -57,12 +58,15 @@ class LoginModel {
     );
   }
 
-  public async insertUserInGroup(groupId: number, userId: number): Promise<void> {
+  public async insertUserInGroup(
+    groupId: number,
+    userId: number
+  ): Promise<void> {
     await this.connection.execute(
       "INSERT INTO caminheirosdb.Groups_has_users (groupId, userId) VALUES (?, ?)",
       [groupId, userId]
     );
-  
+
     const [rows] = await this.connection.execute(
       `
       SELECT M.*, G.name AS groupName
@@ -73,14 +77,47 @@ class LoginModel {
       `,
       [groupId]
     );
-  
+
     if (Array.isArray(rows) && rows.length > 0) {
       const firstMeeting = rows[0] as RowDataPacket;
       const meetingId = firstMeeting.id;
-  
+
       await this.connection.execute(
         `INSERT INTO caminheirosdb.Meetings_has_users (meetingsId, userId, frequency) VALUES (?, ?, ?)`,
         [meetingId, userId, false]
+      );
+    }
+  }
+
+  public async deleteUserInGroup(
+    groupId: number,
+    userId: number
+  ): Promise<void> {
+    await this.connection.execute(
+      `DELETE FROM caminheirosdb.Groups_has_users
+      WHERE groupId = ? AND userId = ?;
+      `,
+      [groupId, userId]
+    );
+
+    const [rows] = await this.connection.execute(
+      `
+      SELECT M.*, G.name AS groupName
+      FROM caminheirosdb.Meetings AS M
+      JOIN caminheirosdb.Groups AS G ON M.groupId = G.id
+      WHERE M.groupId = ? AND M.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
+      AND DATE(M.created_at) = DATE(NOW());
+      `,
+      [groupId]
+    );
+
+    if (Array.isArray(rows) && rows.length > 0) {
+      const firstMeeting = rows[0] as RowDataPacket;
+      const meetingId = firstMeeting.id;
+
+      await this.connection.execute(
+        `DELETE FROM caminheirosdb.Meetings_has_users WHERE meetingsId = ? AND userId = ?;`,
+        [meetingId, userId]
       );
     }
   }

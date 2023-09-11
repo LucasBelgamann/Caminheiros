@@ -17,6 +17,11 @@ class GroupService {
     const result = await this.model.getGroupsByUserId(userId);
     return result;
   }
+
+  public async getAllGroups(userId: number): Promise<any> {
+    const result = await this.model.getAllGroups(userId);
+    return result;
+  }
 }
 
 export default GroupService;

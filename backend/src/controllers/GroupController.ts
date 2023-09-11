@@ -35,6 +35,22 @@ class GroupController {
       return res.status(500).json({ message: "Failed to get groups by userId." });
     }
   };
+
+  public getAllGroups = async (req: Request, res: Response) => {
+    const userId = Number(req.params.id);
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid userId." });
+    }
+
+    try {
+      const result = await this.groupService.getAllGroups(userId);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("Error getting groups by userId:", error);
+      return res.status(500).json({ message: "Failed to get groups by userId." });
+    }
+  };
 }
 
 export default GroupController;
