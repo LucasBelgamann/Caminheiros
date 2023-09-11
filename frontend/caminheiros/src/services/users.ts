@@ -1,5 +1,5 @@
 import axios from "axios";
-import { reactive } from "vue"
+import { reactive } from "vue";
 
 interface User {
   id: number;
@@ -19,16 +19,16 @@ interface Meeting {
 
 export default class Users {
   data: {
-    expanded: boolean,
-    meetings: Meeting[],
-    selectedUsers: User[]
+    expanded: boolean;
+    meetings: Meeting[];
+    selectedUsers: User[];
   } = reactive({
     expanded: false,
     meetings: [],
-    selectedUsers: []
+    selectedUsers: [],
   });
 
-   public async fetchMeetings() {
+  public async fetchMeetings() {
     const userData = localStorage.getItem("userData");
 
     if (userData) {
@@ -45,12 +45,11 @@ export default class Users {
         } else {
           throw new Error("Data not found");
         }
-
       } catch (error) {
         console.error("Error fetching meeting:", error);
       }
     } else {
       console.error("User data not found in localStorage");
     }
-  };
+  }
 }

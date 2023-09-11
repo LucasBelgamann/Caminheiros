@@ -2,7 +2,7 @@
   <div class="header-second-container">
     <div>
       <h5>Grupo,</h5>
-      <h2>{{ groupName }}</h2>
+      <h2 class="group-name">{{ groupName }}</h2>
     </div>
     <div>
       <q-btn
@@ -28,19 +28,18 @@ export default defineComponent({
     const $q = useQuasar();
     const groupName = ref<string | null>(null);
 
-    const toggleDarkMode = () => {
-      darkMode.value = !darkMode.value;
-    };
-
     watch(darkMode, (darkMode) => {
       $q.dark.set(darkMode);
       $q.localStorage.set("darkMode", darkMode);
     });
 
     onMounted(() => {
-      const darkModeIsActive = $q.localStorage.getItem("darkMode");
+      const darkModeIsActive = localStorage.getItem("darkMode");
       if (darkModeIsActive) {
-        darkMode.value = true;
+        darkMode.value = darkModeIsActive === "__q_bool|1";
+        $q.dark.set(darkMode.value);
+      } else {
+        $q.dark.set(false);
       }
       const userData = localStorage.getItem("userData");
       if (userData !== null) {
@@ -51,7 +50,6 @@ export default defineComponent({
 
     return {
       darkMode,
-      toggleDarkMode,
       groupName
     };
   },
@@ -98,6 +96,13 @@ h5 {
   font-weight: 700;
   letter-spacing: 3px;
   color: #61717d;
+}
+
+.group-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
 }
 
 @media screen and (max-width: 599.99px) {

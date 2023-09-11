@@ -1,20 +1,31 @@
 <template>
   <SecondHeader />
   <SearchHistory />
-  <Footer />
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import SecondHeader from "../components/SecondHeader.vue";
 import SearchHistory from "../components/SearchHistory.vue";
-import Footer from "../components/Footer.vue";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   setup() {
+    const darkMode = ref(false);
+    const $q = useQuasar();
+
+    onMounted(() => {
+      const darkModeIsActive = localStorage.getItem("darkMode");
+      if (darkModeIsActive) {
+        darkMode.value = darkModeIsActive === "true";
+        $q.dark.set(darkMode.value);
+      } else {
+        $q.dark.set(false);
+      }
+    });
     return {};
   },
-  components: { SecondHeader, SearchHistory, Footer },
+  components: { SecondHeader, SearchHistory },
   computed: {
     mode: function () {
       return this.$q.dark.isActive;
@@ -23,5 +34,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

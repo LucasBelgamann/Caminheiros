@@ -1,10 +1,8 @@
 <template>
-  <Header />
   <ActiveListCard />
   <UserCards />
   <History />
   <Participantes />
-  <Footer />
 </template>
 
 <script lang="ts">
@@ -13,7 +11,6 @@ import Header from "../components/Header.vue";
 import UserCards from "../components/UserCards.vue";
 import History from "../components/History.vue";
 import Participantes from "../components/Participants.vue";
-import Footer from "../components/Footer.vue";
 import ActiveListCard from "../components/ActiveListCard.vue";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
@@ -28,7 +25,7 @@ export default defineComponent({
     onMounted(() => {
       const darkModeIsActive = localStorage.getItem("darkMode");
       if (darkModeIsActive) {
-        darkMode.value = darkModeIsActive === "true";
+        darkMode.value = darkModeIsActive === "__q_bool|1";
         $q.dark.set(darkMode.value);
       } else {
         $q.dark.set(false);
@@ -41,7 +38,6 @@ export default defineComponent({
       UserCards,
       History,
       Participantes,
-      Footer,
     };
   },
   components: {
@@ -50,7 +46,6 @@ export default defineComponent({
     UserCards,
     History,
     Participantes,
-    Footer,
   },
   computed: {
     mode: function () {

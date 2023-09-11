@@ -2,35 +2,18 @@
   <div class="participants-container">
     <q-card class="my-card" flat>
       <q-card-actions>
-        <span
-          class="text-h6"
-          :class="mode ? 'white-text' : 'black-text'"
-          >Participantes</span>
-          <q-space />
-        <q-btn
-          color="grey"
-          round
-          flat
-          dense
-          :icon="expanded ? 'keyboard_arrow_up' : 'add'"
-          @click="expanded = !expanded"
-        />
+        <span class="text-h6" :class="mode ? 'white-text' : 'black-text'">Participantes</span>
+        <q-space />
+        <q-btn color="grey" round flat dense :icon="expanded ? 'keyboard_arrow_up' : 'add'"
+          @click="expanded = !expanded" />
       </q-card-actions>
 
       <q-slide-transition>
         <div v-show="expanded">
           <q-separator />
           <q-card-section class="q-gutter-md">
-            <q-select
-              v-model="groupName"
-              :options="options"
-              use-input
-              input-debounce="300"
-              label="Participantes"
-              behavior="menu"
-              @filter="filterFn"
-              @update:modelValue="handleUserSelection"
-            >
+            <q-select v-model="groupName" :options="options" use-input input-debounce="300" label="Participantes"
+              behavior="menu" @filter="filterFn" @update:modelValue="handleUserSelection">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -39,32 +22,21 @@
                 </q-item>
               </template>
             </q-select>
-            <q-btn label="Adicionar" color="secondary" @click="addUser" />
+            <div style="display: flex; justify-content: flex-end">
+              <q-btn label="Adicionar" color="secondary" @click="addUser" />
+            </div>
           </q-card-section>
         </div>
       </q-slide-transition>
     </q-card>
-    <div
-      class="user-line"
-      :class="mode ? 'default-card-color-ligth' : 'default-card-color-dark'"
-    ></div>
+    <div class="user-line" :class="mode ? 'bg-white' : 'bg-black'"></div>
     <div class="users-container">
       <div>
-        <p
-          class="user-link"
-          :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-          v-for="user in users"
-          :key="user.id"
-        >
+        <p class="user-link" :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'" v-for="user in users"
+          :key="user.id">
           {{ user.name }}
-          <a
-            :href="getWhatsAppLink(user.phone)"
-            target="_blank"
-            rel="noreferrer"
-            ><q-icon
-              style="font-size: 30px; color: white; margin: 10px"
-              name="fab fa-whatsapp"
-          /></a>
+          <a :href="getWhatsAppLink(user.phone)" target="_blank" rel="noreferrer"><q-icon
+              style="font-size: 30px; color: white; margin: 10px" name="fab fa-whatsapp" /></a>
         </p>
       </div>
     </div>
@@ -75,7 +47,7 @@
 import axios from "axios";
 import { defineComponent, onMounted, ref, computed, inject } from "vue";
 import Users from "../services/users";
-import {useQuasar} from 'quasar'
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   setup() {
@@ -85,7 +57,7 @@ export default defineComponent({
     const groupName = ref<string | null>(null);
     const expanded = ref(false);
     const usersService = inject("users") as Users;
-    const $q = useQuasar()
+    const $q = useQuasar();
 
     interface User {
       id: number;
@@ -93,7 +65,7 @@ export default defineComponent({
       phone: string;
     }
 
-    const mode = computed(() => $q.dark.isActive)
+    const mode = computed(() => $q.dark.isActive);
 
     const fetchUsers = async () => {
       const userData = localStorage.getItem("userData");
@@ -160,7 +132,7 @@ export default defineComponent({
       }));
     });
 
-    function filterFn(val, update) {
+    function filterFn(val: any, update: any) {
       if (val === "") {
         update(() => {
           options.value = stringOptions.value;
@@ -190,11 +162,11 @@ export default defineComponent({
       groupName,
       options,
       filterFn,
-      mode
+      mode,
     };
   },
   methods: {
-    formatPhoneNumber(phoneNumber) {
+    formatPhoneNumber(phoneNumber: any) {
       const cleanedNumber = phoneNumber
         .replace(/\s/g, "")
         .replace(/[\(\)\-]/g, "");
@@ -205,7 +177,7 @@ export default defineComponent({
 
       return cleanedNumber;
     },
-    getWhatsAppLink(phone) {
+    getWhatsAppLink(phone: any) {
       const formattedPhone = this.formatPhoneNumber(phone);
 
       return `https://wa.me/55${formattedPhone}?text=Olá`;
@@ -221,7 +193,7 @@ export default defineComponent({
 
 .participants-container {
   display: flex;
-  height: 35vh;
+  height: 25vh;
   flex-direction: column;
   margin: auto;
   align-items: flex-start;
@@ -265,6 +237,7 @@ export default defineComponent({
 @media screen and (max-width: 599.99px) {
   .participants-container {
     width: 90%;
+    height: 25vh;
   }
 
   .participants-container h4 {

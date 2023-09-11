@@ -15,6 +15,9 @@ CREATE TABLE caminheirosdb.Users (
 CREATE TABLE caminheirosdb.Groups (
   id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
+  description TEXT,
+  hour TEXT,
+  modality VARCHAR(255),
   userId INTEGER,
   FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -46,8 +49,3 @@ CREATE TABLE caminheirosdb.Meetings_has_users (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO caminheirosdb.Groups (name, userId)
-VALUES
-('André Luiz', 1),
-('ESDE TOMO 1', 3),
-('ESDE TOMO 2', 2);

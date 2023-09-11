@@ -1,23 +1,17 @@
 <template>
-  <div
-    class="list_container"
-    :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-    @click="inception = true"
-  >
+  <div class="list_container" :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+    @click="inception = true">
     <div class="list-title">
       <q-icon name="list_alt" :color="mode ? 'white-text' : 'black-text'" />
       <h4>Lista de presença</h4>
     </div>
     <div>
-      <q-btn
-        class="launch-list-btn"
-        :class="mode ? 'dark-theme' : 'ligth-theme'"
-      >
+      <q-btn class="launch-list-btn" :class="mode ? 'dark-theme' : 'ligth-theme'">
         <q-icon name="send" color="white" />
       </q-btn>
 
       <q-dialog v-model="inception">
-        <q-card style="border-radius: 20px">
+        <q-card>
           <q-card-section>
             <div class="text-h6">Atenção!</div>
           </q-card-section>
@@ -27,13 +21,7 @@
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
-            <q-btn
-              flat
-              color="positive"
-              v-close-popup
-              label="Confirmar"
-              @click="handleCreateMeeting"
-            />
+            <q-btn flat color="positive" v-close-popup label="Confirmar" @click="handleCreateMeeting" />
             <q-btn flat color="primary" label="Cancelar" v-close-popup />
           </q-card-actions>
         </q-card>
@@ -44,26 +32,22 @@
 
 <script lang="ts">
 import axios from "axios";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, inject } from "vue";
+import Users from "../services/users";
 
 export default defineComponent({
-  props: {
-    fetchMeetings: {
-      type: Function,
-      required: true,
-    }
-  },
-  setup(props) {
+  setup() {
+    const users = inject("users") as Users;
+
     const handleCreateMeeting = async () => {
       const userData = localStorage.getItem("userData");
       if (userData !== null) {
         const user = JSON.parse(userData);
         try {
-          const response = await axios.post(
+          await axios.post(
             `http://localhost:3001/meetings/${user.groupId}`
           );
-          console.log("Created Meeting!:", response.data);
-          props.fetchMeetings();
+          users.fetchMeetings();
         } catch (error) {
           console.error("Error creating meeting:", error);
         }
@@ -126,7 +110,7 @@ export default defineComponent({
 @media screen and (max-width: 599.99px) {
   .list_container {
     height: 12vh;
-    width: 92%;
+    width: 90%;
   }
 
   .list-title i {

@@ -55,7 +55,6 @@ export default defineComponent({
 .card-user {
   cursor: pointer;
   position: relative;
-  background-color: black;
   border-radius: 20px;
   margin-top: 30px;
   width: 24vw;
@@ -100,9 +99,9 @@ export default defineComponent({
   }
 
   .card-user {
-    margin-top: 20px;
+    margin-top: 15px;
     width: 43vw;
-    height: 18vh;
+    height: 17vh;
   }
 
   .card-user-title {

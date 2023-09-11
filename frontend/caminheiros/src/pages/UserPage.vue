@@ -1,55 +1,35 @@
 <template>
-  <Header />
   <div class="meetings-container">
-    <p v-if="meetings.length === 0" style="width: 80%; text-align: center">
+    <p v-if="meetings.length === 0" style=" margin: 30px 0;width: 80%; text-align: center; font-weight: 100;">
       Lamentamos, mas não encontramos nenhuma chamada disponível no momento. Por
       favor, tente novamente mais tarde.
     </p>
-    <q-card
-      v-else
-      class="my-meeting-card"
-      :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-    >
-      <q-card-section class="text-white row meeting-content">
-        <div class="list-title-two">
-          <q-icon name="list_alt" class="" color="white" />
-        </div>
-        <div class="list-info" v-for="meeting in meetings" :key="meeting.id">
-          <p class="text-h6">Lista de presença</p>
-          <p class="text-subtitle4">{{ `Grupo: ${meeting.groupName}` }}</p>
-          <p class="text-subtitle4">
+    <q-card class="my-card" v-else :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'" flat>
+      <div class="icon-list row">
+        <q-icon name="list_alt" style="margin-right: 10px;" class="" color="white" />
+        <div class="column" v-for="meeting in meetings" :key="meeting.id">
+          <p class="text-h6" style="margin-bottom: 8px;">Lista de Presença</p>
+          <span class="text-caption">{{ `Grupo: ${meeting.groupName}` }}</span>
+          <span class="text-caption">
             {{ `Término da chamada: ${formatMeetingTime(meeting.date)}` }}
-          </p>
+          </span>
         </div>
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <div v-for="user in usersToRender" :key="user.id">
-          <q-btn
-            v-if="user.frequency === 0"
-            style="border-radius: 10px; margin: 10px"
-            icon="done"
-            @click="handleFrequencyChange"
-            :class="mode ? 'dark-theme' : 'ligth-theme'"
-          ></q-btn>
-          <q-icon
-            v-else
-            name="check_circle"
-            style="color: green; font-size: 40px; margin: 10px"
-          />
-        </div>
-      </q-card-actions>
+      </div>
+      <div v-for="user in usersToRender" :key="user.id">
+        <q-btn v-if="user.frequency === 0" style="border-radius: 10px; margin: 10px; width: 10vw;" icon="done"
+          @click="handleFrequencyChange" :class="mode ? 'dark-theme' : 'ligth-theme'"></q-btn>
+        <q-icon v-else name="check_circle" style="color: green; font-size: 40px; margin: 10px" />
+      </div>
     </q-card>
+    <GroupUser />
   </div>
-  <Footer />
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
-import Footer from "../components/Footer.vue";
-import Header from "../components/Header.vue";
+import GroupUser from "../components/UserGroup.vue";
 import axios from "axios";
 
 export default defineComponent({
@@ -99,7 +79,6 @@ export default defineComponent({
             );
           }
 
-          console.log(usersToRender.value);
         } catch (error) {
           console.error("Error fetching meeting:", error);
         }
@@ -164,7 +143,7 @@ export default defineComponent({
       return `${hora}:${minutos}`;
     },
   },
-  components: { Footer, Header },
+  components: { GroupUser },
 });
 </script>
 
@@ -172,31 +151,36 @@ export default defineComponent({
 .meetings-container {
   height: 68vh;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
 }
 
-.my-meeting-card {
-  width: 90%;
+.my-card {
   color: white;
   border-radius: 20px;
+  margin: 20px auto;
+  height: 15vh;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
-.meeting-content {
-  height: 13vh;
+.icon-list i {
+  font-size: 75px;
 }
 
-.list-title-two {
-  margin-right: 25px;
+.presence-buttons button {
+  width: 10vw;
+  border-radius: 10px;
+  height: 4vh;
 }
 
-.list-title-two i {
-  font-size: 80px;
+.default-card-color-ligth {
+  background-color: #182634;
 }
 
-.list-info h4 {
-  font-weight: 900;
-  font-size: 17px;
-  margin: 0;
+.default-card-color-dark {
+  background-color: #000000;
 }
 </style>

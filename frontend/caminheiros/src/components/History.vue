@@ -74,7 +74,7 @@ export default defineComponent({
   .history-container {
     height: 12vh;
     width: 90%;
-    margin: 20px auto;
+    margin: 15px auto;
   }
 
   .history-title h4 {

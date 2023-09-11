@@ -1,45 +1,27 @@
 <template>
   <div class="row items-center justify-center">
-    <component
-      v-if="!users.data.meetings.length"
-      :is="ListCard"
-      :fetchMeetings="users.fetchMeetings"
-    />
-    <q-card
-      v-else
-      class="my-card"
-      flat
-      style="border-radius: 20px"
-      :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-    >
-      <q-card-section class="row items-center meeting-content">
-        <div class="list-title-two">
+    <component v-if="!users.data.meetings.length" :is="ListCard" />
+    <q-card v-else class="my-card" flat style="border-radius: 20px"
+      :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'">
+      <q-card-section class="row items-center meeting-content" style="padding: 0; height: 12vh;">
+        <div class="list-title-two" style="margin: 20px;">
           <q-icon name="list_alt" class="" color="white" />
         </div>
-        <div
-          class="list-info"
-          v-for="meeting in users.data.meetings"
-          :key="meeting.id"
-        >
-          <h4>Lista de presença</h4>
-          <p>{{ `Grupo: ${meeting.groupName}` }}</p>
-          <p>{{ `Término da chamada: ${formatMeetingTime(meeting.date)}` }}</p>
+        <div class="column content" v-for="meeting in users.data.meetings" :key="meeting.id">
+          <p class="text-h6" style="margin-bottom: 8px;">Lista de Presença</p>
+          <span class="text-caption">{{ `Grupo: ${meeting.groupName}` }}</span>
+          <span class="text-caption">
+            {{ `Término da chamada: ${formatMeetingTime(meeting.date)}` }}
+          </span>
         </div>
       </q-card-section>
 
-      <q-card-actions>
+      <q-card-actions style="padding: 5px;">
+        <q-btn flat color="primary" label="Share" style="margin-left: 15px;" />
+        <q-btn flat color="primary" label="Book" />
         <q-space />
-        <q-btn
-          class="sub-class"
-          color="grey"
-          round
-          flat
-          dense
-          :icon="
-            users.data.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
-          "
-          @click="users.data.expanded = !users.data.expanded"
-        />
+        <q-btn style="padding: 10px;" class="sub-class" color="grey" round flat dense :icon="users.data.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
+          " @click="users.data.expanded = !users.data.expanded" />
       </q-card-actions>
 
       <q-slide-transition>
@@ -47,20 +29,12 @@
           <q-separator :class="mode ? 'dark-theme' : 'ligth-theme'" />
           <q-card-section class="text-subitle2">
             <p>Participantes</p>
-            <div style="height: 28vh; overflow-y: scroll">
-              <div
-                v-for="user in users.data.selectedUsers"
-                :key="user.id"
+            <div style="height: 18vh; overflow-y: scroll">
+              <div v-for="user in users.data.selectedUsers" :key="user.id"
                 style="padding: 2px; border-radius: 10px; margin-bottom: 8px"
-                :class="mode ? 'dark-theme' : 'ligth-theme'"
-              >
-                <q-checkbox
-                  v-model="user.frequency"
-                  :label="user.name"
-                  :true-value="1"
-                  :false-value="0"
-                  @click="handleFrequencyChange(user.id, user.frequency)"
-                />
+                :class="mode ? 'dark-theme' : 'ligth-theme'">
+                <q-checkbox v-model="user.frequency" :label="user.name" :true-value="1" :false-value="0"
+                  @click="handleFrequencyChange(user.id, user.frequency)" />
               </div>
             </div>
           </q-card-section>
@@ -141,22 +115,15 @@ export default defineComponent({
   height: 14vh;
 }
 
-.list-title-two {
-  margin-right: 25px;
-}
-
 .list-title-two i {
-  font-size: 80px;
+  font-size: 75px;
 }
 
-.list-info h4 {
-  font-weight: 900;
-  font-size: 17px;
-  margin: 0;
+.content span {
+  font-size: 11px;
 }
 
-@media screen and (max-width: 599.99px) {
-}
+@media screen and (max-width: 599.99px) {}
 
 .default-card-color-ligth {
   background-color: #182634;
