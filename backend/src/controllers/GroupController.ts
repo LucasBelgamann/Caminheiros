@@ -51,6 +51,29 @@ class GroupController {
       return res.status(500).json({ message: "Failed to get groups by userId." });
     }
   };
+
+  public createGroup = async (req: Request, res: Response) => {
+    const groupData = Array.isArray(req.body) ? req.body : [req.body];
+  
+    try {
+      for (const groupObject of groupData) {
+        const { name, description, hour, modality, userId } = groupObject;
+  
+        await this.groupService.createGroup(
+          name,
+          description,
+          hour,
+          modality,
+          userId
+        );
+      }
+  
+      return res.status(200).json({ message: "Group created successfully." });
+    } catch (error) {
+      console.error("Error during Group creation:", error);
+      return res.status(500).json({ message: "Internal server error." });
+    }
+  };
 }
 
 export default GroupController;

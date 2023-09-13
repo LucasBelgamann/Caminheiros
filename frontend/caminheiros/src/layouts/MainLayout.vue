@@ -35,6 +35,16 @@
               <span v-else>Escuro</span>
             </q-item-section>
           </q-item>
+
+          <q-item to="/CreateGroup" clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="add" />
+            </q-item-section>
+
+            <q-item-section>
+              Criar um novo Grupo
+            </q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -45,7 +55,7 @@
       style="height: 4vh; display: flex; align-items: center; justify-content: center;">
       <p style="font-size: 10px; margin: 0;" :class="darkMode ? 'text-white' : 'text-black'">&copy; 2023 Caminheiros do
         Bem
-        - Developed by Lucas Agostinho</p>
+        &mdash; Developed by Lucas Agostinho</p>
     </q-footer>
   </q-layout>
 </template>

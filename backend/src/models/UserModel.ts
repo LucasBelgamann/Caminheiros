@@ -10,7 +10,15 @@ class LoginModel {
     this.connection = connection;
   }
 
-  async getAllUsers(groupId: number, userId: number): Promise<IUser[]> {
+  async getAllUsers(): Promise<IUser[]> {
+    const [result] = await this.connection.execute(
+      `SELECT id, name, role FROM caminheirosdb.Users`
+    );
+
+    return result as any as IUser[];
+  }
+
+  async getUsersExcludedFromGroup(groupId: number, userId: number): Promise<IUser[]> {
     const [result] = await this.connection.execute(
       `SELECT id, name
       FROM caminheirosdb.Users

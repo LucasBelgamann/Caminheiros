@@ -10,8 +10,14 @@ class UserService {
     this.model = new UserModel(connection);
   }
 
-  public async getAllUsers(groupId: number, userId: number): Promise<IUser[]> {
-    const result = await this.model.getAllUsers(groupId, userId);
+
+  public async getAllUsers(): Promise<Array<IUser>> {
+    const result = await this.model.getAllUsers();
+    return result;
+  }
+
+  public async getUsersExcludedFromGroup(groupId: number, userId: number): Promise<IUser[]> {
+    const result = await this.model.getUsersExcludedFromGroup(groupId, userId);
     return result;
   }
 

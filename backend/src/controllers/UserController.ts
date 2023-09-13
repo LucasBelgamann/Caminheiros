@@ -5,11 +5,16 @@ import { compare, hash } from "bcryptjs";
 class UserController {
   constructor(private userService = new UserService()) {}
 
-  public getAllUsers = async (req: Request, res: Response) => {
+  public getAllUsers = async (_req: Request, res: Response) => {
+    const result = await this.userService.getAllUsers();
+    return res.status(200).json(result);
+  };
+
+  public getUsersExcludedFromGroup = async (req: Request, res: Response) => {
     const groupId =Number(req.params.id);
     const userId =Number(req.params.userId);
     console.log(groupId)
-    const result = await this.userService.getAllUsers(groupId, userId);
+    const result = await this.userService.getUsersExcludedFromGroup(groupId, userId);
     return res.status(200).json(result);
   };
 

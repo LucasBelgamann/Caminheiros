@@ -48,6 +48,19 @@ class GroupModel {
 
     return result;
   }
+
+  public async createGroup(
+    name: string,
+    description: string,
+    hour: string,
+    modality: string,
+    userId: number
+  ): Promise<void> {
+    await this.connection.execute(
+      "INSERT INTO caminheirosdb.Users (name, description, hour, modality, userId) VALUES (?, ?, ?, ?, ?)",
+      [name, description, hour, modality, userId]
+    );
+  }
 }
 
 export default GroupModel;
