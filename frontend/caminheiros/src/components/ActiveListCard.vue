@@ -17,8 +17,8 @@
       </q-card-section>
 
       <q-card-actions style="padding: 5px;">
-        <q-btn flat color="primary" label="Share" style="margin-left: 15px;" />
-        <q-btn flat color="primary" label="Book" />
+        <q-btn flat icon="person" color="primary" label="20" style="margin-left: 15px;" />
+        <q-btn flat icon="person" label="8" style="color: green;" />
         <q-space />
         <q-btn style="padding: 10px;" class="sub-class" color="grey" round flat dense :icon="users.data.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
           " @click="users.data.expanded = !users.data.expanded" />

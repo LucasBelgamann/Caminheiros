@@ -1,6 +1,18 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header :class="darkMode ? 'bg-footer' : 'bg-white'"
+    <q-header v-if="route.path === '/Edit' || route.path === '/History'" :class="darkMode ? 'bg-footer' : 'bg-white'"
+      style="height: 15vh; display: flex; align-items: center; justify-content: center;">
+      <q-toolbar style="width: 90vw;">
+        <q-toolbar-title class="header-title">
+          <h5 :class="darkMode ? 'text-white' : 'text-black'">Grupo, </h5>
+          <h2>{{ groupName }}</h2>
+        </q-toolbar-title>
+        <q-btn style="padding: 10px; font-size: 20px;" :class="darkMode ? 'dark-theme' : 'ligth-theme'" flat
+          :to="role !== 'manager' || role !== 'admin' ? '/User' : '/Home'" round dense icon="chevron_left" />
+      </q-toolbar>
+    </q-header>
+
+    <q-header v-else :class="darkMode ? 'bg-footer' : 'bg-white'"
       style="height: 15vh; display: flex; align-items: center; justify-content: center;">
       <q-toolbar style="width: 90vw;">
         <q-toolbar-title class="header-title">
@@ -36,13 +48,23 @@
             </q-item-section>
           </q-item>
 
-          <q-item to="/CreateGroup" clickable v-ripple>
+          <q-item v-if="role === 'manager'" to="/CreateGroup" clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="add" />
             </q-item-section>
 
             <q-item-section>
               Criar um novo Grupo
+            </q-item-section>
+          </q-item>
+
+          <q-item to="/Edit" clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+
+            <q-item-section>
+              Meus Dados
             </q-item-section>
           </q-item>
         </q-list>
@@ -63,12 +85,15 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { useQuasar } from "quasar";
+import { useRoute } from "vue-router";
 
 const darkMode = ref(false);
 const $q = useQuasar();
 const userName = ref("");
-const leftDrawerOpen = ref(false);
+const groupName = ref("");
+const role = ref("");
 const drawer = ref(false);
+const route = useRoute();
 
 const handleLogout = () => {
   localStorage.removeItem("userData");
@@ -99,7 +124,9 @@ onMounted(() => {
     const userData = JSON.parse(userDataString);
     if (userData.name) {
       const firstName = userData.name.split(" ")[0];
+      groupName.value = userData.groupName;
       userName.value = firstName;
+      role.value = userData.role;
     }
   }
 });

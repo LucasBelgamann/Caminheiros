@@ -10,6 +10,12 @@ class UserController {
     return res.status(200).json(result);
   };
 
+  public getUserById = async (req: Request, res: Response) => {
+    const userId = Number(req.params.id);
+    const result = await this.userService.getUserById(userId);
+    return res.status(200).json(result);
+  };
+
   public getUsersExcludedFromGroup = async (req: Request, res: Response) => {
     const groupId =Number(req.params.id);
     const userId =Number(req.params.userId);

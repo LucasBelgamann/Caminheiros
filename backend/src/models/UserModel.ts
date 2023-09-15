@@ -1,7 +1,6 @@
 import { Pool, RowDataPacket } from "mysql2/promise";
 import { IUser } from "../interfaces/IUser";
 import { InactiveUser } from "../interfaces/InactiveUser";
-import MeetingModel from "../models/MeetingModel";
 
 class LoginModel {
   private connection: Pool;
@@ -13,6 +12,15 @@ class LoginModel {
   async getAllUsers(): Promise<IUser[]> {
     const [result] = await this.connection.execute(
       `SELECT id, name, role FROM caminheirosdb.Users`
+    );
+
+    return result as any as IUser[];
+  }
+
+  async getUserById(userId: number): Promise<IUser[]> {
+    const [result] = await this.connection.execute(
+      `SELECT id, name, email, phone FROM caminheirosdb.Users WHERE id = ?`,
+      [userId]
     );
 
     return result as any as IUser[];

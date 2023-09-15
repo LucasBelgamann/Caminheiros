@@ -20,7 +20,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/History',
-    component: () => import('layouts/FooterLayout.vue'),
+    component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/HistoryPage.vue') }],
   },
   {
@@ -37,6 +37,11 @@ const routes: RouteRecordRaw[] = [
     path: '/CreateGroup',
     component: () => import('layouts/FooterLayout.vue'),
     children: [{ path: '', component: () => import('pages/CreateGroup.vue') }],
+  },
+  {
+    path: '/Edit',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/EditPage.vue') }],
   },
   {
     path: "/:catchAll(.*)*",

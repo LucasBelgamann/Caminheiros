@@ -6,6 +6,7 @@ const router = Router();
 const userController = new UserController();
 
 router.get('/', userController.getAllUsers);
+router.get('/:id', userController.getUserById);
 router.get('/:id/user/:userId', userController.getUsersExcludedFromGroup);
 router.get('/groups/:id', userController.getUsersInGroup);
 router.post("/groups/:groupId/users/:userId", userController.insertUserInGroup);

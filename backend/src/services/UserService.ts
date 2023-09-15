@@ -16,6 +16,11 @@ class UserService {
     return result;
   }
 
+  public async getUserById(userId: number): Promise<Array<IUser>> {
+    const result = await this.model.getUserById(userId);
+    return result;
+  }
+
   public async getUsersExcludedFromGroup(groupId: number, userId: number): Promise<IUser[]> {
     const result = await this.model.getUsersExcludedFromGroup(groupId, userId);
     return result;
