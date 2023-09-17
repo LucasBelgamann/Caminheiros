@@ -8,8 +8,7 @@
       <div class="cursor-pointer text-caption" style="margin-bottom: 10px;">
         <q-icon name="person" style="font-size: 25px; margin-right: 10px;" />
         {{ user.name }}
-        <q-popup-edit v-model="user.name" class=""
-          v-slot="scope">
+        <q-popup-edit v-model="user.name" class="" v-slot="scope">
           <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set">
             <template v-slot:append>
               <q-icon name="edit" />
@@ -20,8 +19,7 @@
       <div class="cursor-pointer text-caption" style="margin-bottom: 10px;">
         <q-icon name="mail" style="font-size: 25px; margin-right: 10px;" />
         {{ user.email }}
-        <q-popup-edit v-model="user.name" class=""
-          v-slot="scope">
+        <q-popup-edit v-model="user.name" class="" v-slot="scope">
           <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set">
             <template v-slot:append>
               <q-icon name="edit" />
@@ -32,8 +30,7 @@
       <div class="cursor-pointer text-caption">
         <q-icon name="phone_iphone" style="font-size: 25px; margin-right: 10px;" />
         {{ user.phone }}
-        <q-popup-edit v-model="user.name" class=""
-          v-slot="scope">
+        <q-popup-edit v-model="user.name" class="" v-slot="scope">
           <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set">
             <template v-slot:append>
               <q-icon name="edit" />
@@ -53,9 +50,14 @@ import { reactive, ref, computed, onMounted } from 'vue';
 import { User } from '../interface/IUser';
 import { useQuasar } from 'quasar';
 
-const data = reactive({
-  users: [] as User[],
-  label: ref('Click me'),
+const data: {
+  users: User[];
+  label: string;
+  darkMode: boolean;
+} = reactive({
+  users: [],
+  label: 'Click me',
+  darkMode: ref(false)
 });
 
 const $q = useQuasar();
@@ -79,6 +81,13 @@ const fetchUsers = async () => {
 
 onMounted(() => {
   fetchUsers();
+  const darkModeIsActive = localStorage.getItem("darkMode");
+  if (darkModeIsActive) {
+    data.darkMode = darkModeIsActive === "__q_bool|1";
+    $q.dark.set(data.darkMode);
+  } else {
+    $q.dark.set(false);
+  }
 })
 </script>
 

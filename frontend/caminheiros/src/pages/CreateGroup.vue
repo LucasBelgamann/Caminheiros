@@ -7,8 +7,8 @@
   <div class="form-login">
     <q-input class="in-register" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" clearable filled
       color="primary" v-model="nomeGrupo" label="Nome do Grupo" />
-    <q-input class="in-register" style="width: 80vw;" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" v-model="text"
-      label="Descrição" filled type="textarea" />
+    <q-input class="in-register" filled clearable autogrow  style="width: 80vw;" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" v-model="text"
+      label="Descrição" type="textarea" />
     <q-input class="in-register" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" clearable filled
       color="primary" v-model="hour" label="E-mail" />
     <q-input :type="isPwd ? 'password' : 'text'" class="in-register"
@@ -31,7 +31,7 @@
         </q-item>
       </template>
     </q-select>
-    <q-btn to="/Home" @click="handleCadastro" class="login-btn" color="secondary" label="Cadastrar" />
+    <q-btn to="/Home" @click="handleCadastro" color="secondary" class="login-btn" label="Cadastrar" />
   </div>
 </template>
 
@@ -178,7 +178,6 @@ export default defineComponent({
 
 .login-btn {
   margin-top: 20px;
-  padding: 10px;
   border-radius: 10px;
 }
 
@@ -197,7 +196,7 @@ export default defineComponent({
   }
 
   .form-login {
-    height: 60vh;
+    height: 30vh;
   }
 }
 

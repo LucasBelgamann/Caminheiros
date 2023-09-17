@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header v-if="route.path === '/Edit' || route.path === '/History'" :class="darkMode ? 'bg-footer' : 'bg-white'"
+    <q-header v-if="route.path === '/Edit' || route.path === '/History' || route.path === '/Notifications'" :class="darkMode ? 'bg-footer' : 'bg-white'"
       style="height: 15vh; display: flex; align-items: center; justify-content: center;">
       <q-toolbar style="width: 90vw;">
         <q-toolbar-title class="header-title">
@@ -8,7 +8,7 @@
           <h2>{{ groupName }}</h2>
         </q-toolbar-title>
         <q-btn style="padding: 10px; font-size: 20px;" :class="darkMode ? 'dark-theme' : 'ligth-theme'" flat
-          :to="role !== 'manager' || role !== 'admin' ? '/User' : '/Home'" round dense icon="chevron_left" />
+          :to="role === 'admin' || role === 'manager' ? '/Home' : '/User'" round dense icon="chevron_left" />
       </q-toolbar>
     </q-header>
 
@@ -27,16 +27,6 @@
     <q-drawer side="right" v-model="drawer" show-if-above :width="200" :breakpoint="500">
       <q-scroll-area class="fit">
         <q-list padding class="menu-list">
-          <q-item @click="handleLogout" clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon color="negative" name="logout" />
-            </q-item-section>
-
-            <q-item-section>
-              Sair
-            </q-item-section>
-          </q-item>
-
           <q-item @click="toggleDarkMode" active clickable v-ripple>
             <q-item-section avatar>
               <q-icon :name="darkMode ? 'light_mode' : 'mode_night'" />
@@ -65,6 +55,26 @@
 
             <q-item-section>
               Meus Dados
+            </q-item-section>
+          </q-item>
+
+          <q-item v-if="role === 'manager'" to="/Notifications" clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="notifications" />
+            </q-item-section>
+
+            <q-item-section>
+              Avisos
+            </q-item-section>
+          </q-item>
+
+          <q-item @click="handleLogout" clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon color="negative" name="logout" />
+            </q-item-section>
+
+            <q-item-section style="color: #C10015;">
+              Sair
             </q-item-section>
           </q-item>
         </q-list>

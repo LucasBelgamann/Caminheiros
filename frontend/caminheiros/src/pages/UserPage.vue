@@ -22,6 +22,7 @@
       </div>
     </q-card>
     <GroupUser />
+    <Notifications />
   </div>
 </template>
 
@@ -30,6 +31,7 @@ import { defineComponent, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import GroupUser from "../components/UserGroup.vue";
+import Notifications from "../components/Notifications.vue";
 import axios from "axios";
 
 export default defineComponent({
@@ -116,7 +118,7 @@ export default defineComponent({
       fetchMeetings();
       const darkModeIsActive = localStorage.getItem("darkMode");
       if (darkModeIsActive) {
-        darkMode.value = darkModeIsActive === "true";
+        darkMode.value = darkModeIsActive === "__q_bool|1";
         $q.dark.set(darkMode.value);
       } else {
         $q.dark.set(false);
@@ -143,7 +145,7 @@ export default defineComponent({
       return `${hora}:${minutos}`;
     },
   },
-  components: { GroupUser },
+  components: { GroupUser, Notifications },
 });
 </script>
 
