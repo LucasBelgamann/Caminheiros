@@ -30,13 +30,23 @@ class GroupService {
     modality: string,
     userId: number
   ): Promise<void> {
-    await this.model.createGroup(
-      name,
-      description,
-      hour,
-      modality,
-      userId
-    );
+    await this.model.createGroup(name, description, hour, modality, userId);
+  }
+
+  public async createWarning(
+    description: string,
+    groupId: number
+  ): Promise<void> {
+    await this.model.createWarning(description, groupId);
+  }
+
+  public async deleteWarning(id: number): Promise<void> {
+    await this.model.deleteWarning(id);
+  }
+
+  public async getWarnings(groupId: number): Promise<any[]> {
+    const result = await this.model.getWarnings(groupId);
+    return result;
   }
 }
 

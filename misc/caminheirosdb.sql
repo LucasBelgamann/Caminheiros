@@ -33,6 +33,15 @@ CREATE TABLE caminheirosdb.Meetings (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE caminheirosdb.Warnings (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  description TEXT,
+  groupId INTEGER,
+  FOREIGN KEY (groupId) REFERENCES caminheirosdb.Groups (id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 CREATE TABLE caminheirosdb.Groups_has_users (
   groupId INTEGER,
   userId INTEGER,
@@ -48,4 +57,6 @@ CREATE TABLE caminheirosdb.Meetings_has_users (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+
 

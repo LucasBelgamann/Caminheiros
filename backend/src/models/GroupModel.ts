@@ -61,6 +61,40 @@ class GroupModel {
       [name, description, hour, modality, userId]
     );
   }
+
+  public async createWarning(
+    description: string,
+    groupId: number
+  ): Promise<any[]> {
+    const [result] = await this.connection.execute<RowDataPacket[]>(
+      `
+      INSERT INTO caminheirosdb.Warnings (description, groupId)
+      VALUES (?, ?);    
+  `,
+      [description, groupId]
+    );
+
+    return result;
+  }
+
+  public async deleteWarning(id: number): Promise<void> {
+    await this.connection.execute<RowDataPacket[]>(
+      `
+      DELETE FROM caminheirosdb.Warnings WHERE id = ?;      
+  `,
+      [id]
+    );
+  }
+
+  public async getWarnings(groupId: number): Promise<any[]> {
+    const [result] = await this.connection.execute<RowDataPacket[]>(
+      `
+      SELECT * FROM caminheirosdb.Warnings WHERE groupId = ?;      
+  `,
+      [groupId]
+    );
+    return result;
+  }
 }
 
 export default GroupModel;
