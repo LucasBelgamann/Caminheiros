@@ -38,7 +38,6 @@
 import { reactive, ref, computed, onMounted, inject } from "vue";
 import { User } from "../interface/IUser";
 import { useQuasar } from "quasar";
-import Warnings from "../services/warnings";
 import { Warning } from "../interface/IWarnings";
 import axios from "axios";
 

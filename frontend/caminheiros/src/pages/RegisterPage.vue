@@ -127,7 +127,6 @@ export default defineComponent({
 
 .login-btn {
   margin-top: 20px;
-  padding: 10px 35px;
   border-radius: 10px;
 }
 

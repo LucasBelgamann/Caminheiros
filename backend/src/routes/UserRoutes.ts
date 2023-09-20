@@ -14,5 +14,7 @@ router.post("/groups/:groupId/delete-user/:userId", userController.deleteUserInG
 router.post('/create-user', userController.createUser);
 router.get('/login', userController.login);
 router.post('/login/auth', userController.auth);
+router.get('/inactives/:id', userController.getInativeUsers);
+
 
 export default router;

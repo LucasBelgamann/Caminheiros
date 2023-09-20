@@ -7,8 +7,9 @@
   <div class="form-login">
     <q-input class="in-register" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" clearable filled
       color="primary" v-model="nomeGrupo" label="Nome do Grupo" />
-    <q-input class="in-register" filled clearable autogrow  style="width: 80vw;" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" v-model="text"
-      label="Descrição" type="textarea" />
+    <q-input class="in-register" filled clearable autogrow style="width: 80vw;"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" v-model="text" label="Descrição"
+      type="textarea" />
     <q-input class="in-register" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" clearable filled
       color="primary" v-model="hour" label="E-mail" />
     <q-input :type="isPwd ? 'password' : 'text'" class="in-register"
@@ -19,17 +20,16 @@
       </template>
     </q-input>
 
-    <q-select v-model="userName" class="in-register"
-      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" :options="options" use-input
-      input-debounce="300" label="Facilitadores" behavior="menu" @filter="filterFn"
-      @update:modelValue="handleUserSelection">
-      <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey">
-            No results
-          </q-item-section>
-        </q-item>
-      </template>
+    <q-select filled v-model="userName" :options="options" label="Facilitadores" class="in-register"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" use-input input-debounce="300"
+      behavior="menu" @filter="filterFn" @update:modelValue="handleUserSelection" >
+    <template v-slot:no-option>
+      <q-item>
+        <q-item-section class="text-grey">
+          No results
+        </q-item-section>
+      </q-item>
+    </template>
     </q-select>
     <q-btn to="/Home" @click="handleCadastro" color="secondary" class="login-btn" label="Cadastrar" />
   </div>

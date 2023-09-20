@@ -2,8 +2,8 @@
   <div class="users-cards-container">
     <div
       class="card-user"
-      @click="irParaOutraRota()"
       :class="mode ? 'dark-theme' : 'ligth-theme'"
+      @click="irParaOutraRota()"
     >
       <div class="card-user-title">
         <h6>Novo</h6>
@@ -11,7 +11,7 @@
       </div>
       <q-icon name="add" :color="!mode ? 'white' : 'primary'" />
     </div>
-    <div class="card-user" :class="mode ? 'dark-theme' : 'ligth-theme'">
+    <div class="card-user" :class="mode ? 'dark-theme' : 'ligth-theme'" @click="routaInactiveUsers">
       <div class="card-user-title">
         <h6>Usuários</h6>
         <h4>Inativos</h4>
@@ -34,6 +34,9 @@ export default defineComponent({
   methods: {
     irParaOutraRota() {
       this.$router.push("/Register");
+    },
+    routaInactiveUsers() {
+      this.$router.push("/Inactive-users");
     },
   },
   computed: {

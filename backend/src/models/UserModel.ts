@@ -162,7 +162,7 @@ class LoginModel {
     return user as IUser;
   }
 
-  public async getInativeUsers(seu_grupo_id: number): Promise<InactiveUser[]> {
+  public async getInativeUsers(groupId: number): Promise<any[]> {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
       SELECT
@@ -187,10 +187,27 @@ class LoginModel {
       HAVING
           missed_meetings_count >= 6;
       `,
-      [seu_grupo_id]
+      [groupId]
     );
 
-    return result as InactiveUser[];
+    return result as any[];
+  }
+
+  public async updateUserDetails(
+    userId: number,
+    name: string,
+    phone: string,
+    email: string
+  ): Promise<void> {
+    try {
+      await this.connection.execute(
+        "UPDATE caminheirosdb.Users SET name = ?, phone = ?, email = ? WHERE id = ?",
+        [name, phone, email, userId]
+      );
+    } catch (error) {
+      console.error("Error updating user details:", error);
+      throw error;
+    }
   }
 }
 

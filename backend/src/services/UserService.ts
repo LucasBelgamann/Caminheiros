@@ -59,6 +59,11 @@ class UserService {
     const user = await this.model.findUserByEmailAndPassword(email)
     return user;
   }
+
+  public async getInativeUsers(groupId: number): Promise<Array<IUser>> {
+    const result = await this.model.getInativeUsers(groupId);
+    return result;
+  }
 }
 
 export default UserService;

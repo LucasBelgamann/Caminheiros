@@ -49,6 +49,11 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/NotificationsPage.vue') }],
   },
   {
+    path: '/Inactive-users',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/inactiveUsersPage.vue') }],
+  },
+  {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
   },

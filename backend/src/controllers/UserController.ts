@@ -17,10 +17,13 @@ class UserController {
   };
 
   public getUsersExcludedFromGroup = async (req: Request, res: Response) => {
-    const groupId =Number(req.params.id);
-    const userId =Number(req.params.userId);
-    console.log(groupId)
-    const result = await this.userService.getUsersExcludedFromGroup(groupId, userId);
+    const groupId = Number(req.params.id);
+    const userId = Number(req.params.userId);
+    console.log(groupId);
+    const result = await this.userService.getUsersExcludedFromGroup(
+      groupId,
+      userId
+    );
     return res.status(200).json(result);
   };
 
@@ -37,19 +40,21 @@ class UserController {
 
   public createUser = async (req: Request, res: Response) => {
     const userData = Array.isArray(req.body) ? req.body : [req.body];
-  
+
     try {
       for (const userObject of userData) {
         const { name, phone, email, password, role } = userObject;
-  
+
         const user = await this.userService.findUserByEmailAndPassword(email);
-  
+
         if (user) {
-          return res.status(400).json({ message: "Já existe um usuário com o seguinte email" });
+          return res
+            .status(400)
+            .json({ message: "Já existe um usuário com o seguinte email" });
         }
-  
+
         const hashedPassword = await hash(password, 10);
-  
+
         await this.userService.createUser(
           name,
           phone,
@@ -58,14 +63,13 @@ class UserController {
           role
         );
       }
-  
+
       return res.status(200).json({ message: "Users created successfully." });
     } catch (error) {
       console.error("Error during user creation:", error);
       return res.status(500).json({ message: "Internal server error." });
     }
   };
-  
 
   public insertUserInGroup = async (req: Request, res: Response) => {
     const groupId = Number(req.params.groupId);
@@ -113,37 +117,45 @@ class UserController {
 
   public auth = async (req: Request, res: Response) => {
     const { email, password } = req.body;
-  
+
     try {
       if (!email || !password) {
-        return res.status(400).json({ message: 'Todos os campos devem ser preenchidos' });
+        return res
+          .status(400)
+          .json({ message: "Todos os campos devem ser preenchidos" });
       }
-  
+
       const user = await this.userService.findUserByEmailAndPassword(email);
-  
+
       if (!user) {
-        return res.status(401).json({ message: 'Senha ou email incorretos' });
+        return res.status(401).json({ message: "Senha ou email incorretos" });
       }
 
       const isPasswordValid = await compare(password, user.password);
-  
+
       if (!isPasswordValid) {
-        console.log(password, user.password)
-        return res.status(401).json({ message: 'Senha inválida' });
+        console.log(password, user.password);
+        return res.status(401).json({ message: "Senha inválida" });
       }
 
       const result = {
         id: user.id,
         name: user.name,
-        role: user.role
-      }
-  
+        role: user.role,
+      };
+
       return res.status(200).json(result);
     } catch (error) {
-      console.error('Error during login:', error);
-      return res.status(500).json({ message: 'Erro interno do servidor' });
+      console.error("Error during login:", error);
+      return res.status(500).json({ message: "Erro interno do servidor" });
     }
-  }
+  };
+
+  public getInativeUsers = async (req: Request, res: Response) => {
+    const groupId = Number(req.params.id);
+    const result = await this.userService.getInativeUsers(groupId);
+    return res.status(200).json(result);
+  };
 }
 
 export default UserController;

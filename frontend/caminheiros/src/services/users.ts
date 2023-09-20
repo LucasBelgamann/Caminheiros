@@ -22,10 +22,14 @@ export default class Users {
     expanded: boolean;
     meetings: Meeting[];
     selectedUsers: User[];
+    usersLength: number;
+    userOn: number;
   } = reactive({
     expanded: false,
     meetings: [],
     selectedUsers: [],
+    usersLength: 0,
+    userOn: 0,
   });
 
   public async fetchMeetings() {
@@ -34,14 +38,18 @@ export default class Users {
     if (userData) {
       const user = JSON.parse(userData);
       try {
-        const { data }: { data: Meeting[] } = await axios.get(
+        const response = await axios.get(
           `http://localhost:3001/meetings/recent/${user.groupId}`
         );
-        if (data) {
-          this.data.meetings = data;
+        if (response.data) {
+          this.data.meetings = response.data;
           this.data.meetings.forEach((meeting) => {
             this.data.selectedUsers = meeting.users;
+            this.data.usersLength = meeting.users.length;
           });
+          this.data.userOn = this.data.selectedUsers.filter(
+            (e) => e.frequency === 1
+          ).length;
         } else {
           throw new Error("Data not found");
         }

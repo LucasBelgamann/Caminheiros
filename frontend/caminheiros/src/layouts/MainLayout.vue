@@ -1,6 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header v-if="route.path === '/Edit' || route.path === '/History' || route.path === '/Notifications'" :class="darkMode ? 'bg-footer' : 'bg-white'"
+    <q-header
+      v-if="route.path === '/Edit' || route.path === '/History' || route.path === '/Notifications' || route.path === '/Inactive-users'"
+      :class="darkMode ? 'bg-footer' : 'bg-white'"
       style="height: 15vh; display: flex; align-items: center; justify-content: center;">
       <q-toolbar style="width: 90vw;">
         <q-toolbar-title class="header-title">
@@ -58,7 +60,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item v-if="role === 'manager'" to="/Notifications" clickable v-ripple>
+          <q-item v-if="role === 'manager' || role === 'admin'" to="/Notifications" clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="notifications" />
             </q-item-section>
