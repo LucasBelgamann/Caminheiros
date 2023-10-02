@@ -12,24 +12,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { useQuasar } from 'quasar';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 
-export default defineComponent({
-  setup() {
-    return {};
-  },
-  methods: {
-    irParaOutraRota() {
-      this.$router.push("/History");
-    },
-  },
-  computed: {
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
-  },
-});
+const $q = useQuasar();
+const $router = useRouter();
+
+const irParaOutraRota = () => {
+  $router.push('/History');
+};
+
+const mode = computed(() => $q.dark.isActive);
 </script>
 
 <style lang="scss">

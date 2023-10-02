@@ -1,6 +1,6 @@
-# Quasar App (caminheiros)
+# QuasarCaminheiros (caminheiros)
 
-A Quasar Project
+Um projeto completo que integra um banco de dados com uma interface gráfica moderna, facilitando o gerenciamento de usuários, grupos e reuniões da organização Caminheiros do bem. Combina MySQL, Vue.js e Quasar Framework para uma experiência intuitiva e eficiente.
 
 ## Install the dependencies
 ```bash
@@ -13,6 +13,23 @@ npm install
 ```bash
 quasar dev
 ```
+
+
+### Lint the files
+```bash
+yarn lint
+# or
+npm run lint
+```
+
+
+### Format the files
+```bash
+yarn format
+# or
+npm run format
+```
+
 
 
 ### Build the app for production

@@ -2,18 +2,34 @@
   <div class="participants-container">
     <q-card class="my-card" flat>
       <q-card-actions>
-        <span class="text-h6" :class="mode ? 'white-text' : 'black-text'">Participantes</span>
+        <span class="text-h6" :class="mode ? 'white-text' : 'black-text'"
+          >Participantes</span
+        >
         <q-space />
-        <q-btn color="grey" round flat dense :icon="expanded ? 'keyboard_arrow_up' : 'add'"
-          @click="expanded = !expanded" />
+        <q-btn
+          color="grey"
+          round
+          flat
+          dense
+          :icon="expanded ? 'keyboard_arrow_up' : 'add'"
+          @click="expanded = !expanded"
+        />
       </q-card-actions>
 
       <q-slide-transition>
         <div v-show="expanded">
           <q-separator />
           <q-card-section class="q-gutter-md">
-            <q-select v-model="groupName" :options="options" use-input input-debounce="300" label="Participantes"
-              behavior="menu" @filter="filterFn" @update:modelValue="handleUserSelection">
+            <q-select
+              v-model="groupName"
+              :options="options"
+              use-input
+              input-debounce="300"
+              label="Participantes"
+              behavior="menu"
+              @filter="filterFn"
+              @update:modelValue="handleUserSelection"
+            >
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -32,11 +48,21 @@
     <div class="user-line" :class="mode ? 'bg-white' : 'bg-black'"></div>
     <div class="users-container">
       <div>
-        <p class="user-link" :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'" v-for="user in users"
-          :key="user.id">
+        <p
+          class="user-link"
+          :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+          v-for="user in users"
+          :key="user.id"
+        >
           {{ user.name }}
-          <a :href="getWhatsAppLink(user.phone)" target="_blank" rel="noreferrer"><q-icon
-              style="font-size: 30px; color: white; margin: 10px" name="fab fa-whatsapp" /></a>
+          <a
+            :href="getWhatsAppLink(user.phone)"
+            target="_blank"
+            rel="noreferrer"
+            ><q-icon
+              style="font-size: 30px; color: white; margin: 10px"
+              name="fab fa-whatsapp"
+          /></a>
         </p>
       </div>
     </div>
@@ -44,10 +70,10 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
-import { defineComponent, onMounted, ref, computed, inject } from "vue";
-import Users from "../services/users";
-import { useQuasar } from "quasar";
+import axios from 'axios';
+import { defineComponent, onMounted, ref, computed, inject } from 'vue';
+import Users from '../services/users';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   setup() {
@@ -56,7 +82,7 @@ export default defineComponent({
     const selectedUserId = ref<number | null>(null);
     const groupName = ref<string | null>(null);
     const expanded = ref(false);
-    const usersService = inject("users") as Users;
+    const usersService = inject('users') as Users;
     const $q = useQuasar();
 
     interface User {
@@ -68,7 +94,7 @@ export default defineComponent({
     const mode = computed(() => $q.dark.isActive);
 
     const fetchUsers = async () => {
-      const userData = localStorage.getItem("userData");
+      const userData = localStorage.getItem('userData');
 
       if (userData !== null) {
         const user = JSON.parse(userData);
@@ -78,15 +104,15 @@ export default defineComponent({
           );
           users.value = Array.from(response.data);
         } catch (error) {
-          console.error("Error fetching users of group:", error);
+          console.error('Error fetching users of group:', error);
         }
       } else {
-        console.error("User data not found in localStorage");
+        console.error('User data not found in localStorage');
       }
     };
 
     const fetchAllUsers = async () => {
-      const userData = localStorage.getItem("userData");
+      const userData = localStorage.getItem('userData');
 
       if (userData !== null) {
         const user = JSON.parse(userData);
@@ -96,10 +122,10 @@ export default defineComponent({
           );
           allUsers.value = Array.from(response.data);
         } catch (error) {
-          console.error("Error fetching all users:", error);
+          console.error('Error fetching all users:', error);
         }
       } else {
-        console.error("User data not found in localStorage");
+        console.error('User data not found in localStorage');
       }
     };
 
@@ -109,7 +135,7 @@ export default defineComponent({
     };
 
     const addUser = async () => {
-      const userData = localStorage.getItem("userData");
+      const userData = localStorage.getItem('userData');
       console.log(selectedUserId.value);
       if (selectedUserId.value && userData !== null) {
         const user = JSON.parse(userData);
@@ -119,7 +145,7 @@ export default defineComponent({
         fetchUsers();
         fetchAllUsers();
         usersService.fetchMeetings();
-        groupName.value = "";
+        groupName.value = '';
         expanded.value = false;
       }
     };
@@ -133,7 +159,7 @@ export default defineComponent({
     });
 
     function filterFn(val: any, update: any) {
-      if (val === "") {
+      if (val === '') {
         update(() => {
           options.value = stringOptions.value;
         });
@@ -168,10 +194,10 @@ export default defineComponent({
   methods: {
     formatPhoneNumber(phoneNumber: any) {
       const cleanedNumber = phoneNumber
-        .replace(/\s/g, "")
-        .replace(/[\(\)\-]/g, "");
+        .replace(/\s/g, '')
+        .replace(/[\(\)\-]/g, '');
 
-      if (cleanedNumber.startsWith("0")) {
+      if (cleanedNumber.startsWith('0')) {
         return cleanedNumber.substring(1);
       }
 

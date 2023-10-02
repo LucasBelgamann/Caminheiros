@@ -11,7 +11,11 @@
       </div>
       <q-icon name="add" :color="!mode ? 'white' : 'primary'" />
     </div>
-    <div class="card-user" :class="mode ? 'dark-theme' : 'ligth-theme'" @click="routaInactiveUsers">
+    <div
+      class="card-user"
+      :class="mode ? 'dark-theme' : 'ligth-theme'"
+      @click="routaInactiveUsers"
+    >
       <div class="card-user-title">
         <h6>Usuários</h6>
         <h4>Inativos</h4>
@@ -21,30 +25,22 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { useQuasar } from 'quasar';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 
-export default defineComponent({
-  name: "",
+const $q = useQuasar();
+const $router = useRouter();
 
-  setup() {
-    return {};
-  },
-  components: {},
-  methods: {
-    irParaOutraRota() {
-      this.$router.push("/Register");
-    },
-    routaInactiveUsers() {
-      this.$router.push("/Inactive-users");
-    },
-  },
-  computed: {
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
-  },
-});
+const mode = computed(() => $q.dark.isActive);
+
+const irParaOutraRota = () => {
+  $router.push('/Register');
+};
+const routaInactiveUsers = () => {
+  $router.push('/Inactive-users');
+};
 </script>
 
 <style lang="scss">
@@ -147,6 +143,6 @@ export default defineComponent({
 }
 
 .ligth-theme {
-  background-color: #314B68;
+  background-color: #314b68;
 }
 </style>

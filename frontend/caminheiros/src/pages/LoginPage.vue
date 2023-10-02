@@ -1,84 +1,111 @@
 <template>
-  <div class="background" :class="darkMode ? 'default-card-color-dark' : 'default-card-color-ligth'">
+  <div
+    class="background"
+    :class="
+      data.darkMode ? 'default-card-color-dark' : 'default-card-color-ligth'
+    "
+  >
     <img
-      src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png" />
+      src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png"
+    />
   </div>
   <div class="form-login">
-    <q-input class="in-email" :class="darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
-      " clearable filled color="primary" v-model="email" label="E-mail" />
-    <q-input :type="isPwd ? 'password' : 'text'" class="in-pass" :class="darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
-      " clearable filled color="primary" v-model="password" label="Senha">
+    <q-input
+      class="in-email"
+      :class="
+        data.darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
+      "
+      clearable
+      filled
+      color="primary"
+      v-model="data.email"
+      label="E-mail"
+    />
+    <q-input
+      :type="data.isPwd ? 'password' : 'text'"
+      class="in-pass"
+      :class="
+        data.darkMode ? 'default-input-color-dark' : 'default-input-color-ligth'
+      "
+      clearable
+      filled
+      color="primary"
+      v-model="data.password"
+      label="Senha"
+    >
       <template v-slot:append>
-        <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
+        <q-icon
+          :name="data.isPwd ? 'visibility_off' : 'visibility'"
+          class="cursor-pointer"
+          @click="data.isPwd = !data.isPwd"
+        />
       </template>
     </q-input>
-    <span class="error-response" v-if="errorMessage">{{ errorMessage }}</span>
-    <q-btn @click="handleLogin" class="login-btn" color="secondary" label="Entrar" />
+    <span class="error-response" v-if="data.errorMessage">{{
+      data.errorMessage
+    }}</span>
+    <q-btn
+      @click="handleLogin"
+      class="login-btn"
+      color="secondary"
+      label="Entrar"
+    />
     <span class="forgot-pass">Esqueceu a senha?</span>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted } from "vue";
-import { ref } from "vue";
-import axios from "axios";
-import { useQuasar } from "quasar";
+<script setup lang="ts">
+import { onMounted, reactive } from 'vue';
+import axios from 'axios';
+import { useQuasar } from 'quasar';
 
-export default defineComponent({
-  setup() {
-    const password = ref("");
-    const email = ref("");
-    const errorMessage = ref("");
-    const darkMode = ref(false);
-    const $q = useQuasar();
+const data: {
+  password: string;
+  email: string;
+  errorMessage: string;
+  darkMode: boolean;
+  isPwd: boolean;
+} = reactive({
+  password: '',
+  email: '',
+  errorMessage: '',
+  darkMode: false,
+  isPwd: true,
+});
 
-    const handleLogin = async () => {
-      const user = {
-        email: email.value,
-        password: password.value,
-      };
+const $q = useQuasar();
 
-      try {
-        const response = await axios.post(
-          "http://localhost:3001/users/login/auth",
-          user
-        );
+const handleLogin = async () => {
+  const user = {
+    email: data.email,
+    password: data.password,
+  };
 
-        localStorage.setItem("userData", JSON.stringify(response.data));
+  try {
+    const response = await axios.post(
+      'http://localhost:3001/users/login/auth',
+      user
+    );
 
-        window.location.href = "/groups";
-      } catch (error: any) {
-        console.error("Erro no login:", error);
-        if (error.response && error.response.data) {
-          errorMessage.value = error.response.data.message;
-        }
-      }
-    };
+    localStorage.setItem('userData', JSON.stringify(response.data));
 
-    onMounted(() => {
-      const darkModeIsActive = localStorage.getItem("darkMode");
-      if (darkModeIsActive) {
-        darkMode.value = darkModeIsActive === "__q_bool|1";
-        $q.dark.set(darkMode.value);
-      } else {
-        $q.dark.set(false);
-      }
-    });
+    window.location.href = '/groups';
+  } catch (error: any) {
+    console.error('Erro no login:', error);
+    if (error.response && error.response.data) {
+      data.errorMessage = error.response.data.message;
+    }
+  }
+};
 
-    return {
-      password,
-      isPwd: ref(true),
-      email,
-      handleLogin,
-      errorMessage,
-      darkMode,
-    };
-  },
-  computed: {
-    mode: function () {
-      return localStorage.getItem("darkMode") === "true";
-    },
-  },
+onMounted(() => {
+  const darkModeIsActive = localStorage.getItem('darkMode');
+  if (darkModeIsActive) {
+    data.darkMode = darkModeIsActive === '__q_bool|1';
+    $q.dark.set(data.darkMode);
+  } else {
+    $q.dark.set(false);
+  }
 });
 </script>
 

@@ -1,14 +1,26 @@
 <template>
   <div class="row items-center justify-center">
     <component v-if="!users.data.meetings.length" :is="ListCard" />
-    <q-card v-else class="my-card" flat style="border-radius: 20px"
-      :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'">
-      <q-card-section class="row items-center meeting-content" style="padding: 0; height: 12vh;">
-        <div class="list-title-two" style="margin: 20px;">
+    <q-card
+      v-else
+      class="my-card"
+      flat
+      style="border-radius: 20px"
+      :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+    >
+      <q-card-section
+        class="row items-center meeting-content"
+        style="padding: 0; height: 12vh"
+      >
+        <div class="list-title-two" style="margin: 20px">
           <q-icon name="list_alt" class="" color="white" />
         </div>
-        <div class="column content" v-for="meeting in users.data.meetings" :key="meeting.id">
-          <p class="text-h6" style="margin-bottom: 8px;">Lista de Presença</p>
+        <div
+          class="column content"
+          v-for="meeting in users.data.meetings"
+          :key="meeting.id"
+        >
+          <p class="text-h6" style="margin-bottom: 8px">Lista de Presença</p>
           <span class="text-caption">{{ `Grupo: ${meeting.groupName}` }}</span>
           <span class="text-caption">
             {{ `Término da chamada: ${formatMeetingTime(meeting.date)}` }}
@@ -16,12 +28,33 @@
         </div>
       </q-card-section>
 
-      <q-card-actions style="padding: 5px;">
-        <q-btn flat icon="person" color="primary" :label="users.data.usersLength" style="margin-left: 15px;" />
-        <q-btn flat icon="person" :label="users.data.userOn ? users.data.userOn : 0" style="color: green;" />
+      <q-card-actions style="padding: 5px">
+        <q-btn
+          flat
+          icon="person"
+          color="primary"
+          :label="users.data.usersLength"
+          style="margin-left: 15px"
+        />
+        <q-btn
+          flat
+          icon="person"
+          :label="users.data.userOn ? users.data.userOn : 0"
+          style="color: green"
+        />
         <q-space />
-        <q-btn style="padding: 10px;" class="sub-class" color="grey" round flat dense :icon="users.data.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
-          " @click="users.data.expanded = !users.data.expanded" />
+        <q-btn
+          style="padding: 10px"
+          class="sub-class"
+          color="grey"
+          round
+          flat
+          dense
+          :icon="
+            users.data.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
+          "
+          @click="users.data.expanded = !users.data.expanded"
+        />
       </q-card-actions>
 
       <q-slide-transition>
@@ -30,11 +63,19 @@
           <q-card-section class="text-subitle2">
             <p>Participantes</p>
             <div style="height: 18vh; overflow-y: scroll">
-              <div v-for="user in users.data.selectedUsers" :key="user.id"
+              <div
+                v-for="user in users.data.selectedUsers"
+                :key="user.id"
                 style="padding: 2px; border-radius: 10px; margin-bottom: 8px"
-                :class="mode ? 'dark-theme' : 'ligth-theme'">
-                <q-checkbox v-model="user.frequency" :label="user.name" :true-value="1" :false-value="0"
-                  @click="handleFrequencyChange(user.id, user.frequency)" />
+                :class="mode ? 'dark-theme' : 'ligth-theme'"
+              >
+                <q-checkbox
+                  v-model="user.frequency"
+                  :label="user.name"
+                  :true-value="1"
+                  :false-value="0"
+                  @click="handleFrequencyChange(user.id, user.frequency)"
+                />
               </div>
             </div>
           </q-card-section>
@@ -44,66 +85,51 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, inject } from "vue";
-import axios from "axios";
-import ListCard from "./listCard.vue";
-import Participants from "./Participants.vue";
-import Users from "../services/users";
-import { log } from "console";
+<script setup lang="ts">
+import {
+  onMounted,
+  inject,
+  computed,
+} from 'vue';
+import axios from 'axios';
+import ListCard from './listCard.vue';
+import Users from '../services/users';
+import { useQuasar } from 'quasar';
 
+const users = inject('users') as Users;
+const $q = useQuasar();
 
-export default defineComponent({
-  setup() {
-    const users = inject("users") as Users;
+const mode = computed(() => $q.dark.isActive);
 
-    const handleFrequencyChange = async (
-      userId: number,
-      newFrequency: number
-    ) => {
-      try {
-        for (const meeting of users.data.meetings) {
-          axios.put(
-            `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${userId}`,
-            { newFrequency }
-          );
-        }
-        users.data.userOn = users.data.selectedUsers.filter((e) => e.frequency === 1).length;
-      } catch (error) {
-        console.error("Error updating frequency:", error);
-      }
-    };
-
-    onMounted(() => {
-      users.fetchMeetings();
-    });
-
-    return {
-      val: ref(true),
-      handleFrequencyChange,
-      ListCard,
-      Participants,
-      users,
-    };
-  },
-  computed: {
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
-  },
-  methods: {
-    formatMeetingTime(dateString: string) {
-      const dateObject = new Date(dateString);
-      const localDate = new Date(
-        dateObject.getTime() + dateObject.getTimezoneOffset() * 60000
+const handleFrequencyChange = async (userId: number, newFrequency: number) => {
+  try {
+    for (const meeting of users.data.meetings) {
+      axios.put(
+        `http://localhost:3001/meetings/update-frequency/${meeting.id}/users/${userId}`,
+        { newFrequency }
       );
-      localDate.setHours(localDate.getHours() + 2);
-      const hora = localDate.getHours();
-      const minutos = localDate.getMinutes();
-      return `${hora}:${minutos}`;
-    },
-  },
-  components: { ListCard, Participants },
+    }
+    users.data.userOn = users.data.selectedUsers.filter(
+      (e) => e.frequency === 1
+    ).length;
+  } catch (error) {
+    console.error('Error updating frequency:', error);
+  }
+};
+
+const formatMeetingTime = (dateString: string) => {
+  const dateObject = new Date(dateString);
+  const localDate = new Date(
+    dateObject.getTime() + dateObject.getTimezoneOffset() * 60000
+  );
+  localDate.setHours(localDate.getHours() + 2);
+  const hora = localDate.getHours();
+  const minutos = localDate.getMinutes();
+  return `${hora}:${minutos}`;
+};
+
+onMounted(() => {
+  users.fetchMeetings();
 });
 </script>
 
@@ -126,7 +152,8 @@ export default defineComponent({
   font-size: 11px;
 }
 
-@media screen and (max-width: 599.99px) {}
+@media screen and (max-width: 599.99px) {
+}
 
 .default-card-color-ligth {
   background-color: #182634;

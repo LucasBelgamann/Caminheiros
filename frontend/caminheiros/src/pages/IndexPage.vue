@@ -5,52 +5,29 @@
   <Participantes />
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted } from "vue";
-import Header from "../components/Header.vue";
-import UserCards from "../components/UserCards.vue";
-import History from "../components/History.vue";
-import Participantes from "../components/Participants.vue";
-import ActiveListCard from "../components/ActiveListCard.vue";
-import { useQuasar } from "quasar";
-import { ref } from "vue";
+<script setup lang="ts">
+import { onMounted, reactive } from 'vue';
+import UserCards from '../components/UserCards.vue';
+import History from '../components/History-comp.vue';
+import Participantes from '../components/Participants-list.vue';
+import ActiveListCard from '../components/ActiveListCard.vue';
+import { useQuasar } from 'quasar';
 
-export default defineComponent({
-  name: "IndexPage",
+const $q = useQuasar();
 
-  setup() {
-    const $q = useQuasar();
-    const darkMode = ref(false);
+const data: {
+  darkMode: boolean;
+} = reactive({
+  darkMode: false,
+});
 
-    onMounted(() => {
-      const darkModeIsActive = localStorage.getItem("darkMode");
-      if (darkModeIsActive) {
-        darkMode.value = darkModeIsActive === "__q_bool|1";
-        $q.dark.set(darkMode.value);
-      } else {
-        $q.dark.set(false);
-      }
-    });
-
-    return {
-      ActiveListCard,
-      Header,
-      UserCards,
-      History,
-      Participantes,
-    };
-  },
-  components: {
-    ActiveListCard,
-    Header,
-    UserCards,
-    History,
-    Participantes,
-  },
-  computed: {
-    mode: function () {
-      return localStorage.getItem("darkMode") === "true";
-    },
-  },
+onMounted(() => {
+  const darkModeIsActive = localStorage.getItem('darkMode');
+  if (darkModeIsActive) {
+    data.darkMode = darkModeIsActive === '__q_bool|1';
+    $q.dark.set(data.darkMode);
+  } else {
+    $q.dark.set(false);
+  }
 });
 </script>

@@ -13,9 +13,7 @@
 
 
 
-import {LocalStorage} from 'quasar'
 
 
-
-export default { config: {"dark":"auto"},plugins: {LocalStorage} }
+export default { config: {} }
 

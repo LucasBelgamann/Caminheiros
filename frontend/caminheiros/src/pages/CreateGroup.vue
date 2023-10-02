@@ -1,156 +1,197 @@
 <template>
-  <div class="background" :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'">
-    <q-btn class="arrow-btn-header" :class="mode ? 'dark-theme' : 'ligth-theme'" icon="arrow_back_ios_new" to="/Home" />
+  <div
+    class="background"
+    :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+  >
+    <q-btn
+      class="arrow-btn-header"
+      :class="mode ? 'dark-theme' : 'ligth-theme'"
+      icon="arrow_back_ios_new"
+      to="/Home"
+    />
     <img
-      src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png" />
+      src="https://static.wixstatic.com/media/4f4b22_a6ecbef17b754f1b9397c72e87c8aa3a~mv2.png/v1/fill/w_152,h_140,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/caminheiros-do-bem-png-branco.png"
+    />
   </div>
   <div class="form-login">
-    <q-input class="in-register" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" clearable filled
-      color="primary" v-model="nomeGrupo" label="Nome do Grupo" />
-    <q-input class="in-register" filled clearable autogrow style="width: 80vw;"
-      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" v-model="text" label="Descrição"
-      type="textarea" />
-    <q-input class="in-register" :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" clearable filled
-      color="primary" v-model="hour" label="E-mail" />
-    <q-input :type="isPwd ? 'password' : 'text'" class="in-register"
-      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" clearable filled color="primary"
-      v-model="password" label="Senha">
+    <q-input
+      class="in-register"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      clearable
+      filled
+      color="primary"
+      v-model="data.nomeGrupo"
+      label="Nome do Grupo"
+    />
+    <q-input
+      class="in-register"
+      filled
+      clearable
+      autogrow
+      style="width: 80vw"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      v-model="data.text"
+      label="Descrição"
+      type="textarea"
+    />
+    <q-input
+      class="in-register"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      clearable
+      filled
+      color="primary"
+      v-model="data.hour"
+      label="Horário"
+    />
+    <q-input
+      :type="data.isPwd ? 'password' : 'text'"
+      class="in-register"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      clearable
+      filled
+      color="primary"
+      v-model="data.password"
+      label="Modalidade"
+    >
       <template v-slot:append>
-        <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
+        <q-icon
+          :name="data.isPwd ? 'visibility_off' : 'visibility'"
+          class="cursor-pointer"
+          @click="data.isPwd = !data.isPwd"
+        />
       </template>
     </q-input>
 
-    <q-select filled v-model="userName" :options="options" label="Facilitadores" class="in-register"
-      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" use-input input-debounce="300"
-      behavior="menu" @filter="filterFn" @update:modelValue="handleUserSelection" >
-    <template v-slot:no-option>
-      <q-item>
-        <q-item-section class="text-grey">
-          No results
-        </q-item-section>
-      </q-item>
-    </template>
+    <q-select
+      filled
+      v-model="userName"
+      :options="options"
+      label="Facilitadores"
+      class="in-register"
+      :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
+      use-input
+      input-debounce="300"
+      behavior="menu"
+      @filter="filterFn"
+      @update:modelValue="handleUserSelection"
+    >
+      <template v-slot:no-option>
+        <q-item>
+          <q-item-section class="text-grey"> No results </q-item-section>
+        </q-item>
+      </template>
     </q-select>
-    <q-btn to="/Home" @click="handleCadastro" color="secondary" class="login-btn" label="Cadastrar" />
+    <q-btn
+      to="/Home"
+      @click="handleCadastro"
+      color="secondary"
+      class="login-btn"
+      label="Cadastrar"
+    />
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
-import { ref } from "vue";
-import axios from "axios";
-import { useQuasar } from "quasar";
+<script setup lang="ts">
+import { computed, onMounted, reactive } from 'vue';
+import { ref } from 'vue';
+import axios from 'axios';
+import { useQuasar } from 'quasar';
+import { User } from '../interfaces/IUser';
 
-export default defineComponent({
-  setup() {
-    const users = ref<Array<User>>([]);
-    const isPwd = ref(true);
-    const nomeGrupo = ref("");
-    const hour = ref("");
-    const password = ref("");
-    const text = ref("");
-    const darkMode = ref(false);
-    const $q = useQuasar();
-    const selectedUserId = ref<number | null>(null);
-    const userName = ref<string | null>(null);
+const data: {
+  users: User[];
+  isPwd: boolean;
+  nomeGrupo: string;
+  hour: string;
+  password: string;
+  text: string;
+  darkMode: boolean;
+} = reactive({
+  users: [],
+  isPwd: true,
+  nomeGrupo: '',
+  hour: '',
+  password: '',
+  text: '',
+  darkMode: false,
+});
 
-    interface User {
-      id: number;
-      name: string;
-      phone: string;
+const selectedUserId = ref<number | null>(null);
+const userName = ref<string | null>(null);
+const $q = useQuasar();
+
+const mode = computed(() => $q.dark.isActive);
+
+const handleCadastro = async () => {
+  const newUser = {
+    name: data.nomeGrupo,
+    hour: data.hour,
+    password: data.password,
+    userId: selectedUserId,
+  };
+  try {
+    if (!newUser) {
+      console.log('não foi possivel');
     }
+    await axios.post('http://localhost:3001/groups/create-group', newUser);
+    console.log('Group created successfully!');
+  } catch (error) {
+    console.error('Error creating Group:', error);
+  }
+};
 
-    const handleCadastro = async () => {
-      const newUser = {
-        name: nomeGrupo.value,
-        hour: hour.value,
-        password: password.value,
-        userId: selectedUserId.value,
-      };
-      try {
-        if (!newUser) {
-          console.log("não foi possivel");
-        }
-        await axios.post("http://localhost:3001/groups/create-group", newUser);
-        console.log("Group created successfully!");
-      } catch (error) {
-        console.error("Error creating Group:", error);
-      }
-    };
+const handleUserSelection = (value: { label: string; value: number }) => {
+  selectedUserId.value = value.value;
+  userName.value = value.label;
+};
 
-    const handleUserSelection = (value: { label: string; value: number }) => {
-      selectedUserId.value = value.value;
-      userName.value = value.label;
-    };
+const fetchUsers = async () => {
+  try {
+    const response = await axios.get('http://localhost:3001/users/');
 
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3001/users/`);
-
-        const filteredUsers = response.data.filter((user: any) => {
-          return user.role === "admin" || user.role === "manager";
-        });
-
-        users.value = Array.from(filteredUsers);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    const options = ref<Array<{ label: string; value: string }>>([]);
-    const stringOptions = computed(() => {
-      return users.value.map((user) => ({
-        label: user.name,
-        value: user.id.toString(),
-      }));
+    const filteredUsers = response.data.filter((user: any) => {
+      return user.role === 'admin' || user.role === 'manager';
     });
 
-    function filterFn(val: any, update: any) {
-      if (val === "") {
-        update(() => {
-          options.value = stringOptions.value;
-        });
-        return;
-      }
+    data.users = Array.from(filteredUsers);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+};
 
-      update(() => {
-        const needle = val.toLowerCase();
-        options.value = stringOptions.value.filter((user) =>
-          user.label.toLowerCase().includes(needle)
-        );
-      });
-    }
+const options = ref<Array<{ label: string; value: string }>>([]);
+const stringOptions = computed(() => {
+  return data.users.map((user) => ({
+    label: user.name,
+    value: user.id.toString(),
+  }));
+});
 
-
-    onMounted(() => {
-      fetchUsers();
-      const darkModeIsActive = localStorage.getItem("darkMode");
-      if (darkModeIsActive) {
-        darkMode.value = darkModeIsActive === "__q_bool|1";
-        $q.dark.set(darkMode.value);
-      } else {
-        $q.dark.set(false);
-      }
+function filterFn(val: any, update: any) {
+  if (val === '') {
+    update(() => {
+      options.value = stringOptions.value;
     });
+    return;
+  }
 
-    return {
-      password,
-      isPwd,
-      hour,
-      nomeGrupo,
-      handleCadastro,
-      options,
-      text,
-      userName,
-      filterFn,
-      handleUserSelection
-    };
-  },
-  computed: {
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
-  },
+  update(() => {
+    const needle = val.toLowerCase();
+    options.value = stringOptions.value.filter((user) =>
+      user.label.toLowerCase().includes(needle)
+    );
+  });
+}
+
+onMounted(() => {
+  fetchUsers();
+  const darkModeIsActive = localStorage.getItem('darkMode');
+  if (darkModeIsActive) {
+    data.darkMode = darkModeIsActive === '__q_bool|1';
+    $q.dark.set(data.darkMode);
+  } else {
+    $q.dark.set(false);
+  }
 });
 </script>
 

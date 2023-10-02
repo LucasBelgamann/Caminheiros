@@ -1,16 +1,22 @@
 <template>
-  <div class="list_container" :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
-    @click="inception = true">
+  <div
+    class="list_container"
+    :class="mode ? 'default-card-color-dark' : 'default-card-color-ligth'"
+    @click="data.inception = true"
+  >
     <div class="list-title">
       <q-icon name="list_alt" :color="mode ? 'white-text' : 'black-text'" />
       <h4>Lista de presença</h4>
     </div>
     <div>
-      <q-btn class="launch-list-btn" :class="mode ? 'dark-theme' : 'ligth-theme'">
+      <q-btn
+        class="launch-list-btn"
+        :class="mode ? 'dark-theme' : 'ligth-theme'"
+      >
         <q-icon name="send" color="white" />
       </q-btn>
 
-      <q-dialog v-model="inception">
+      <q-dialog v-model="data.inception">
         <q-card>
           <q-card-section>
             <div class="text-h6">Atenção!</div>
@@ -21,7 +27,13 @@
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
-            <q-btn flat color="positive" v-close-popup label="Confirmar" @click="handleCreateMeeting" />
+            <q-btn
+              flat
+              color="positive"
+              v-close-popup
+              label="Confirmar"
+              @click="handleCreateMeeting"
+            />
             <q-btn flat color="primary" label="Cancelar" v-close-popup />
           </q-card-actions>
         </q-card>
@@ -30,42 +42,37 @@
   </div>
 </template>
 
-<script lang="ts">
-import axios from "axios";
-import { defineComponent, ref, inject } from "vue";
-import Users from "../services/users";
+<script setup lang="ts">
+import axios from 'axios';
+import { ref, inject, reactive, computed } from 'vue';
+import Users from '../services/users';
+import { useQuasar } from 'quasar';
 
-export default defineComponent({
-  setup() {
-    const users = inject("users") as Users;
-
-    const handleCreateMeeting = async () => {
-      const userData = localStorage.getItem("userData");
-      if (userData !== null) {
-        const user = JSON.parse(userData);
-        try {
-          await axios.post(
-            `http://localhost:3001/meetings/${user.groupId}`
-          );
-          users.fetchMeetings();
-        } catch (error) {
-          console.error("Error creating meeting:", error);
-        }
-      }
-    };
-
-    return {
-      inception: ref(false),
-      secondDialog: ref(false),
-      handleCreateMeeting,
-    };
-  },
-  computed: {
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
-  },
+const data: {
+  inception: boolean;
+  secondDialog: boolean;
+} = reactive({
+  inception: ref(false),
+  secondDialog: ref(false),
 });
+
+const users = inject('users') as Users;
+const $q = useQuasar();
+
+const mode = computed(() => $q.dark.isActive);
+
+const handleCreateMeeting = async () => {
+  const userData = localStorage.getItem('userData');
+  if (userData !== null) {
+    const user = JSON.parse(userData);
+    try {
+      await axios.post(`http://localhost:3001/meetings/${user.groupId}`);
+      users.fetchMeetings();
+    } catch (error) {
+      console.error('Error creating meeting:', error);
+    }
+  }
+};
 </script>
 
 <style lang="scss">

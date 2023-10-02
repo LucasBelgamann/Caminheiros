@@ -11,7 +11,7 @@
           :class="
             mode ? 'default-input-color-dark' : 'default-input-color-ligth'
           "
-          v-model="date"
+          v-model="data.date"
           filled
           type="date"
         />
@@ -24,7 +24,7 @@
     </div>
   </div>
   <div
-    v-if="historyData.length === 0 && !errorMessage"
+    v-if="historyData.length === 0 && !data.errorMessage"
     class="no-search-results"
   >
     <p
@@ -34,9 +34,9 @@
       Por favor, informe a data desejada para localizarmos o seu registro.
     </p>
   </div>
-  <div v-else-if="errorMessage" class="error-container">
+  <div v-else-if="data.errorMessage" class="error-container">
     <div style="height: 30vh" class="row items-center justify-center">
-      <span class="error-response">{{ errorMessage }}</span>
+      <span class="error-response">{{ data.errorMessage }}</span>
     </div>
   </div>
   <div
@@ -44,7 +44,7 @@
     class="history-result-container"
     :class="mode ? 'default-card-color-dark' : 'default-card-color-light'"
   >
-    <p class="header-history-result">{{ date }}</p>
+    <p class="header-history-result">{{ data.date }}</p>
     <div class="participants-result-history">
       <p
         :class="mode ? 'dark-theme' : 'ligth-theme'"
@@ -54,66 +54,50 @@
         {{ user.name }}
       </p>
     </div>
-    <div class="download-btn">
-      <q-btn icon="picture_as_pdf" label="Baixar PDF"></q-btn>
-    </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
-import axios from "axios";
+<script setup lang="ts">
+import { computed, reactive, ref } from 'vue';
+import axios from 'axios';
+import { useQuasar } from 'quasar';
+import { User } from '../interfaces/IUser'
 
-export default defineComponent({
-  setup() {
-    const date = ref("");
-    const historyData = ref<Array<User>>([]);
-    const errorMessage = ref("");
+const historyData = ref<Array<User>>([]);
+const $q = useQuasar();
 
-    interface User {
-      id: number;
-      name: string;
-    }
-
-    const searchHistory = async () => {
-      const userData = localStorage.getItem("userData");
-
-      if (userData !== null) {
-        const user = JSON.parse(userData);
-        try {
-          const response = await axios.get(
-            `http://localhost:3001/meetings/history/${user.groupId}/date/${date.value}`
-          );
-          historyData.value = response.data;
-        } catch (error: any) {
-          console.error("Error fetching history:", error);
-          if (error.response && error.response.data) {
-            errorMessage.value = error.response.data.message;
-          }
-        }
-      } else {
-        console.error("User data not found in localStorage");
-      }
-    };
-
-    return {
-      date,
-      historyData,
-      searchHistory,
-      errorMessage,
-    };
-  },
-  methods: {
-    irParaOutraRota() {
-      this.$router.push("/History");
-    },
-  },
-  computed: {
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
-  },
+const data: {
+  errorMessage: string;
+  date: string;
+  historyData: User[];
+} = reactive({
+  errorMessage: '',
+  date: '',
+  historyData: [],
 });
+
+const mode = computed(() => $q.dark.isActive);
+
+const searchHistory = async () => {
+  const userData = localStorage.getItem('userData');
+
+  if (userData !== null) {
+    const user = JSON.parse(userData);
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/meetings/history/${user.groupId}/date/${data.date}`
+      );
+      historyData.value = response.data;
+    } catch (error: any) {
+      console.error('Error fetching history:', error);
+      if (error.response && error.response.data) {
+        data.errorMessage = error.response.data.message;
+      }
+    }
+  } else {
+    console.error('User data not found in localStorage');
+  }
+};
 </script>
 
 <style lang="scss">

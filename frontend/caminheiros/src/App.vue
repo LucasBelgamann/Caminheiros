@@ -1,23 +1,15 @@
 <template>
-  <div>
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
-<script>
+<script setup lang="ts">
 import { onBeforeMount, provide } from 'vue';
 import Users from './services/users';
 
-export default {
-  name: "App",
-  setup() {
-    let users;
+let users;
 
-    onBeforeMount(() => {
-      users = new Users();
-      provide("users", users);
-    })
-    return {};
-  },
-};
+onBeforeMount(() => {
+  users = new Users();
+  provide('users', users);
+});
 </script>

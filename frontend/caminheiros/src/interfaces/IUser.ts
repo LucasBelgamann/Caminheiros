@@ -4,3 +4,10 @@ export interface User {
   email: string;
   phone: string;
 }
+
+export interface UserFrequency {
+  id: number;
+  name: string;
+  frequency: number;
+}
+

@@ -1,8 +1,6 @@
-import { RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/Home',
     component: () => import('layouts/MainLayout.vue'),
@@ -46,18 +44,21 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/Notifications',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/NotificationsPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/NotificationsPage.vue') },
+    ],
   },
   {
     path: '/Inactive-users',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/inactiveUsersPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/inactiveUsersPage.vue') },
+    ],
   },
   {
-    path: "/:catchAll(.*)*",
-    component: () => import("pages/ErrorNotFound.vue"),
+    path: '/:catchAll(.*)*',
+    component: () => import('pages/ErrorNotFound.vue'),
   },
-  //comentario
 ];
 
 export default routes;
