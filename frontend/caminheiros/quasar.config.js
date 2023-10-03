@@ -61,6 +61,16 @@ module.exports = configure(function (/* ctx */) {
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
+      vite: {
+        vue: {
+          template: {
+            compilerOptions: {
+              // Use esbuild-wasm como o compilador para o Vue.js
+              compiler: require('esbuild-wasm').transform,
+            },
+          },
+        },
+      },
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,

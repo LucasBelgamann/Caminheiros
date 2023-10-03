@@ -1,5 +1,3 @@
 node_modules/
 dist/
 backend/.env
-docker-compose.yml
-misc/caminheiros.sql
