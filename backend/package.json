@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "nodemon --exec 'npm run build' --watch src --ext ts",
-    "start": "ts-node-dev src/index.ts",
+    "start": "nodemon src/index.ts",
     "predev": "npm install",
     "dev": "nodemon src/index.ts"
   },
