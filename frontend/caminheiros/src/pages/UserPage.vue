@@ -52,7 +52,7 @@
 import { computed, onMounted, reactive } from 'vue';
 import { useQuasar } from 'quasar';
 import GroupUser from '../components/UserGroup.vue';
-import Notifications from '../components/Notifications.vue';
+import Notifications from '../components/Notifications-comp.vue';
 import axios from 'axios';
 import { UserFrequency } from '../interfaces/IUser';
 import { Meeting } from '../interfaces/IMeeting';
@@ -130,7 +130,7 @@ onMounted(() => {
   fetchMeetings();
   const darkModeIsActive = localStorage.getItem('darkMode');
   if (darkModeIsActive) {
-    data.darkMode = darkModeIsActive === '__q_bool|1';
+    data.darkMode = darkModeIsActive === 'true';
     $q.dark.set(data.darkMode);
   } else {
     $q.dark.set(false);

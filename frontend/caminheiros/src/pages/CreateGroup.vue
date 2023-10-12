@@ -150,7 +150,7 @@ const fetchUsers = async () => {
     const response = await axios.get('http://localhost:3001/users/');
 
     const filteredUsers = response.data.filter((user: any) => {
-      return user.role === 'admin' || user.role === 'manager';
+      return user.role === 'Administrador' || user.role === 'Facilitador';
     });
 
     data.users = Array.from(filteredUsers);
@@ -187,7 +187,7 @@ onMounted(() => {
   fetchUsers();
   const darkModeIsActive = localStorage.getItem('darkMode');
   if (darkModeIsActive) {
-    data.darkMode = darkModeIsActive === '__q_bool|1';
+    data.darkMode = darkModeIsActive === 'true';
     $q.dark.set(data.darkMode);
   } else {
     $q.dark.set(false);

@@ -263,7 +263,7 @@ export default defineComponent({
 @media screen and (max-width: 599.99px) {
   .participants-container {
     width: 90%;
-    height: 25vh;
+    height: 28vh;
   }
 
   .participants-container h4 {

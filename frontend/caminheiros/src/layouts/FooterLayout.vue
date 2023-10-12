@@ -32,13 +32,13 @@ const $q = useQuasar();
 
 watch(darkMode, (darkMode) => {
   $q.dark.set(darkMode);
-  $q.localStorage.set('darkMode', darkMode);
+  localStorage.setItem("darkMode", JSON.stringify(darkMode));
 });
 
 onMounted(() => {
   const darkModeIsActive = localStorage.getItem('darkMode');
   if (darkModeIsActive) {
-    darkMode.value = darkModeIsActive === '__q_bool|1';
+    darkMode.value = darkModeIsActive === 'true';
     $q.dark.set(darkMode.value);
   } else {
     $q.dark.set(false);

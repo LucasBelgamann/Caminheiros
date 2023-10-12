@@ -82,7 +82,7 @@ const fetchGroups = async () => {
   if (userData !== null) {
     const user = JSON.parse(userData);
     try {
-      if (user.role === 'manager' || user.role === 'admin') {
+      if (user.role === 'Administrador' || user.role === 'Facilitador') {
         const response = await axios.get(
           `http://localhost:3001/groups/owner/${user.id}`
         );
@@ -114,7 +114,7 @@ const handleGroupSelection = (value: { label: string; value: number }) => {
     userDataObject.groupName = value.label;
 
     localStorage.setItem('userData', JSON.stringify(userDataObject));
-    if (userDataObject.role === 'admin' || userDataObject.role === 'manager') {
+    if (userDataObject.role === 'Administrador' || userDataObject.role === 'Facilitador') {
       window.location.href = '/home';
     } else {
       window.location.href = '/User';
@@ -125,7 +125,7 @@ const handleGroupSelection = (value: { label: string; value: number }) => {
 onMounted(() => {
   const darkModeIsActive = localStorage.getItem('darkMode');
   if (darkModeIsActive) {
-    data.darkMode = darkModeIsActive === '__q_bool|1';
+    data.darkMode = darkModeIsActive === 'true';
     $q.dark.set(data.darkMode);
   } else {
     $q.dark.set(false);

@@ -64,7 +64,7 @@
       filled
       v-model="data.typeUser"
       :options="data.options"
-      v-if="data.role === 'manager'"
+      v-if="data.role === 'Administrador'"
       label="Tipo do usuário"
       class="in-register"
       :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'"
@@ -105,8 +105,9 @@ const data: {
   role: '',
   isPwd: true,
   darkMode: false,
-  options: ['user', 'admin', 'manager'],
+  options: ['Participante', 'Facilitador', 'Administrador'],
 });
+
 const $q = useQuasar();
 
 const mode = computed(() => $q.dark.isActive);
@@ -117,7 +118,7 @@ const handleCadastro = async () => {
     phone: data.telefone,
     email: data.email,
     password: data.password,
-    role: data.role === '' ? 'user' : data.role,
+    role: data.role === '' ? 'Participante' : data.role,
   };
   try {
     if (!newUser) {
@@ -131,13 +132,6 @@ const handleCadastro = async () => {
 };
 
 onMounted(() => {
-  const darkModeIsActive = localStorage.getItem('darkMode');
-  if (darkModeIsActive) {
-    data.darkMode = darkModeIsActive === '__q_bool|1';
-    $q.dark.set(data.darkMode);
-  } else {
-    $q.dark.set(false);
-  }
   const userDataString = localStorage.getItem('userData');
   if (userDataString) {
     const userData = JSON.parse(userDataString);
@@ -202,5 +196,21 @@ onMounted(() => {
 
 .default-input-color-dark {
   background-color: #3b3a3a;
+}
+
+.default-card-color-ligth {
+  background-color: #182634;
+}
+
+.default-card-color-dark {
+  background-color: #000000;
+}
+
+.dark-theme {
+  background-color: #262c30;
+}
+
+.ligth-theme {
+  background-color: #314b68;
 }
 </style>

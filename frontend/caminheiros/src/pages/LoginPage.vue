@@ -101,7 +101,7 @@ const handleLogin = async () => {
 onMounted(() => {
   const darkModeIsActive = localStorage.getItem('darkMode');
   if (darkModeIsActive) {
-    data.darkMode = darkModeIsActive === '__q_bool|1';
+    data.darkMode = darkModeIsActive === 'true';
     $q.dark.set(data.darkMode);
   } else {
     $q.dark.set(false);

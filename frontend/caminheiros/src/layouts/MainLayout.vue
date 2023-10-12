@@ -7,7 +7,7 @@
         route.path === '/Notifications' ||
         route.path === '/Inactive-users'
       "
-      :class="data.darkMode ? 'bg-footer' : 'bg-white'"
+      :class="darkMode ? 'bg-footer' : 'bg-white'"
       style="
         height: 15vh;
         display: flex;
@@ -17,15 +17,15 @@
     >
       <q-toolbar style="width: 90vw">
         <q-toolbar-title class="header-title">
-          <h5 :class="data.darkMode ? 'text-white' : 'text-black'">Grupo,</h5>
+          <h5 :class="darkMode ? 'text-white' : 'text-black'">Grupo,</h5>
           <h2>{{ data.groupName }}</h2>
         </q-toolbar-title>
         <q-btn
           style="padding: 10px; font-size: 20px"
-          :class="data.darkMode ? 'dark-theme' : 'ligth-theme'"
+          :class="darkMode ? 'dark-theme' : 'ligth-theme'"
           flat
           :to="
-            data.role === 'admin' || data.role === 'manager' ? '/Home' : '/User'
+            data.role === 'Administrador' || data.role === 'Facilitador' ? '/Home' : '/User'
           "
           round
           dense
@@ -36,7 +36,7 @@
 
     <q-header
       v-else
-      :class="data.darkMode ? 'bg-footer' : 'bg-white'"
+      :class="darkMode ? 'bg-footer' : 'bg-white'"
       style="
         height: 15vh;
         display: flex;
@@ -46,12 +46,12 @@
     >
       <q-toolbar style="width: 90vw">
         <q-toolbar-title class="header-title">
-          <h5 :class="data.darkMode ? 'text-white' : 'text-black'">Olá,</h5>
+          <h5 :class="darkMode ? 'text-white' : 'text-black'">Olá,</h5>
           <h2>{{ data.userName }}</h2>
         </q-toolbar-title>
         <q-btn
           style="padding: 10px"
-          :class="data.darkMode ? 'dark-theme' : 'ligth-theme'"
+          :class="darkMode ? 'dark-theme' : 'ligth-theme'"
           flat
           @click="data.drawer = !data.drawer"
           round
@@ -72,17 +72,17 @@
         <q-list padding class="menu-list">
           <q-item @click="toggleDarkMode" active clickable v-ripple>
             <q-item-section avatar>
-              <q-icon :name="data.darkMode ? 'light_mode' : 'mode_night'" />
+              <q-icon :name="darkMode ? 'light_mode' : 'mode_night'" />
             </q-item-section>
 
             <q-item-section>
-              <span v-if="data.darkMode">Claro</span>
+              <span v-if="darkMode">Claro</span>
               <span v-else>Escuro</span>
             </q-item-section>
           </q-item>
 
           <q-item
-            v-if="data.role === 'manager'"
+            v-if="data.role === 'Administrador'"
             to="/CreateGroup"
             clickable
             v-ripple
@@ -103,7 +103,7 @@
           </q-item>
 
           <q-item
-            v-if="data.role === 'manager' || data.role === 'admin'"
+            v-if="data.role === 'Administrador' || data.role === 'Facilitador'"
             to="/Notifications"
             clickable
             v-ripple
@@ -130,7 +130,7 @@
     </q-page-container>
     <q-footer
       bordered
-      :class="data.darkMode ? 'bg-footer' : 'bg-white'"
+      :class="darkMode ? 'bg-footer' : 'bg-white'"
       style="
         height: 4vh;
         display: flex;
@@ -140,7 +140,7 @@
     >
       <p
         style="font-size: 10px; margin: 0"
-        :class="data.darkMode ? 'text-white' : 'text-black'"
+        :class="darkMode ? 'text-white' : 'text-black'"
       >
         &copy; 2023 Caminheiros do Bem &mdash; Developed by Lucas Agostinho
       </p>
@@ -149,18 +149,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
 
 const data: {
-  darkMode: boolean;
   userName: string;
   groupName: string;
   role: string;
   drawer: boolean;
 } = reactive({
-  darkMode: false,
   userName: '',
   groupName: '',
   role: '',
@@ -169,6 +167,7 @@ const data: {
 
 const $q = useQuasar();
 const route = useRoute();
+const darkMode = ref(false);
 
 const handleLogout = () => {
   localStorage.removeItem('userData');
@@ -176,15 +175,21 @@ const handleLogout = () => {
 };
 
 const toggleDarkMode = () => {
-  data.darkMode = !data.darkMode;
+  darkMode.value = !darkMode.value;
   data.drawer = !data.drawer;
 };
+
+watch(darkMode, (darkMode) => {
+  $q.dark.set(darkMode);
+  localStorage.setItem("darkMode", JSON.stringify(darkMode));
+});
+
 
 onMounted(() => {
   const darkModeIsActive = localStorage.getItem('darkMode');
   if (darkModeIsActive) {
-    data.darkMode = darkModeIsActive === '__q_bool|1';
-    $q.dark.set(data.darkMode);
+    darkMode.value = darkModeIsActive === 'true';
+    $q.dark.set(darkMode.value);
   } else {
     $q.dark.set(false);
   }

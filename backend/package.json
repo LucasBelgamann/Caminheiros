@@ -7,7 +7,7 @@
     "build": "tsc",
     "watch": "nodemon --exec 'npm run build' --watch src --ext ts",
     "start": "nodemon src/index.ts",
-    "predev": "npm install",
+    "predev": "npm run build",
     "dev": "nodemon src/index.ts"
   },
   "keywords": [],
