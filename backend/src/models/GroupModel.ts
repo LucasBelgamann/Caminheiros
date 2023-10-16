@@ -52,13 +52,14 @@ class GroupModel {
   public async createGroup(
     name: string,
     description: string,
+    studyDays: string,
     hour: string,
     modality: string,
     userId: number
   ): Promise<void> {
     await this.connection.execute(
-      "INSERT INTO caminheirosdb.Users (name, description, hour, modality, userId) VALUES (?, ?, ?, ?, ?)",
-      [name, description, hour, modality, userId]
+      "INSERT INTO caminheirosdb.Groups (name, description, studyDays, hour, modality, userId) VALUES (?, ?, ?, ?, ?, ?)",
+      [name, description, studyDays, hour, modality, userId]
     );
   }
 

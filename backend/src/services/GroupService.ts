@@ -26,11 +26,12 @@ class GroupService {
   public async createGroup(
     name: string,
     description: string,
+    studyDays: string,
     hour: string,
     modality: string,
     userId: number
   ): Promise<void> {
-    await this.model.createGroup(name, description, hour, modality, userId);
+    await this.model.createGroup(name, description, studyDays, hour, modality, userId);
   }
 
   public async createWarning(

@@ -63,11 +63,12 @@ class GroupController {
 
     try {
       for (const groupObject of groupData) {
-        const { name, description, hour, modality, userId } = groupObject;
+        const { name, description, studyDays, hour, modality, userId } = groupObject;
 
         await this.groupService.createGroup(
           name,
           description,
+          studyDays,
           hour,
           modality,
           userId
