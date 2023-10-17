@@ -7,7 +7,7 @@
         ">
         <q-icon name="history" style="font-size: 50px; margin-right: 20px;" />
         <div>
-          <span class="text-h5">Histórico</span> <br>
+          <span class="text-h6">Histórico</span> <br>
           <span class="text-caption">Pesquise por um dia especifico de estudos.</span>
         </div>
       </div>
@@ -142,22 +142,5 @@ const searchHistory = async () => {
   .q-scroll-history-participantes-class {
     width: 80vw;
   }
-}
-.q-card-color-primary-dark-card {
-  background-color: #121925;
-}
-
-.q-card-color-primary-light-card {
-  background-color: #121925;
-  color: white;
-}
-
-.q-card-color-secondary-dark-card {
-  background-color: $primary;
-}
-
-.q-card-color-secondary-light-card {
-  background-color: #d3def1;
-  color: black;
 }
 </style>

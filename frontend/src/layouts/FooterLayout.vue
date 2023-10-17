@@ -5,8 +5,8 @@
       class="row items-center background"
       :class="
         mode
-          ? 'q-card-color-secondary-dark-card'
-          : 'q-card-color-secondary-light-card'
+          ? 'q-card-color-primary-dark-card'
+          : 'q-card-color-primary-light-card'
       "
     >
       <q-toolbar class="row justify-center items-center">

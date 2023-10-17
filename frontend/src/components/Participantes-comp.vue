@@ -4,7 +4,7 @@
       <q-card>
         <q-card-section class="row justify-between items-center">
           <q-select filled v-model="groupName" use-input input-debounce="300" label="Participantes" :options="options"
-            @filter="filterFn" @update:modelValue="handleUserSelection" style="width: 230px" behavior="menu">
+            @filter="filterFn" @update:modelValue="handleUserSelection" style="width: 230px" behavior="dialog">
             <template v-slot:no-option>
               <q-item>
                 <q-item-section class="text-grey"> No results </q-item-section>
@@ -169,7 +169,7 @@ onMounted(() => {
 
 <style lang="scss">
 .q-scroll-participantes-class {
-  height: 18vh;
+  height: 15vh;
   width: 30vw;
   margin: auto;
 }
@@ -187,23 +187,5 @@ onMounted(() => {
   .q-scroll-participantes-class {
     width: 90vw;
   }
-}
-
-.q-card-color-primary-dark-card {
-  background-color: #121925;
-}
-
-.q-card-color-primary-light-card {
-  background-color: #121925;
-  color: white;
-}
-
-.q-card-color-secondary-dark-card {
-  background-color: $primary;
-}
-
-.q-card-color-secondary-light-card {
-  background-color: #d3def1;
-  color: black;
 }
 </style>

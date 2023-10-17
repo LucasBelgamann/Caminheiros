@@ -1,6 +1,6 @@
 <template>
   <div class="row items-center justify-center" style="height: 40vh">
-    <q-card class="q-select-group-card-class">
+    <q-card flat class="q-select-group-card-class">
       <q-card-section :class="mode
         ? 'q-card-color-primary-dark-card'
         : 'q-card-color-primary-light-card'
@@ -8,7 +8,7 @@
         <div class="text-subtitle2" style="margin-bottom: 15px">
           Escolha o grupo que deseja ingressar
         </div>
-        <q-select behavior="default" filled standout v-model="groupName" :options="data.allGroups.map((user) => ({
+        <q-select behavior="dialog" filled standout v-model="groupName" :options="data.allGroups.map((user) => ({
           label: user.name,
           value: user.id.toString(),
         }))
@@ -24,10 +24,11 @@
         ? 'q-card-color-secondary-dark-card'
         : 'q-card-color-secondary-light-card'
         ">
-        <q-btn icon="chevron_right" :disable="disable" style="padding: 10px" dense round @click="handleGroupSelect" :class="mode
-          ? 'q-card-color-primary-dark-card'
-          : 'q-card-color-primary-light-card'
-          " />
+        <q-btn icon="chevron_right" :disable="disable" style="padding: 10px" dense round @click="handleGroupSelect"
+          :class="mode
+            ? 'q-card-color-primary-dark-card'
+            : 'q-card-color-primary-light-card'
+            " />
       </q-card-actions>
     </q-card>
   </div>
@@ -139,23 +140,5 @@ onMounted(() => {
     border-radius: 15px;
     width: 80vw;
   }
-}
-
-.q-card-color-primary-dark-card {
-  background-color: #121925;
-}
-
-.q-card-color-primary-light-card {
-  background-color: #121925;
-  color: white;
-}
-
-.q-card-color-secondary-dark-card {
-  background-color: $primary;
-}
-
-.q-card-color-secondary-light-card {
-  background-color: #d3def1;
-  color: black;
 }
 </style>

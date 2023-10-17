@@ -107,22 +107,4 @@ onMounted(() => {
     max-width: 80vw;
   }
 }
-
-.q-card-color-primary-dark-card {
-  background-color: #121925;
-}
-
-.q-card-color-primary-light-card {
-  background-color: #121925;
-  color: white;
-}
-
-.q-card-color-secondary-dark-card {
-  background-color: $primary;
-}
-
-.q-card-color-secondary-light-card {
-  background-color: #d3def1;
-  color: black;
-}
 </style>

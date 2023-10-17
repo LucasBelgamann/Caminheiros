@@ -26,7 +26,7 @@
       <q-btn
         flat
         icon="person"
-        color="secondary"
+        color="grey-5"
         :label="users.data.usersLength"
       />
       <q-btn
@@ -114,14 +114,14 @@ const handleFrequencyChange = async (userId: number, newFrequency: number) => {
 
 const formatMeetingTime = (dateString: string) => {
   const dateObject = new Date(dateString);
-  const localDate = new Date(
-    dateObject.getTime() + dateObject.getTimezoneOffset() * 60000
-  );
-  localDate.setHours(localDate.getHours() + 2);
-  const hora = localDate.getHours();
-  const minutos = localDate.getMinutes();
+  dateObject.setHours(dateObject.getHours() + 2);
+
+  const hora = dateObject.getHours().toString().padStart(2, '0');
+  const minutos = dateObject.getMinutes().toString().padStart(2, '0');
+
   return `${hora}:${minutos}`;
 };
+
 
 onMounted(() => {
   users.fetchMeetings();

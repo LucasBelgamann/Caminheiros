@@ -82,22 +82,4 @@ onMounted(() => {
     border-radius: 15px;
   }
 }
-
-.q-card-color-primary-dark-card {
-  background-color: #191825;
-}
-
-.q-card-color-primary-light-card {
-  background-color: #080E1A;
-  color: white;
-}
-
-.q-card-color-secondary-dark-card {
-  background-color: #865DFF;
-}
-
-.q-card-color-secondary-light-card {
-  background-color: #e7eefa;
-  color: black;
-}
 </style>

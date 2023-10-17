@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-header class="row justify-around" style="background-color: transparent">
       <q-toolbar class="q-toolbar-class">
-        <q-toolbar-title v-if="$route.path !== '/home' && $route.path !== '/data'">
+        <q-toolbar-title v-if="$route.path !== '/home' && $route.path !== '/data' && $route.path !== '/user'">
           <span :class="mode ? 'text-white' : 'text-black'" class="text-weight-thin">Grupo,</span><br />
           <span :class="mode ? 'text-white' : 'text-black'" class="text-weight-medium">{{ data.groupName }}</span>
         </q-toolbar-title>
@@ -12,14 +12,15 @@
           <span :class="mode ? 'text-white' : 'text-black'" class="text-weight-medium">{{ data.userName }}</span>
         </q-toolbar-title>
 
-        <q-btn v-if="$route.path !== '/home'" style="padding: 10px" dense round icon="chevron_left" :class="mode
+        <q-btn v-if="$route.path !== '/home' && $route.path !== '/user'" style="padding: 10px" dense round
+          icon="chevron_left" :class="mode
             ? 'q-card-color-primary-dark-card'
             : 'q-card-color-primary-light-card'
-          " aria-label="Menu" to="/home" />
+            " aria-label="Menu" :to="data.role === 'Participante' ? '/user' : '/home'" />
 
         <q-btn v-else style="padding: 10px" dense round icon="menu" :class="mode
-            ? 'q-card-color-primary-dark-card'
-            : 'q-card-color-primary-light-card'
+          ? 'q-card-color-primary-dark-card'
+          : 'q-card-color-primary-light-card'
           " aria-label="Menu" @click="toggleRightDrawer" />
       </q-toolbar>
     </q-header>
@@ -28,17 +29,40 @@
       <q-list>
         <q-item-label header> Barra de Navegação </q-item-label>
         <div :class="mode
-            ? 'q-card-color-primary-dark-card'
-            : 'q-card-color-primary-light-card'
+          ? 'q-card-color-primary-dark-card'
+          : 'q-card-color-primary-light-card'
           ">
           <q-toggle v-model="darkMode" color="black" checked-icon="light_mode" unchecked-icon="mode_night" />
         </div>
-        <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+        <q-item v-if="data.role === 'Administrador' || data.role === 'Facilitador'" clickable to="/register-group">
+          <q-item-section avatar>
+            <q-icon name="add" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Criar um novo Grupo</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable to="/data">
+          <q-item-section avatar>
+            <q-icon name="person" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Meus dados</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-if="data.role === 'Administrador' || data.role === 'Facilitador'" clickable to="/notifications">
+          <q-item-section avatar>
+            <q-icon name="notifications" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Avisos</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable @click="handleLogout">
           <q-item-section avatar>
             <q-icon name="logout" />
           </q-item-section>
-
           <q-item-section>
             <q-item-label>Sair</q-item-label>
           </q-item-section>
@@ -47,8 +71,8 @@
     </q-drawer>
 
     <q-footer reveal :class="mode
-        ? 'q-card-color-primary-dark-card'
-        : 'q-card-color-primary-light-card'
+      ? 'q-card-color-primary-dark-card'
+      : 'q-card-color-primary-light-card'
       " class="text-overline">
       <q-toolbar>
         <q-toolbar-title class="text-center" style="font-size: 10px">
@@ -65,9 +89,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue';
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
 import { useQuasar } from 'quasar';
 
 const data: {
@@ -84,24 +105,6 @@ const data: {
 
 const $q = useQuasar();
 const darkMode = ref(false);
-
-const essentialLinks: EssentialLinkProps[] = [
-  {
-    title: 'Criar um novo Grupo',
-    icon: 'add',
-    link: '/register-group',
-  },
-  {
-    title: ' Meus Dados',
-    icon: 'person',
-    link: '/data',
-  },
-  {
-    title: 'Avisos',
-    icon: 'notifications',
-    link: '/notifications',
-  },
-];
 
 const handleLogout = () => {
   localStorage.removeItem('userData');
