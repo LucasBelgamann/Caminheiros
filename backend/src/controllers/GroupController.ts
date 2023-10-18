@@ -58,29 +58,34 @@ class GroupController {
     }
   };
 
-  public createGroup = async (req: Request, res: Response) => {
-    const groupData = Array.isArray(req.body) ? req.body : [req.body];
+public createGroup = async (req: Request, res: Response) => {
+  const groupData = Array.isArray(req.body) ? req.body : [req.body];
 
-    try {
-      for (const groupObject of groupData) {
-        const { name, description, studyDays, hour, modality, userId } = groupObject;
+  try {
+    for (const groupObject of groupData) {
+      const { name, description, studyDays, hour, modality, userId } = groupObject;
 
-        await this.groupService.createGroup(
-          name,
-          description,
-          studyDays,
-          hour,
-          modality,
-          userId
-        );
+      if (!name || !description || !studyDays || !hour || !modality || !userId) {
+        return res.status(400).json({ message: "Todos os campos são obrigatórios." });
       }
 
-      return res.status(200).json({ message: "Group created successfully." });
-    } catch (error) {
-      console.error("Error during Group creation:", error);
-      return res.status(500).json({ message: "Internal server error." });
+      await this.groupService.createGroup(
+        name,
+        description,
+        studyDays,
+        hour,
+        modality,
+        userId
+      );
     }
-  };
+
+    return res.status(200).json({ message: "Grupo criado com sucesso." });
+  } catch (error) {
+    console.error("Erro durante a criação do Grupo:", error);
+    return res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
 
   public createWarning = async (req: Request, res: Response) => {
     const { description, groupId } = req.body;

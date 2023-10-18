@@ -15,6 +15,7 @@ router.post('/create-user', userController.createUser);
 router.get('/login', userController.login);
 router.post('/login/auth', userController.auth);
 router.get('/inactives/:id', userController.getInativeUsers);
+router.put('/update-user-data', userController.updateUserDetails);
 
 
 export default router;

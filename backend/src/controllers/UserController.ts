@@ -45,12 +45,19 @@ class UserController {
       for (const userObject of userData) {
         const { name, phone, email, password, role } = userObject;
 
-        const user = await this.userService.findUserByEmailAndPassword(email);
-
-        if (user) {
+        if (!name || !phone || !email || !password || !role) {
           return res
             .status(400)
-            .json({ message: "Já existe um usuário com o seguinte email" });
+            .json({ message: "Todos os campos são obrigatórios." });
+        }
+
+        const existingUser = await this.userService.findUserByEmailAndPassword(
+          email
+        );
+        if (existingUser) {
+          return res
+            .status(400)
+            .json({ message: "Já existe um usuário com o seguinte email." });
         }
 
         const hashedPassword = await hash(password, 10);
@@ -64,10 +71,10 @@ class UserController {
         );
       }
 
-      return res.status(200).json({ message: "Users created successfully." });
+      return res.status(200).json({ message: "Usuários criados com sucesso." });
     } catch (error) {
-      console.error("Error during user creation:", error);
-      return res.status(500).json({ message: "Internal server error." });
+      console.error("Erro durante a criação de usuário:", error);
+      return res.status(500).json({ message: "Erro interno do servidor." });
     }
   };
 
@@ -155,6 +162,24 @@ class UserController {
     const groupId = Number(req.params.id);
     const result = await this.userService.getInativeUsers(groupId);
     return res.status(200).json(result);
+  };
+
+  public updateUserDetails = async (req: Request, res: Response) => {
+    const { userId, name, phone, email } = req.body;
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "ID de usuário inválido." });
+    }
+
+    try {
+      await this.userService.updateUserDetails(userId, name, phone, email);
+      return res
+        .status(200)
+        .json({ message: "Usuário atualizado com sucesso." });
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+      return res.status(500).json({ message: "Falha ao atualizar usuário." });
+    }
   };
 }
 

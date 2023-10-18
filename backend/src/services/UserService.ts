@@ -1,7 +1,7 @@
 import { IUser } from "../interfaces/IUser";
 import connection from "../models/connection";
 import UserModel from "../models/UserModel";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
 class UserService {
   public model: UserModel;
@@ -9,7 +9,6 @@ class UserService {
   constructor() {
     this.model = new UserModel(connection);
   }
-
 
   public async getAllUsers(): Promise<Array<IUser>> {
     const result = await this.model.getAllUsers();
@@ -21,7 +20,10 @@ class UserService {
     return result;
   }
 
-  public async getUsersExcludedFromGroup(groupId: number, userId: number): Promise<IUser[]> {
+  public async getUsersExcludedFromGroup(
+    groupId: number,
+    userId: number
+  ): Promise<IUser[]> {
     const result = await this.model.getUsersExcludedFromGroup(groupId, userId);
     return result;
   }
@@ -38,31 +40,42 @@ class UserService {
     password: string,
     role: "user" | "admin"
   ): Promise<void> {
-    await this.model.createUser(
-      name,
-      phone,
-      email,
-      password,
-      role
-    );
+    await this.model.createUser(name, phone, email, password, role);
   }
 
-  public async insertUserInGroup(groupId: number, userId: number): Promise<void> {
-    await this.model.insertUserInGroup(groupId, userId)
+  public async insertUserInGroup(
+    groupId: number,
+    userId: number
+  ): Promise<void> {
+    await this.model.insertUserInGroup(groupId, userId);
   }
 
-  public async deleteUserInGroup(groupId: number, userId: number): Promise<void> {
-    await this.model.deleteUserInGroup(groupId, userId)
+  public async deleteUserInGroup(
+    groupId: number,
+    userId: number
+  ): Promise<void> {
+    await this.model.deleteUserInGroup(groupId, userId);
   }
 
-  public async findUserByEmailAndPassword(email: string): Promise<IUser | null> {
-    const user = await this.model.findUserByEmailAndPassword(email)
+  public async findUserByEmailAndPassword(
+    email: string
+  ): Promise<IUser | null> {
+    const user = await this.model.findUserByEmailAndPassword(email);
     return user;
   }
 
   public async getInativeUsers(groupId: number): Promise<Array<IUser>> {
     const result = await this.model.getInativeUsers(groupId);
     return result;
+  }
+
+  public async updateUserDetails(
+    userId: number,
+    name: string,
+    phone: string,
+    email: string
+  ): Promise<void> {
+    await this.model.updateUserDetails(userId, name, phone, email);
   }
 }
 
