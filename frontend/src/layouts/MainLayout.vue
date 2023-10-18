@@ -32,7 +32,7 @@
           ? 'q-card-color-primary-dark-card'
           : 'q-card-color-primary-light-card'
           ">
-          <q-toggle v-model="darkMode" color="black" checked-icon="light_mode" unchecked-icon="mode_night" />
+          <q-toggle v-model="darkMode" color="secondary" checked-icon="light_mode" unchecked-icon="mode_night" />
         </div>
         <q-item v-if="data.role === 'Administrador' || data.role === 'Facilitador'" clickable to="/register-group">
           <q-item-section avatar>
