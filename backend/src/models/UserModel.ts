@@ -195,13 +195,12 @@ class LoginModel {
 
   public async updateUserDetails(
     userId: number,
-    name: string,
     phone: string,
     email: string
   ): Promise<void> {
     try {
       await this.connection.execute(
-        "UPDATE caminheirosdb.Users SET name = ?, phone = ?, email = ? WHERE id = ?",
+        "UPDATE caminheirosdb.Users SET phone = ?, email = ? WHERE id = ?",
         [name, phone, email, userId]
       );
     } catch (error) {

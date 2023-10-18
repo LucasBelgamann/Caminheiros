@@ -71,11 +71,10 @@ class UserService {
 
   public async updateUserDetails(
     userId: number,
-    name: string,
     phone: string,
     email: string
   ): Promise<void> {
-    await this.model.updateUserDetails(userId, name, phone, email);
+    await this.model.updateUserDetails(userId, phone, email);
   }
 }
 

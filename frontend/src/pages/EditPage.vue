@@ -18,17 +18,6 @@
     </div>
     <div v-for="user in data.users" :key="user.id">
       <div class="cursor-pointer text-caption" style="margin-bottom: 10px">
-        <q-icon name="person" style="font-size: 25px; margin-right: 10px" />
-        {{ data.name === '' ? user.name : data.name }}
-        <q-popup-edit v-model="user.name" class="" v-slot="scope">
-          <q-input v-model="data.name" dense autofocus counter @keyup.enter="scope.set">
-            <template v-slot:append>
-              <q-icon name="edit" />
-            </template>
-          </q-input>
-        </q-popup-edit>
-      </div>
-      <div class="cursor-pointer text-caption" style="margin-bottom: 10px">
         <q-icon name="mail" style="font-size: 25px; margin-right: 10px" />
         {{ data.email === '' ? user.email : data.email }}
         <q-popup-edit v-model="user.email" class="" v-slot="scope">
@@ -73,8 +62,26 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat color="positive" v-close-popup label="Confirmar" />
+          <q-btn flat color="positive" v-close-popup label="Confirmar" @click="updateUsers" />
           <q-btn flat color="primary" label="Cancelar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="data.dialogVisible">
+      <q-card flat>
+        <q-card-section>
+          <div class="text-h6" :style="data.dialogType === 'success' ? 'color: #00C853;' : 'color: #C10015;'">
+            {{ data.dialogType === 'success' ? 'Sucesso' : 'Erro' }}
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          {{ data.dialogType === 'success' ? 'Dados atualizados com sucesso!' : data.error }}
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup @click="data.dialogVisible = false" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -91,18 +98,22 @@ const data: {
   users: User[];
   label: string;
   darkMode: boolean;
-  name: string;
   email: string;
   phone: string;
   inception: boolean;
+  error: string,
+  dialogVisible: boolean,
+  dialogType: string
 } = reactive({
   users: [],
   label: 'Click me',
   darkMode: ref(false),
-  name: '',
   email: '',
   phone: '',
   inception: false,
+  error: '',
+  dialogVisible: false,
+  dialogType: ''
 });
 
 const $q = useQuasar();
@@ -117,10 +128,40 @@ const fetchUsers = async () => {
       const response = await axios.get(
         `http://localhost:3001/users/${user.id}`
       );
-
       data.users = response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching users:', error);
+      if (error.response && error.response.data) {
+        data.error = error.response.data.message;
+        data.dialogVisible = true;
+      }
+    }
+  }
+};
+
+const updateUsers = async () => {
+  const userData = localStorage.getItem('userData');
+  if (userData) {
+    const user = JSON.parse(userData);
+    const userFromData = data.users[0];
+    const newData = {
+      userId: user.id,
+      phone: data.phone || (userFromData.phone || null),
+      email: data.email || (userFromData.email || null),
+    };
+    try {
+      const response = await axios.put(
+        'http://localhost:3001/users/update-user-data',
+        newData
+      );
+      data.users = response.data;
+      data.email = '';
+      data.phone = '';
+      data.dialogType = 'success';
+      data.dialogVisible = true;
+      fetchUsers();
+    } catch (error) {
+      console.error('Erro ao atualizar dados:', error);
     }
   }
 };

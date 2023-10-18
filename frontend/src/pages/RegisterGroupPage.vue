@@ -19,11 +19,29 @@
         </template>
       </q-select>
 
+      <q-dialog v-model="data.dialogVisible">
+        <q-card flat>
+          <q-card-section>
+            <div class="text-h6" :style="data.dialogType === 'success' ? 'color: #00C853;' : 'color: #C10015;'">
+              {{ data.dialogType === 'success' ? 'Sucesso' : 'Erro' }}
+            </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            {{ data.dialogType === 'success' ? 'Grupo criado com sucesso!' : data.error }}
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="OK" color="primary" v-close-popup @click="data.dialogVisible = false" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <div class="row justify-center">
         <q-btn label="Cadastrar" :class="mode
           ? 'q-card-color-secondary-dark-card'
           : 'q-card-color-secondary-light-card'
-          " :disable="data.disable" @click="handleCreate" />
+          " @click="handleCreate" />
       </div>
     </div>
   </div>
@@ -46,10 +64,12 @@ const data: {
   hour: string;
   modality: string;
   userName: string;
-  disable: boolean;
   options: string[];
   daysWeek: string[];
   modalityOptions: string[];
+  error: string;
+  dialogVisible: boolean;
+  dialogType: string;
 } = reactive({
   users: [],
   darkMode: false,
@@ -59,7 +79,6 @@ const data: {
   hour: '',
   modality: '',
   userName: '',
-  disable: false,
   options: ['Participante', 'Facilitador', 'Administrador'],
   daysWeek: [
     'Domingos',
@@ -70,7 +89,10 @@ const data: {
     'Sextas-feiras',
     'Sábados'
   ],
-  modalityOptions: ['Online', 'Presencial']
+  modalityOptions: ['Online', 'Presencial'],
+  error: '',
+  dialogVisible: false,
+  dialogType: ''
 });
 
 const selectedUserId = ref<number | null>(null);
@@ -79,9 +101,6 @@ const mode = computed(() => $q.dark.isActive);
 const handleUserSelection = (value: { label: string; value: number }) => {
   selectedUserId.value = value.value;
   data.userName = value.label;
-  if (data.disable && value.label.length) {
-    data.disable = false;
-  }
 };
 
 const handleCreate = async () => {
@@ -94,25 +113,23 @@ const handleCreate = async () => {
     userId: selectedUserId.value
   };
 
-  const isDataValid = Object.values(newGroup).every((value) => value !== '');
-
   try {
-    if (!isDataValid) {
-      console.log('Alguns campos estão vazios. Não foi possível criar o Grupo.');
-      data.disable = true;
-    } else {
-      await axios.post('http://localhost:3001/groups/create-group', newGroup);
-      console.log('Group created successfully!');
-      data.groupName = '';
-      data.description = '';
-      data.studyDays = '';
-      data.hour = '';
-      data.modality = '';
-      data.userName = '';
-      data.disable = true
-    }
-  } catch (error) {
+    await axios.post('http://localhost:3001/groups/create-group', newGroup);
+    console.log('Group created successfully!');
+    data.groupName = '';
+    data.description = '';
+    data.studyDays = '';
+    data.hour = '';
+    data.modality = '';
+    data.userName = '';
+    data.dialogType = 'success';
+    data.dialogVisible = true;
+  } catch (error: any) {
     console.error('Error creating Group:', error);
+    if (error.response && error.response.data) {
+      data.error = error.response.data.message;
+      data.dialogVisible = true;
+    }
   }
 };
 

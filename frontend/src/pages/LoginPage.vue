@@ -19,11 +19,22 @@
         </template>
       </q-input>
 
-      <div style="margin: 20px auto; text-align: center">
-        <span class="error-response" v-if="data.errorMessage">{{
-          data.errorMessage
-        }}</span>
-      </div>
+
+        <q-dialog v-model="data.alert">
+          <q-card flat>
+            <q-card-section>
+              <div class="text-h6" style="color: #C10015;">Erro</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+              {{ data.errorMessage }}
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn flat label="OK" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       <div style="margin: 20px auto; text-align: center">
         <span>Esqueceu sua senha?</span>
       </div>
@@ -58,12 +69,14 @@ const data: {
   errorMessage: string;
   darkMode: boolean;
   isPwd: boolean;
+  alert: boolean;
 } = reactive({
   password: '',
   email: '',
   errorMessage: '',
   darkMode: false,
   isPwd: true,
+  alert: false
 });
 
 const mode = computed(() => $q.dark.isActive);
@@ -87,6 +100,7 @@ const handleLogin = async () => {
     console.error('Erro no login:', error);
     if (error.response && error.response.data) {
       data.errorMessage = error.response.data.message;
+      data.alert = true;
     }
   }
 };

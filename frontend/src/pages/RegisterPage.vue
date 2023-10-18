@@ -14,8 +14,28 @@
         </template>
       </q-input>
 
-      <q-select v-if="data.role !== 'Administrador'" filled v-model="data.typeUser" :options="data.options" label="Tipo do usuário" class="in-register"
+      <q-select v-if="data.role !== 'Administrador'" filled v-model="data.typeUser" :options="data.options"
+        label="Tipo do usuário" class="in-register"
         :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" />
+
+      <q-dialog v-model="data.dialogVisible">
+        <q-card flat>
+          <q-card-section>
+            <div class="text-h6" :style="data.dialogType === 'success' ? 'color: #00C853;' : 'color: #C10015;'">
+              {{ data.dialogType === 'success' ? 'Sucesso' : 'Erro' }}
+            </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            {{ data.dialogType === 'success' ? 'Usuário criado com sucesso!' : data.error }}
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="OK" color="primary" v-close-popup @click="data.dialogVisible = false" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
 
       <div class="row justify-center">
         <q-btn label="Cadastrar" :disable="data.disable" @click="handleCadastro" :class="mode
@@ -45,6 +65,9 @@ const data: {
   typeUser: string;
   options: string[];
   disable: boolean;
+  error: string;
+  dialogVisible: boolean;
+  dialogType: string
 } = reactive({
   name: '',
   phone: '',
@@ -55,7 +78,10 @@ const data: {
   darkMode: false,
   typeUser: '',
   options: ['Participante', 'Facilitador', 'Administrador'],
-  disable: false
+  disable: false,
+  error: '',
+  dialogVisible: false,
+  dialogType: ''
 });
 
 const mode = computed(() => $q.dark.isActive);
@@ -69,18 +95,24 @@ const handleCadastro = async () => {
     role: data.role === '' ? 'Participante' : data.role,
   };
 
-  const isDataValid = Object.values(newUser).every((value) => value !== '');
 
   try {
-    if (!isDataValid) {
-      console.log('Alguns campos estão vazios. Não foi possível criar o usuário.');
-      data.disable = true;
-    } else {
-      await axios.post('http://localhost:3001/users/create-user', newUser);
-      console.log('User created successfully!');
-    }
-  } catch (error) {
+    await axios.post('http://localhost:3001/users/create-user', newUser);
+    console.log('User created successfully!');
+    data.name = '';
+    data.phone = '';
+    data.email = '';
+    data.password = '';
+    data.role = '';
+    data.typeUser = '';
+    data.dialogType = 'success';
+    data.dialogVisible = true;
+  } catch (error: any) {
     console.error('Error creating user:', error);
+    if (error.response && error.response.data) {
+      data.error = error.response.data.message;
+      data.dialogVisible = true;
+    }
   }
 };
 

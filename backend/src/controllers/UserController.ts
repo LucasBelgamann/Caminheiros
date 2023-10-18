@@ -165,14 +165,14 @@ class UserController {
   };
 
   public updateUserDetails = async (req: Request, res: Response) => {
-    const { userId, name, phone, email } = req.body;
+    const { userId, phone, email } = req.body;
 
     if (isNaN(userId)) {
       return res.status(400).json({ message: "ID de usuário inválido." });
     }
 
     try {
-      await this.userService.updateUserDetails(userId, name, phone, email);
+      await this.userService.updateUserDetails(userId, phone, email);
       return res
         .status(200)
         .json({ message: "Usuário atualizado com sucesso." });
