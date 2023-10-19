@@ -201,7 +201,7 @@ class LoginModel {
     try {
       await this.connection.execute(
         "UPDATE caminheirosdb.Users SET phone = ?, email = ? WHERE id = ?",
-        [name, phone, email, userId]
+        [phone, email, userId]
       );
     } catch (error) {
       console.error("Error updating user details:", error);

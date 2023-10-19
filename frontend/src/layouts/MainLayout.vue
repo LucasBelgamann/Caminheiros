@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="row justify-around" style="background-color: transparent">
+    <q-header class="row justify-around" :style="{ backgroundColor: mode ? '#121212' : 'white' }">
       <q-toolbar class="q-toolbar-class">
         <q-toolbar-title v-if="$route.path !== '/home' && $route.path !== '/data' && $route.path !== '/user'">
           <span :class="mode ? 'text-white' : 'text-black'" class="text-weight-thin">Grupo,</span><br />
