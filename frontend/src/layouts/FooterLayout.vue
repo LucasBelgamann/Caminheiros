@@ -33,7 +33,7 @@
     </q-footer>
 
     <q-page-sticky
-      v-if="$route.path !== '/' && $route.path !== '/groups'"
+      v-if="$route.path !== '/' && $route.path !== '/groups' && $route.path !== '/password'"
       position="bottom-right"
       :offset="[18, 18]"
     >
