@@ -208,6 +208,21 @@ class LoginModel {
       throw error;
     }
   }
+
+  public async updateUserPassword(
+    password: string,
+    userId: number,
+  ): Promise<void> {
+    try {
+      await this.connection.execute(
+        "UPDATE caminheirosdb.Users SET password = ? WHERE id = ?",
+        [password, userId]
+      );
+    } catch (error) {
+      console.error("Error updating user details:", error);
+      throw error;
+    }
+  }
 }
 
 export default LoginModel;

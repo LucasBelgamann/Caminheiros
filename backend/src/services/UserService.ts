@@ -76,6 +76,13 @@ class UserService {
   ): Promise<void> {
     await this.model.updateUserDetails(userId, phone, email);
   }
+
+  public async updateUserPassword(
+    password: string,
+    userId: number
+  ): Promise<void> {
+    await this.model.updateUserPassword(password, userId);
+  }
 }
 
 export default UserService;

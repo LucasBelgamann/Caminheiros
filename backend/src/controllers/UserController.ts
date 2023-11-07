@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import UserService from "../services/UserService";
 import { compare, hash } from "bcryptjs";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
 
 class UserController {
   constructor(private userService = new UserService()) {}
@@ -179,6 +181,77 @@ class UserController {
     } catch (error) {
       console.error("Erro ao atualizar usuário:", error);
       return res.status(500).json({ message: "Falha ao atualizar usuário." });
+    }
+  };
+
+  public updateUserPassword = async (req: Request, res: Response) => {
+    const { password, userId } = req.body;
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "ID de usuário inválido." });
+    }
+
+    try {
+      const hashedPassword = await hash(password, 10);
+      await this.userService.updateUserPassword(hashedPassword, userId);
+      return res
+        .status(200)
+        .json({ message: "Usuário atualizado com sucesso." });
+    } catch (error) {
+      console.error("Erro ao atualizar senha:", error);
+      return res.status(500).json({ message: "Falha ao atualizar senha." });
+    }
+  };
+
+  public sendPasswordResetEmail = async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    try {
+      const existingUser = await this.userService.findUserByEmailAndPassword(
+        email
+      );
+
+      if (!existingUser) {
+        return res.status(400).json({ message: "Usuário não encontrado." });
+      }
+
+      const token = crypto.randomBytes(20).toString("hex");
+      const resetLink = `http://seusite.com/reset-password?token=${token}`;
+
+      const transporter = nodemailer.createTransport({
+        service: "Hotmail",
+        auth: {
+          user: "caminheirosDoBem1@hotmail.com",
+          pass: "caminheiros0523",
+        },
+      });
+
+      const mailOptions = {
+        from: "caminheirosDoBem1@hotmail.com",
+        to: email,
+        subject: "Solicitação de Redefinição de Senha",
+        text: `Clique no link a seguir para redefinir sua senha: ${resetLink}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).json({
+            message: "Erro ao enviar o e-mail de redefinição de senha",
+          });
+        } else {
+          console.log(`E-mail de redefinição de senha enviado para: ${email}`);
+          return res.status(200).json({
+            message: "E-mail de redefinição de senha enviado com sucesso",
+          });
+        }
+      });
+    } catch (error) {
+      console.error(
+        "Erro durante o envio de e-mail de redefinição de senha:",
+        error
+      );
+      return res.status(500).json({ message: "Erro interno do servidor" });
     }
   };
 }

@@ -16,6 +16,7 @@ router.get('/login', userController.login);
 router.post('/login/auth', userController.auth);
 router.get('/inactives/:id', userController.getInativeUsers);
 router.put('/update-user-data', userController.updateUserDetails);
-
+router.post('/reset-password-request', userController.sendPasswordResetEmail);
+router.post('/update-user-password', userController.updateUserPassword);
 
 export default router;
