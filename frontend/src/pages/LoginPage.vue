@@ -10,22 +10,6 @@
         </template>
       </q-input>
 
-
-      <q-dialog v-model="data.alert">
-        <q-card flat>
-          <q-card-section>
-            <div class="text-h6" style="color: #C10015;">Erro</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            {{ data.errorMessage }}
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="OK" color="primary" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
       <div style="margin: 20px auto; text-align: center">
         <span @click="handlePassword">Esqueceu sua senha?</span>
       </div>
@@ -82,19 +66,15 @@ const $router = useRouter();
 const data: {
   password: string;
   email: string;
-  errorMessage: string;
   darkMode: boolean;
   isPwd: boolean;
-  alert: boolean;
   forgotPass: boolean;
   submitting: boolean,
 } = reactive({
   password: '',
   email: '',
-  errorMessage: '',
   darkMode: false,
   isPwd: true,
-  alert: false,
   forgotPass: false,
   submitting: false,
 });
@@ -119,8 +99,10 @@ const handleLogin = async () => {
   } catch (error: any) {
     console.error('Erro no login:', error);
     if (error.response && error.response.data) {
-      data.errorMessage = error.response.data.message;
-      data.alert = true;
+      $q.notify({
+        type: 'negative',
+        message: error.response.data.message,
+      });
     }
   }
 };
@@ -147,8 +129,10 @@ const submitForm = async () => {
   } catch (error: any) {
     console.error('Erro ao enviar a solicitação de redefinição de senha:', error);
     if (error.response && error.response.data) {
-      data.errorMessage = error.response.data.message;
-      data.alert = true;
+      $q.notify({
+        type: 'negative',
+        message: error.response.data.message,
+      });
       data.submitting = false;
     }
   }

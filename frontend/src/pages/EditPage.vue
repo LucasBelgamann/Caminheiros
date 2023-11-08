@@ -1,20 +1,19 @@
 <template>
   <div class="q-container-search-history">
     <div>
-      <div style="border-radius: 5px; padding: 10px;" class="row items-center" :class="mode
-        ? 'q-card-color-secondary-dark-card'
-        : 'q-card-color-secondary-light-card'
+      <div style="border-radius: 5px; padding: 10px" class="row items-center" :class="mode
+          ? 'q-card-color-secondary-dark-card'
+          : 'q-card-color-secondary-light-card'
         ">
-        <q-icon name="badge" style="font-size: 40px; margin-right: 30px;" />
-        <div style="width: 65vw;">
-          <span class="text-h5">Meus dados</span> <br>
-          <span class="text-caption" style="font-size: 10px;">Para atualizar qualquer um dos seus dados, basta clicar
-            sobre o
-            dado que deseja
-            modificar.</span>
+        <q-icon name="badge" style="font-size: 40px; margin-right: 30px" />
+        <div style="width: 65vw">
+          <span class="text-h5">Meus dados</span> <br />
+          <span class="text-caption" style="font-size: 10px">Para atualizar qualquer um dos seus dados, basta clicar sobre
+            o
+            dado que deseja modificar.</span>
         </div>
       </div>
-      <q-separator inset style="margin: 10px 0;" />
+      <q-separator inset style="margin: 10px 0" />
     </div>
     <div v-for="user in data.users" :key="user.id">
       <div class="cursor-pointer text-caption" style="margin-bottom: 10px">
@@ -46,8 +45,8 @@
     </div>
     <div class="row justify-end">
       <q-btn label="Confirmar" :class="mode
-        ? 'q-card-color-primary-dark-card'
-        : 'q-card-color-primary-light-card'
+          ? 'q-card-color-primary-dark-card'
+          : 'q-card-color-primary-light-card'
         " @click="data.inception = true" />
     </div>
     <q-dialog v-model="data.inception">
@@ -67,24 +66,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
-    <q-dialog v-model="data.dialogVisible">
-      <q-card flat>
-        <q-card-section>
-          <div class="text-h6" :style="data.dialogType === 'success' ? 'color: #00C853;' : 'color: #C10015;'">
-            {{ data.dialogType === 'success' ? 'Sucesso' : 'Erro' }}
-          </div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          {{ data.dialogType === 'success' ? 'Dados atualizados com sucesso!' : data.error }}
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup @click="data.dialogVisible = false" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
@@ -101,9 +82,6 @@ const data: {
   email: string;
   phone: string;
   inception: boolean;
-  error: string,
-  dialogVisible: boolean,
-  dialogType: string
 } = reactive({
   users: [],
   label: 'Click me',
@@ -111,9 +89,6 @@ const data: {
   email: '',
   phone: '',
   inception: false,
-  error: '',
-  dialogVisible: false,
-  dialogType: ''
 });
 
 const $q = useQuasar();
@@ -132,8 +107,10 @@ const fetchUsers = async () => {
     } catch (error: any) {
       console.error('Error fetching users:', error);
       if (error.response && error.response.data) {
-        data.error = error.response.data.message;
-        data.dialogVisible = true;
+        $q.notify({
+          type: 'negative',
+          message: error.response.data.message,
+        });
       }
     }
   }
@@ -146,8 +123,8 @@ const updateUsers = async () => {
     const userFromData = data.users[0];
     const newData = {
       userId: user.id,
-      phone: data.phone || (userFromData.phone || null),
-      email: data.email || (userFromData.email || null),
+      phone: data.phone || userFromData.phone || null,
+      email: data.email || userFromData.email || null,
     };
     try {
       const response = await axios.put(
@@ -157,11 +134,17 @@ const updateUsers = async () => {
       data.users = response.data;
       data.email = '';
       data.phone = '';
-      data.dialogType = 'success';
-      data.dialogVisible = true;
+      $q.notify({
+        type: 'positive',
+        message: 'Dados atualizados com sucesso!',
+      });
       fetchUsers();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao atualizar dados:', error);
+      $q.notify({
+        type: 'negative',
+        message: error.response.data.message,
+      });
     }
   }
 };
@@ -199,7 +182,7 @@ onMounted(() => {
 
 <style lang="scss">
 .q-container-search-history {
-  width: 30VW;
+  width: 30vw;
   margin: auto;
 }
 
@@ -215,7 +198,7 @@ onMounted(() => {
 
 @media (max-width: $breakpoint-xs-max) {
   .q-container-search-history {
-    width: 90VW;
+    width: 90vw;
   }
 
   .q-search-history input {

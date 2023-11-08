@@ -1,5 +1,11 @@
 <template>
   <component v-if="!users.data.meetings.length" :is="ListCard" />
+   <div v-else-if="users.data.submitting" class="row items-center justify-center" style="height: 17vh;">
+        <q-spinner-facebook size="4em" :class="mode
+          ? 'q-spinner-color-secondary-dark-card'
+          : 'q-spinner-color-secondary-light-card'
+          " />
+      </div>
   <q-card
     v-else
     class="q-active-card-class"

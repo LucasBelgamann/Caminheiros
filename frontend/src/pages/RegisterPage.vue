@@ -18,25 +18,6 @@
         label="Tipo do usuário" class="in-register"
         :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" />
 
-      <q-dialog v-model="data.dialogVisible">
-        <q-card flat>
-          <q-card-section>
-            <div class="text-h6" :style="data.dialogType === 'success' ? 'color: #00C853;' : 'color: #C10015;'">
-              {{ data.dialogType === 'success' ? 'Sucesso' : 'Erro' }}
-            </div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            {{ data.dialogType === 'success' ? 'Usuário criado com sucesso!' : data.error }}
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="OK" color="primary" v-close-popup @click="data.dialogVisible = false" />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
-
       <div class="row justify-center">
         <q-btn label="Cadastrar" :disable="data.disable" @click="handleCadastro" :class="mode
           ? 'q-card-color-secondary-dark-card'
@@ -65,9 +46,6 @@ const data: {
   typeUser: string;
   options: string[];
   disable: boolean;
-  error: string;
-  dialogVisible: boolean;
-  dialogType: string
 } = reactive({
   name: '',
   phone: '',
@@ -79,9 +57,6 @@ const data: {
   typeUser: '',
   options: ['Participante', 'Facilitador', 'Administrador'],
   disable: false,
-  error: '',
-  dialogVisible: false,
-  dialogType: ''
 });
 
 const mode = computed(() => $q.dark.isActive);
@@ -105,13 +80,17 @@ const handleCadastro = async () => {
     data.password = '';
     data.role = '';
     data.typeUser = '';
-    data.dialogType = 'success';
-    data.dialogVisible = true;
+    $q.notify({
+      type: 'positive',
+      message: 'Usuário criado com sucesso!',
+    });
   } catch (error: any) {
     console.error('Error creating user:', error);
     if (error.response && error.response.data) {
-      data.error = error.response.data.message;
-      data.dialogVisible = true;
+      $q.notify({
+        type: 'negative',
+        message: error.response.data.message,
+      });
     }
   }
 };

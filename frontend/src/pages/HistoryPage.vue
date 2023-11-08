@@ -1,17 +1,17 @@
 <template>
   <div class="q-container-search-history">
     <div>
-      <div style="border-radius: 5px; padding: 10px;" class="row items-center" :class="mode
+      <div style="border-radius: 5px; padding: 10px" class="row items-center" :class="mode
         ? 'q-card-color-secondary-dark-card'
         : 'q-card-color-secondary-light-card'
         ">
-        <q-icon name="history" style="font-size: 50px; margin-right: 20px;" />
+        <q-icon name="history" style="font-size: 50px; margin-right: 20px" />
         <div>
-          <span class="text-h6">Histórico</span> <br>
+          <span class="text-h6">Histórico</span> <br />
           <span class="text-caption">Pesquise por um dia especifico de estudos.</span>
         </div>
       </div>
-      <q-separator inset style="margin: 10px 0;" />
+      <q-separator inset style="margin: 10px 0" />
       <div class="row justify-between items-center q-search-history">
         <q-input v-model="data.date" filled type="date" />
         <q-btn push round icon="search" :class="mode
@@ -20,17 +20,18 @@
           " @click="searchHistory" />
       </div>
     </div>
-    <div v-if="historyData.length === 0 && !data.errorMessage" class="no-search-results">
+    <div v-if="historyData.length === 0 && !data.submitting" class="no-search-results">
       <p style="height: 30vh; width: 80vw; margin: auto; text-align: center" class="row items-center justify-center">
         Por favor, informe a data desejada para localizarmos o seu registro.
       </p>
     </div>
-    <div v-else-if="data.errorMessage" class="error-container">
-      <div style="height: 30vh" class="row items-center justify-center">
-        <span class="error-response">{{ data.errorMessage }}</span>
-      </div>
+    <div v-else-if="data.submitting" class="row items-center justify-center" style="height: 35vh;">
+      <q-spinner-facebook size="4em" :class="mode
+        ? 'q-spinner-color-secondary-dark-card'
+        : 'q-spinner-color-secondary-light-card'
+        " />
     </div>
-    <q-card v-else-if="historyData.length > 0" flat style="border-radius: 15px; margin-top: 20px;" :class="mode
+    <q-card v-else-if="historyData.length > 0" flat style="border-radius: 15px; margin-top: 20px" :class="mode
       ? 'q-card-color-primary-dark-card'
       : 'q-card-color-primary-light-card'
       ">
@@ -62,7 +63,7 @@
 import { computed, reactive, ref } from 'vue';
 import axios from 'axios';
 import { useQuasar } from 'quasar';
-import { User } from '../interfaces/IUser'
+import { User } from '../interfaces/IUser';
 
 const historyData = ref<Array<User>>([]);
 const $q = useQuasar();
@@ -73,10 +74,12 @@ const data: {
   errorMessage: string;
   date: string;
   historyData: User[];
+  submitting: boolean;
 } = reactive({
   errorMessage: '',
   date: '',
   historyData: [],
+  submitting: false,
 });
 
 const searchHistory = async () => {
@@ -85,14 +88,24 @@ const searchHistory = async () => {
   if (userData !== null) {
     const user = JSON.parse(userData);
     try {
+      data.submitting = true;
+
       const response = await axios.get(
         `http://localhost:3001/meetings/history/${user.groupId}/date/${data.date}`
       );
       historyData.value = response.data;
+      if (response.status === 200) {
+        setTimeout(() => {
+          data.submitting = false;
+        }, 3000);
+      }
     } catch (error: any) {
       console.error('Error fetching history:', error);
       if (error.response && error.response.data) {
-        data.errorMessage = error.response.data.message;
+        $q.notify({
+          type: 'negative',
+          message: error.response.data.message,
+        });
       }
     }
   } else {
@@ -103,7 +116,7 @@ const searchHistory = async () => {
 
 <style lang="scss">
 .q-container-search-history {
-  width: 30VW;
+  width: 30vw;
   margin: auto;
 }
 
@@ -132,7 +145,7 @@ const searchHistory = async () => {
 
 @media (max-width: $breakpoint-xs-max) {
   .q-container-search-history {
-    width: 90VW;
+    width: 90vw;
   }
 
   .q-search-history input {

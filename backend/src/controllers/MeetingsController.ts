@@ -14,7 +14,12 @@ class MeetingController {
     }
 
     if (result.length > 0) {
-      return res.status(400).json({  message: "Já existe uma reunião para o mesmo grupo nas últimas duas horas." })
+      return res
+        .status(400)
+        .json({
+          message:
+            "Já existe uma reunião para o mesmo grupo nas últimas duas horas.",
+        });
     }
 
     try {
@@ -30,9 +35,13 @@ class MeetingController {
     const meetingId = parseInt(req.params.meetingId, 10);
     const userId = parseInt(req.params.userId, 10);
     const newFrequency = req.body.newFrequency;
-  
+
     try {
-      await this.meetingService.updateFrequency(meetingId, userId, newFrequency);
+      await this.meetingService.updateFrequency(
+        meetingId,
+        userId,
+        newFrequency
+      );
       res.status(200).json(newFrequency);
     } catch (error) {
       console.error("Error updating frequency:", error);
@@ -52,13 +61,21 @@ class MeetingController {
       return res.status(200).json(result);
     } catch (error) {
       console.error("Error getting recent meetings:", error);
-      return res.status(500).json({ message: "Failed to get recent meetings." });
+      return res
+        .status(500)
+        .json({ message: "Failed to get recent meetings." });
     }
   };
 
   public getHistory = async (req: Request, res: Response) => {
     const meetingDate = req.params.meetingDate;
     const groupId = Number(req.params.id);
+
+    if (!meetingDate) {
+      return res
+        .status(400)
+        .json({ message: "O campo de data deve ser preenchido." });
+    }
 
     if (isNaN(groupId)) {
       return res.status(400).json({ message: "Invalid groupId." });
@@ -67,7 +84,9 @@ class MeetingController {
     try {
       const result = await this.meetingService.getHistory(meetingDate, groupId);
       if (result.length === 0) {
-        return res.status(401).json({ message: "Nenhuma data correspondente." });
+        return res
+          .status(401)
+          .json({ message: "Nenhuma data correspondente." });
       }
       return res.status(200).json(result);
     } catch (error) {

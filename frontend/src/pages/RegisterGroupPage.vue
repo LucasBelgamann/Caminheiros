@@ -19,24 +19,6 @@
         </template>
       </q-select>
 
-      <q-dialog v-model="data.dialogVisible">
-        <q-card flat>
-          <q-card-section>
-            <div class="text-h6" :style="data.dialogType === 'success' ? 'color: #00C853;' : 'color: #C10015;'">
-              {{ data.dialogType === 'success' ? 'Sucesso' : 'Erro' }}
-            </div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            {{ data.dialogType === 'success' ? 'Grupo criado com sucesso!' : data.error }}
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="OK" color="primary" v-close-popup @click="data.dialogVisible = false" />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
       <div class="row justify-center">
         <q-btn label="Cadastrar" :class="mode
           ? 'q-card-color-secondary-dark-card'
@@ -67,9 +49,6 @@ const data: {
   options: string[];
   daysWeek: string[];
   modalityOptions: string[];
-  error: string;
-  dialogVisible: boolean;
-  dialogType: string;
 } = reactive({
   users: [],
   darkMode: false,
@@ -90,9 +69,6 @@ const data: {
     'Sábados'
   ],
   modalityOptions: ['Online', 'Presencial'],
-  error: '',
-  dialogVisible: false,
-  dialogType: ''
 });
 
 const selectedUserId = ref<number | null>(null);
@@ -122,13 +98,17 @@ const handleCreate = async () => {
     data.hour = '';
     data.modality = '';
     data.userName = '';
-    data.dialogType = 'success';
-    data.dialogVisible = true;
+    $q.notify({
+      type: 'positive',
+      message: 'Usuário criado com sucesso!',
+    });
   } catch (error: any) {
     console.error('Error creating Group:', error);
     if (error.response && error.response.data) {
-      data.error = error.response.data.message;
-      data.dialogVisible = true;
+      $q.notify({
+        type: 'negative',
+        message: error.response.data.message,
+      });
     }
   }
 };

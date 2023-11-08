@@ -211,6 +211,10 @@ class UserController {
         email
       );
 
+      if (!email.lengh) {
+        return res.status(400).json({ message: "O campo de e-mail deve ser preenchido." });
+      }
+
       if (!existingUser) {
         return res.status(400).json({ message: "Usuário não encontrado." });
       }
