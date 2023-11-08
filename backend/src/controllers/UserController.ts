@@ -5,7 +5,7 @@ import nodemailer from "nodemailer";
 import crypto from "crypto";
 
 class UserController {
-  constructor(private userService = new UserService()) {}
+  constructor(private userService = new UserService()) { }
 
   public getAllUsers = async (_req: Request, res: Response) => {
     const result = await this.userService.getAllUsers();
@@ -207,19 +207,27 @@ class UserController {
     const { email } = req.body;
 
     try {
-      const existingUser = await this.userService.findUserByEmailAndPassword(
-        email
-      );
-
-      if (!email.lengh) {
-        return res.status(400).json({ message: "O campo de e-mail deve ser preenchido." });
+      if (!email) {
+        return res
+          .status(400)
+          .json({ message: "O campo de e-mail deve ser preenchido." });
       }
+
+      const existingUser = await this.userService.findUserByEmailAndPassword(email);
 
       if (!existingUser) {
         return res.status(400).json({ message: "Usuário não encontrado." });
       }
 
       const token = crypto.randomBytes(20).toString("hex");
+
+      const expiration = new Date();
+      expiration.setHours(expiration.getHours() + 1);
+
+      const userId = existingUser.id;
+      
+      await this.userService.createPasswordResetToken(userId,  token, expiration);
+
       const resetLink = `http://seusite.com/reset-password?token=${token}`;
 
       const transporter = nodemailer.createTransport({
@@ -240,9 +248,9 @@ class UserController {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error(error);
-          return res.status(500).json({
-            message: "Erro ao enviar o e-mail de redefinição de senha",
-          });
+          return res
+            .status(500)
+            .json({ message: "Erro ao enviar o e-mail de redefinição de senha" });
         } else {
           console.log(`E-mail de redefinição de senha enviado para: ${email}`);
           return res.status(200).json({
@@ -258,6 +266,7 @@ class UserController {
       return res.status(500).json({ message: "Erro interno do servidor" });
     }
   };
+
 }
 
 export default UserController;

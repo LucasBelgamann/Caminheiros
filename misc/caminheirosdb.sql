@@ -58,3 +58,13 @@ CREATE TABLE caminheirosdb.Meetings_has_users (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+CREATE TABLE caminheirosdb.PasswordResetTokens (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  userId INTEGER,
+  token VARCHAR(255) NOT NULL,
+  expiration DATETIME NOT NULL,
+  FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

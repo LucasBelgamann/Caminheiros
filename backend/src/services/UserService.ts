@@ -83,6 +83,14 @@ class UserService {
   ): Promise<void> {
     await this.model.updateUserPassword(password, userId);
   }
+
+    public async createPasswordResetToken(
+    userId: any,
+    token: string,
+    expiration: Date
+  ): Promise<void> {
+    await this.model.createPasswordResetToken(userId, token, expiration);
+  }
 }
 
 export default UserService;

@@ -223,6 +223,24 @@ class LoginModel {
       throw error;
     }
   }
+
+  public async createPasswordResetToken(
+    userId: any,
+    token: string,
+    expiration: Date
+  ): Promise<void> {
+    try {
+      await this.connection.execute(
+        "INSERT INTO caminheirosdb.PasswordResetTokens (userId, token, expiration) VALUES (?, ?, ?) " +
+        "ON DUPLICATE KEY UPDATE token = VALUES(token), expiration = VALUES(expiration)",
+        [userId, token, expiration]
+      );
+    } catch (error) {
+      console.error("Error creating or updating token", error);
+      throw error;
+    }
+  }
+
 }
 
 export default LoginModel;
