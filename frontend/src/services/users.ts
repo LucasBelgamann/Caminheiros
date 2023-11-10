@@ -57,7 +57,7 @@ export default class Users {
           if (response.status === 200) {
             setTimeout(() => {
               this.data.submitting = false;
-            }, 2000);
+            }, 1000);
           }
         } else {
           throw new Error('Data not found');

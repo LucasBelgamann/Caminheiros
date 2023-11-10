@@ -8,9 +8,9 @@
         <div class="text-subtitle2" style="margin-bottom: 15px">
           Escolha o grupo que deseja ingressar
         </div>
-        <q-select behavior="dialog" filled standout v-model="groupName" :options="data.allGroups.map((user) => ({
-          label: user.name,
-          value: user.id.toString(),
+        <q-select behavior="dialog" filled standout v-model="groupName" :options="data.allGroups.map((group) => ({
+          label: group.name,
+          value: group.id.toString(),
         }))
           " :class="mode
     ? 'q-card-color-secondary-dark-card'
@@ -91,7 +91,6 @@ const fetchGroups = async () => {
 const handleGroupSelection = (value: { label: string; value: number }) => {
   groupId.value = value.value;
   groupName.value = value.label;
-  console.log(value.label);
 };
 
 const handleGroupSelect = () => {

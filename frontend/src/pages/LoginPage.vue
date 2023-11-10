@@ -15,10 +15,14 @@
       </div>
 
       <div class="row justify-center">
-        <q-btn label="Entrar" :class="mode
+        <q-btn type="submit" :loading="data.submitting" flat label="Entrar" :class="mode
           ? 'q-card-color-secondary-dark-card'
           : 'q-card-color-secondary-light-card'
-          " @click="handleLogin" />
+          " @click="handleLogin">
+          <template v-slot:loading>
+            <q-spinner-facebook />
+          </template>
+        </q-btn>
       </div>
     </div>
     <q-dialog v-model="data.forgotPass">
@@ -51,6 +55,36 @@
         </form>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="data.choice">
+      <q-card flat class="q-select-group-card-class">
+        <q-card-section :class="mode
+          ? 'q-card-color-primary-dark-card'
+          : 'q-card-color-primary-light-card'
+          ">
+          <div class="text-subtitle2" style="margin-bottom: 15px">
+            Escolha a forma pela qual deseja entrar.
+          </div>
+          <q-select behavior="dialog" filled standout v-model="data.modelChoice" :options="data.options" :class="mode
+            ? 'q-card-color-secondary-dark-card'
+            : 'q-card-color-secondary-light-card'
+            " label="Opções" @update:modelValue="handleGroupSelection" />
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right" :class="mode
+          ? 'q-card-color-secondary-dark-card'
+          : 'q-card-color-secondary-light-card'
+          ">
+          <q-btn icon="chevron_right" :disable="data.disable" style="padding: 10px" dense round @click="handleGroupSelect"
+            :class="mode
+              ? 'q-card-color-primary-dark-card'
+              : 'q-card-color-primary-light-card'
+              " />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -70,6 +104,10 @@ const data: {
   isPwd: boolean;
   forgotPass: boolean;
   submitting: boolean,
+  choice: boolean;
+  options: string[],
+  modelChoice: string,
+  disable: boolean
 } = reactive({
   password: '',
   email: '',
@@ -77,6 +115,10 @@ const data: {
   isPwd: true,
   forgotPass: false,
   submitting: false,
+  choice: false,
+  options: ['Facilitador', 'Participante'],
+  modelChoice: '',
+  disable: false
 });
 
 const mode = computed(() => $q.dark.isActive);
@@ -88,14 +130,21 @@ const handleLogin = async () => {
   };
 
   try {
+    data.submitting = true;
     const response = await axios.post(
       'http://localhost:3001/users/login/auth',
       user
     );
+    if (response.status === 200) {
+      data.submitting = false;
+      localStorage.setItem('userData', JSON.stringify(response.data));
+      if (response.data.role === 'Administrador' || response.data.role === 'Facilitador') {
+        data.choice = true;
+      } else {
+        $router.push('/groups');
+      }
+    };
 
-    localStorage.setItem('userData', JSON.stringify(response.data));
-
-    $router.push('/groups');
   } catch (error: any) {
     console.error('Erro no login:', error);
     if (error.response && error.response.data) {
@@ -107,42 +156,54 @@ const handleLogin = async () => {
   }
 };
 
+const handleGroupSelection = (value: string) => {
+  data.modelChoice = value;
+};
+
 const handlePassword = () => {
   data.forgotPass = true;
 }
 
+const handleGroupSelect = () => {
+  const userData = localStorage.getItem('userData');
+  if (data.modelChoice) {
+    if (userData !== null) {
+      const userDataObject = JSON.parse(userData);
+
+      userDataObject.role = data.modelChoice;
+      localStorage.setItem('userData', JSON.stringify(userDataObject));
+      $router.push('/groups');
+    }
+  } else {
+    data.disable = false;
+  }
+};
+
 const submitForm = async () => {
   try {
     data.submitting = true
-
     const response = await axios.post('http://localhost:3001/users/reset-password-request', {
       email: data.email,
     });
-
     if (response.status === 200) {
-
-      triggerPositive()
       data.forgotPass = false;
       data.submitting = false;
       data.email = '';
+      $q.notify({
+        type: 'positive',
+        message: 'Sua solicitação foi enviada com sucesso!',
+      });
     }
   } catch (error: any) {
     console.error('Erro ao enviar a solicitação de redefinição de senha:', error);
     if (error.response && error.response.data) {
+      data.submitting = false;
       $q.notify({
         type: 'negative',
         message: error.response.data.message,
       });
-      data.submitting = false;
     }
   }
-};
-
-function triggerPositive() {
-  $q.notify({
-    type: 'positive',
-    message: 'Sua solicitação foi enviada com sucesso!',
-  });
 };
 
 onMounted(() => {

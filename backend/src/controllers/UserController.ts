@@ -184,24 +184,33 @@ class UserController {
     }
   };
 
-  public updateUserPassword = async (req: Request, res: Response) => {
-    const { password, userId } = req.body;
+public updateUserPassword = async (req: Request, res: Response) => {
+  const { password, token } = req.body;
 
-    if (isNaN(userId)) {
-      return res.status(400).json({ message: "ID de usuário inválido." });
+  try {
+    // Consulta o banco de dados para encontrar o usuário associado ao token
+    const user = await this.userService.findUserByPasswordResetToken(token);
+
+    console.log("Esse é o token",token);
+    console.log("Esse é o user",user);
+
+    if (!user) {
+      return res.status(400).json({ message: "Token de redefinição de senha inválido ou expirado." });
     }
 
-    try {
-      const hashedPassword = await hash(password, 10);
-      await this.userService.updateUserPassword(hashedPassword, userId);
-      return res
-        .status(200)
-        .json({ message: "Usuário atualizado com sucesso." });
-    } catch (error) {
-      console.error("Erro ao atualizar senha:", error);
-      return res.status(500).json({ message: "Falha ao atualizar senha." });
-    }
-  };
+    const hashedPassword = await hash(password, 10);
+    await this.userService.updateUserPassword(hashedPassword, user.id);
+
+    // Limpa o token após a atualização bem-sucedida
+    await this.userService.clearPasswordResetToken(token);
+
+    return res.status(200).json({ message: "Senha atualizada com sucesso." });
+  } catch (error) {
+    console.error("Erro ao atualizar a senha:", error);
+    return res.status(500).json({ message: "Falha ao atualizar a senha." });
+  }
+};
+
 
   public sendPasswordResetEmail = async (req: Request, res: Response) => {
     const { email } = req.body;
@@ -228,7 +237,7 @@ class UserController {
       
       await this.userService.createPasswordResetToken(userId,  token, expiration);
 
-      const resetLink = `http://seusite.com/reset-password?token=${token}`;
+      const resetLink = `http://localhost:9000/#/password?token=${token}`;
 
       const transporter = nodemailer.createTransport({
         service: "Hotmail",

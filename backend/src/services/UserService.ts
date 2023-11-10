@@ -79,17 +79,28 @@ class UserService {
 
   public async updateUserPassword(
     password: string,
-    userId: number
+    userId: any
   ): Promise<void> {
     await this.model.updateUserPassword(password, userId);
   }
 
-    public async createPasswordResetToken(
+  public async createPasswordResetToken(
     userId: any,
     token: string,
     expiration: Date
   ): Promise<void> {
     await this.model.createPasswordResetToken(userId, token, expiration);
+  }
+
+  public async findUserByPasswordResetToken(
+    token: string
+  ): Promise<IUser | null> {
+    const result = await this.model.findUserByPasswordResetToken(token);
+    return result;
+  }
+
+  public async clearPasswordResetToken(token: string): Promise<void> {
+    await this.model.clearPasswordResetToken(token);
   }
 }
 

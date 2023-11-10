@@ -1,13 +1,20 @@
 <template>
   <div class="q-form-pass-container">
     <div>
-      <q-input ref="passwordRef" filled type="password" v-model="data.password" label="Nova senha *" lazy-rules
-        :rules="passwordRules" />
+      <q-input ref="passwordRef" filled type="password" v-model="data.password" label="Nova senha *"
+        style="margin-bottom: 15px;" />
       <q-input ref="confirmPasswordRef" filled type="password" v-model="data.confirmPassword" label="Confirmar senha *"
-        lazy-rules :rules="confirmPasswordRules" />
+        style="margin-bottom: 15px;" />
     </div>
     <div>
-      <q-btn label="Enviar" type="submit" color="primary" />
+      <q-btn type="submit" :loading="data.submitting" flat label="Enviar" :class="mode
+        ? 'q-card-color-secondary-dark-card'
+        : 'q-card-color-secondary-light-card'
+        " @click="submitForm">
+        <template v-slot:loading>
+          <q-spinner-facebook />
+        </template>
+      </q-btn>
     </div>
   </div>
 </template>
@@ -16,30 +23,56 @@
 import { useQuasar } from 'quasar';
 import axios from 'axios';
 import { computed, onMounted, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 
 const $q = useQuasar();
-const $router = useRouter();
+const route = useRoute()
+
 
 const data: {
   password: string;
   darkMode: boolean;
   confirmPassword: string;
+  submitting: boolean;
 } = reactive({
   password: '',
   darkMode: false,
-  confirmPassword: ''
+  confirmPassword: '',
+  submitting: false,
 });
 
 const mode = computed(() => $q.dark.isActive);
 
-const passwordRules = computed(() => [
-  (v: string) => v === data.confirmPassword || 'Passwords do not match'
-]);
+const submitForm = async () => {
+  const token = route.query.token;
 
-const confirmPasswordRules = computed(() => [
-  (v: string) => v === data.password || 'Passwords do not match'
-]);
+  try {
+    data.submitting = true;
+
+    const response = await axios.post(
+      'http://localhost:3001/users/update-user-password',
+      { password: data.password, token }
+    );
+
+    if (response.status === 200) {
+      data.submitting = false;
+      data.password = '';
+      data.confirmPassword = '';
+      $q.notify({
+        type: 'positive',
+        message: 'Sua senha foi atualizada com sucesso! Você pode agora fechar esta aba.',
+      });
+    }
+  } catch (error: any) {
+    console.error('Erro ao atualizar a senha:', error);
+    if (error.response && error.response.data) {
+      $q.notify({
+        type: 'negative',
+        message: error.response.data.message,
+      });
+    }
+  }
+};
 
 onMounted(() => {
   const darkModeIsActive = localStorage.getItem('darkMode');

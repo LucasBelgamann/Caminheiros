@@ -26,7 +26,10 @@ class LoginModel {
     return result as any as IUser[];
   }
 
-  async getUsersExcludedFromGroup(groupId: number, userId: number): Promise<IUser[]> {
+  async getUsersExcludedFromGroup(
+    groupId: number,
+    userId: number
+  ): Promise<IUser[]> {
     const [result] = await this.connection.execute(
       `SELECT id, name
       FROM caminheirosdb.Users
@@ -211,7 +214,7 @@ class LoginModel {
 
   public async updateUserPassword(
     password: string,
-    userId: number,
+    userId: number
   ): Promise<void> {
     try {
       await this.connection.execute(
@@ -232,7 +235,7 @@ class LoginModel {
     try {
       await this.connection.execute(
         "INSERT INTO caminheirosdb.PasswordResetTokens (userId, token, expiration) VALUES (?, ?, ?) " +
-        "ON DUPLICATE KEY UPDATE token = VALUES(token), expiration = VALUES(expiration)",
+          "ON DUPLICATE KEY UPDATE token = VALUES(token), expiration = VALUES(expiration)",
         [userId, token, expiration]
       );
     } catch (error) {
@@ -241,6 +244,44 @@ class LoginModel {
     }
   }
 
+  public async findUserByPasswordResetToken(
+    token: string
+  ): Promise<IUser | null> {
+    try {
+      const [rows] = await this.connection.execute(
+        `SELECT * FROM caminheirosdb.Users
+       WHERE id = (
+         SELECT userId FROM caminheirosdb.PasswordResetTokens
+         WHERE token = ? AND NOW() <= expiration);`,
+        [token]
+      );
+
+      if (Array.isArray(rows) && rows.length > 0) {
+        return rows[0] as IUser;
+      }
+
+      return null;
+    } catch (error) {
+      console.error(
+        "Erro ao procurar usuário por token de redefinição de senha",
+        error
+      );
+      throw error;
+    }
+  }
+
+public async clearPasswordResetToken(token: string): Promise<void> {
+  try {
+    await this.connection.execute(
+      `DELETE FROM caminheirosdb.PasswordResetTokens
+       WHERE token = ?;`,
+      [token]
+    );
+  } catch (error) {
+    console.error("Erro ao deletar o token.", error);
+    throw error;
+  }
+}
 }
 
 export default LoginModel;
