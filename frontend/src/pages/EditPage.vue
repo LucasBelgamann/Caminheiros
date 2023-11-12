@@ -2,8 +2,8 @@
   <div class="q-container-search-history">
     <div>
       <div style="border-radius: 5px; padding: 10px" class="row items-center" :class="mode
-          ? 'q-card-color-secondary-dark-card'
-          : 'q-card-color-secondary-light-card'
+        ? 'q-card-color-secondary-dark-card'
+        : 'q-card-color-secondary-light-card'
         ">
         <q-icon name="badge" style="font-size: 40px; margin-right: 30px" />
         <div style="width: 65vw">
@@ -22,7 +22,7 @@
         <q-popup-edit v-model="user.email" class="" v-slot="scope">
           <q-input v-model="data.email" :rules="[
             (val) => isEmailValid(val) || 'Endereço de e-mail inválido',
-          ]" dense autofocus counter @blur="handleEmailInput(scope)">
+          ]" dense autofocus counter @vnode-before-unmount="handleEmailInput(scope)">
             <template v-slot:append>
               <q-icon name="edit" />
             </template>
@@ -33,9 +33,9 @@
         <q-icon name="phone_iphone" style="font-size: 25px; margin-right: 10px" />
         {{ data.phone === '' ? user.phone : data.phone }}
         <q-popup-edit v-model="user.phone" class="" v-slot="scope">
-          <q-input v-model="data.phone" :rules="[
+          <q-input v-model="data.phone" dense autofocus counter :rules="[
             (val) => isPhoneValid(val) || 'Número de telefone inválido',
-          ]" dense autofocus counter @keyup.enter="scope.set">
+          ]" fill-mask mask="(##) #####-####" @vnode-before-unmount="handlePhoneInput(scope)">
             <template v-slot:append>
               <q-icon name="edit" />
             </template>
@@ -45,8 +45,8 @@
     </div>
     <div class="row justify-end">
       <q-btn label="Confirmar" :class="mode
-          ? 'q-card-color-primary-dark-card'
-          : 'q-card-color-primary-light-card'
+        ? 'q-card-color-primary-dark-card'
+        : 'q-card-color-primary-light-card'
         " @click="data.inception = true" />
     </div>
     <q-dialog v-model="data.inception">
@@ -77,14 +77,12 @@ import { useQuasar } from 'quasar';
 
 const data: {
   users: User[];
-  label: string;
   darkMode: boolean;
   email: string;
   phone: string;
   inception: boolean;
 } = reactive({
   users: [],
-  label: 'Click me',
   darkMode: ref(false),
   email: '',
   phone: '',
@@ -154,18 +152,30 @@ const isEmailValid = (email: string) => {
   return emailRegex.test(email);
 };
 
+const isPhoneValid = (telefone: string) => {
+  const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
+  return telefoneRegex.test(telefone);
+};
+
 const handleEmailInput = (scope: any) => {
   const { value } = scope;
+  const previousEmail = data.email;
   if (isEmailValid(value)) {
     data.email = value;
   } else {
-    data.email = '';
+    data.email = previousEmail;
   }
 };
 
-const isPhoneValid = (phone: string) => {
-  const phoneRegex = /^\(\d{3}\) \d{5}-\d{4}$/;
-  return phoneRegex.test(phone);
+const handlePhoneInput = (scope: any) => {
+  const { value } = scope;
+  const previousPhone = data.phone;
+  console.log(previousPhone)
+  if (isPhoneValid(value)) {
+    data.phone = value;
+  } else {
+    data.phone = previousPhone;
+  }
 };
 
 onMounted(() => {

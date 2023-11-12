@@ -49,6 +49,22 @@
       />
     </q-page-sticky>
 
+        <q-page-sticky
+        v-if="$route.path === '/groups'"
+        position="bottom-right"
+        :offset="[18, 18]"
+      >
+        <q-btn
+          fab
+          icon="chevron_left"
+          @click="handleLogout"
+          :class="mode
+              ? 'q-card-color-secondary-dark-card'
+              : 'q-card-color-secondary-light-card'
+            "
+        />
+      </q-page-sticky>
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -58,6 +74,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
+import axios from 'axios';
 
 const $q = useQuasar();
 const darkMode = ref(false);
@@ -69,7 +86,40 @@ watch(darkMode, (newDarkMode) => {
   localStorage.setItem('darkMode', JSON.stringify(newDarkMode));
 });
 
+const checkTokenValidity = async () => {
+  const userDataString = localStorage.getItem('userData');
+  if (userDataString) {
+    const userData = JSON.parse(userDataString);
+    if (!userData.token) {
+      window.location.href = '/';
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:3001/users/check-token-validity', {
+        token: userData.token,
+      });
+
+    } catch (error: any) {
+      $q.notify({
+        type: 'negative',
+        message: 'Sessão expirada, faça login novamente',
+      });
+      setTimeout(() => {
+        localStorage.removeItem('userData');
+        window.location.href = '/';
+      }, 2000);
+    }
+  }
+};
+
+const handleLogout = () => {
+  localStorage.removeItem('userData');
+  window.location.href = '/';
+};
+
 onMounted(() => {
+  checkTokenValidity();
   const darkModeIsActive = localStorage.getItem('darkMode');
   if (darkModeIsActive) {
     darkMode.value = darkModeIsActive === 'true';

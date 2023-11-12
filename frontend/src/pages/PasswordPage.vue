@@ -1,10 +1,20 @@
 <template>
   <div class="q-form-pass-container">
     <div>
-      <q-input ref="passwordRef" filled type="password" v-model="data.password" label="Nova senha *"
-        style="margin-bottom: 15px;" />
-      <q-input ref="confirmPasswordRef" filled type="password" v-model="data.confirmPassword" label="Confirmar senha *"
-        style="margin-bottom: 15px;" />
+      <q-input v-model="data.password" label="Nova senha *" clearable filled style="margin-bottom: 15px;"
+        :type="data.isPwd ? 'password' : 'text'" @blur="validatePasswords">
+        <template v-slot:append>
+          <q-icon :name="data.isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+            @click="data.isPwd = !data.isPwd" />
+        </template>
+      </q-input>
+      <q-input v-model="data.confirmPassword" label="Confirmar senha *" clearable filled style="margin-bottom: 15px;"
+        :type="data.isPwd ? 'password' : 'text'" @blur="validatePasswords">
+        <template v-slot:append>
+          <q-icon :name="data.isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+            @click="data.isPwd = !data.isPwd" />
+        </template>
+      </q-input>
     </div>
     <div>
       <q-btn type="submit" :loading="data.submitting" flat label="Enviar" :class="mode
@@ -34,16 +44,35 @@ const data: {
   darkMode: boolean;
   confirmPassword: string;
   submitting: boolean;
+  isPwd: boolean,
 } = reactive({
   password: '',
   darkMode: false,
   confirmPassword: '',
   submitting: false,
+  isPwd: true,
 });
 
 const mode = computed(() => $q.dark.isActive);
+const passwordsMatch = computed(() => data.password === data.confirmPassword);
+
+const validatePasswords = () => {
+  if (!passwordsMatch.value) {
+    $q.notify({
+      type: 'warning',
+      message: 'As senhas não coincidem.',
+    });
+  }
+};
 
 const submitForm = async () => {
+  if (!passwordsMatch.value) {
+    $q.notify({
+      type: 'negative',
+      message: 'As senhas não coincidem. Corrija antes de enviar o formulário.',
+    });
+    return;
+  }
   const token = route.query.token;
 
   try {

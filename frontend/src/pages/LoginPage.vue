@@ -56,7 +56,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="data.choice">
+    <q-dialog v-model="data.choice" persistent>
       <q-card flat class="q-select-group-card-class">
         <q-card-section :class="mode
           ? 'q-card-color-primary-dark-card'

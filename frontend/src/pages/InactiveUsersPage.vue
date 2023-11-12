@@ -36,7 +36,7 @@
           </q-card>
         </div>
       </div>
-      <div v-if-else style="
+      <div v-else style="
       display: flex;
       justify-content: center;
       height: 20vh;

@@ -235,7 +235,7 @@ class LoginModel {
     try {
       await this.connection.execute(
         "INSERT INTO caminheirosdb.PasswordResetTokens (userId, token, expiration) VALUES (?, ?, ?) " +
-          "ON DUPLICATE KEY UPDATE token = VALUES(token), expiration = VALUES(expiration)",
+        "ON DUPLICATE KEY UPDATE token = VALUES(token), expiration = VALUES(expiration)",
         [userId, token, expiration]
       );
     } catch (error) {
@@ -270,18 +270,18 @@ class LoginModel {
     }
   }
 
-public async clearPasswordResetToken(token: string): Promise<void> {
-  try {
-    await this.connection.execute(
-      `DELETE FROM caminheirosdb.PasswordResetTokens
+  public async clearPasswordResetToken(token: string): Promise<void> {
+    try {
+      await this.connection.execute(
+        `DELETE FROM caminheirosdb.PasswordResetTokens
        WHERE token = ?;`,
-      [token]
-    );
-  } catch (error) {
-    console.error("Erro ao deletar o token.", error);
-    throw error;
+        [token]
+      );
+    } catch (error) {
+      console.error("Erro ao deletar o token.", error);
+      throw error;
+    }
   }
-}
 }
 
 export default LoginModel;

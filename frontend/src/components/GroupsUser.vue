@@ -5,8 +5,8 @@
       <q-tab name="MeusGrupos" icon="local_library" label="Meus Grupos" />
     </q-tabs>
     <q-tab-panels v-model="data.tab" animated swipeable horizontal transition-prev="jump-up" transition-next="jump-up"
-      style="background-color: transparent">
-      <q-tab-panel name="Grupos" style="height: 120px">
+      style="background-color: transparent;">
+      <q-tab-panel name="Grupos" style="height: 230px">
         <q-card style="margin-bottom: 15px; border-radius: 15px; padding: 10px" flat v-for="group in data.allGroups"
           :key="group.id" :class="mode ? 'q-card-color-secondary-dark-card' : 'q-card-color-secondary-light-card'">
           <q-card-section>
@@ -18,7 +18,7 @@
           <q-btn style="position: absolute; right: 5px; bottom: 5px" icon="info" @click="groupInfo(group)" flat />
         </q-card>
       </q-tab-panel>
-      <q-tab-panel name="MeusGrupos" style="height: 120px">
+      <q-tab-panel name="MeusGrupos" style="height: 230px">
         <q-card style="margin-bottom: 15px; border-radius: 15px; padding: 10px" flat v-for="group in data.myGroups"
           :key="group.id" :class="mode ? 'q-card-color-secondary-dark-card' : 'q-card-color-secondary-light-card'">
           <q-card-section>
@@ -152,15 +152,6 @@ const fetchGroupsToId = async () => {
     }
   } else {
     console.error('User data not found in localStorage');
-  }
-};
-
-const toggleInGroup = () => {
-  data.inGroup = !data.inGroup;
-  if (data.inGroup) {
-    fetchGroupsToId();
-  } else {
-    fetchGroups();
   }
 };
 

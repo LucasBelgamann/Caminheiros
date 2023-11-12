@@ -78,7 +78,6 @@ const fetchGroups = async () => {
           `http://localhost:3001/groups/user/${user.id}`
         );
         data.allGroups = Array.from(response.data);
-        console.log(response.data);
       }
     } catch (error) {
       console.error('Error fetching all users:', error);

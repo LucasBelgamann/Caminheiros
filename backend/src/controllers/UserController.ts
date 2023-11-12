@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import UserService from "../services/UserService";
-import { compare, hash } from "bcryptjs";
-import nodemailer from "nodemailer";
-import crypto from "crypto";
+import { hash } from "bcryptjs";
 
 class UserController {
-  constructor(private userService = new UserService()) { }
+  constructor(private userService = new UserService()) {}
 
   public getAllUsers = async (_req: Request, res: Response) => {
     const result = await this.userService.getAllUsers();
@@ -118,48 +116,6 @@ class UserController {
     }
   };
 
-  public login = async (req: Request, res: Response) => {
-    const { email } = req.body;
-    const user = await this.userService.findUserByEmailAndPassword(email);
-    return res.status(200).json(user);
-  };
-
-  public auth = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-
-    try {
-      if (!email || !password) {
-        return res
-          .status(400)
-          .json({ message: "Todos os campos devem ser preenchidos" });
-      }
-
-      const user = await this.userService.findUserByEmailAndPassword(email);
-
-      if (!user) {
-        return res.status(401).json({ message: "Senha ou email incorretos" });
-      }
-
-      const isPasswordValid = await compare(password, user.password);
-
-      if (!isPasswordValid) {
-        console.log(password, user.password);
-        return res.status(401).json({ message: "Senha inválida" });
-      }
-
-      const result = {
-        id: user.id,
-        name: user.name,
-        role: user.role,
-      };
-
-      return res.status(200).json(result);
-    } catch (error) {
-      console.error("Error during login:", error);
-      return res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  };
-
   public getInativeUsers = async (req: Request, res: Response) => {
     const groupId = Number(req.params.id);
     const result = await this.userService.getInativeUsers(groupId);
@@ -177,105 +133,12 @@ class UserController {
       await this.userService.updateUserDetails(userId, phone, email);
       return res
         .status(200)
-        .json({ message: "Usuário atualizado com sucesso." });
+        .json({ message: "Dados atualizados com sucesso." });
     } catch (error) {
       console.error("Erro ao atualizar usuário:", error);
-      return res.status(500).json({ message: "Falha ao atualizar usuário." });
+      return res.status(500).json({ message: "Falha ao atualizar dadoa." });
     }
   };
-
-public updateUserPassword = async (req: Request, res: Response) => {
-  const { password, token } = req.body;
-
-  try {
-    // Consulta o banco de dados para encontrar o usuário associado ao token
-    const user = await this.userService.findUserByPasswordResetToken(token);
-
-    console.log("Esse é o token",token);
-    console.log("Esse é o user",user);
-
-    if (!user) {
-      return res.status(400).json({ message: "Token de redefinição de senha inválido ou expirado." });
-    }
-
-    const hashedPassword = await hash(password, 10);
-    await this.userService.updateUserPassword(hashedPassword, user.id);
-
-    // Limpa o token após a atualização bem-sucedida
-    await this.userService.clearPasswordResetToken(token);
-
-    return res.status(200).json({ message: "Senha atualizada com sucesso." });
-  } catch (error) {
-    console.error("Erro ao atualizar a senha:", error);
-    return res.status(500).json({ message: "Falha ao atualizar a senha." });
-  }
-};
-
-
-  public sendPasswordResetEmail = async (req: Request, res: Response) => {
-    const { email } = req.body;
-
-    try {
-      if (!email) {
-        return res
-          .status(400)
-          .json({ message: "O campo de e-mail deve ser preenchido." });
-      }
-
-      const existingUser = await this.userService.findUserByEmailAndPassword(email);
-
-      if (!existingUser) {
-        return res.status(400).json({ message: "Usuário não encontrado." });
-      }
-
-      const token = crypto.randomBytes(20).toString("hex");
-
-      const expiration = new Date();
-      expiration.setHours(expiration.getHours() + 1);
-
-      const userId = existingUser.id;
-      
-      await this.userService.createPasswordResetToken(userId,  token, expiration);
-
-      const resetLink = `http://localhost:9000/#/password?token=${token}`;
-
-      const transporter = nodemailer.createTransport({
-        service: "Hotmail",
-        auth: {
-          user: "caminheirosDoBem1@hotmail.com",
-          pass: "caminheiros0523",
-        },
-      });
-
-      const mailOptions = {
-        from: "caminheirosDoBem1@hotmail.com",
-        to: email,
-        subject: "Solicitação de Redefinição de Senha",
-        text: `Clique no link a seguir para redefinir sua senha: ${resetLink}`,
-      };
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error(error);
-          return res
-            .status(500)
-            .json({ message: "Erro ao enviar o e-mail de redefinição de senha" });
-        } else {
-          console.log(`E-mail de redefinição de senha enviado para: ${email}`);
-          return res.status(200).json({
-            message: "E-mail de redefinição de senha enviado com sucesso",
-          });
-        }
-      });
-    } catch (error) {
-      console.error(
-        "Erro durante o envio de e-mail de redefinição de senha:",
-        error
-      );
-      return res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  };
-
 }
 
 export default UserController;

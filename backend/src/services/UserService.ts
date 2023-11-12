@@ -1,7 +1,6 @@
 import { IUser } from "../interfaces/IUser";
 import connection from "../models/connection";
 import UserModel from "../models/UserModel";
-import bcrypt from "bcryptjs";
 
 class UserService {
   public model: UserModel;
@@ -57,13 +56,6 @@ class UserService {
     await this.model.deleteUserInGroup(groupId, userId);
   }
 
-  public async findUserByEmailAndPassword(
-    email: string
-  ): Promise<IUser | null> {
-    const user = await this.model.findUserByEmailAndPassword(email);
-    return user;
-  }
-
   public async getInativeUsers(groupId: number): Promise<Array<IUser>> {
     const result = await this.model.getInativeUsers(groupId);
     return result;
@@ -77,30 +69,11 @@ class UserService {
     await this.model.updateUserDetails(userId, phone, email);
   }
 
-  public async updateUserPassword(
-    password: string,
-    userId: any
-  ): Promise<void> {
-    await this.model.updateUserPassword(password, userId);
-  }
-
-  public async createPasswordResetToken(
-    userId: any,
-    token: string,
-    expiration: Date
-  ): Promise<void> {
-    await this.model.createPasswordResetToken(userId, token, expiration);
-  }
-
-  public async findUserByPasswordResetToken(
-    token: string
+  public async findUserByEmailAndPassword(
+    email: string
   ): Promise<IUser | null> {
-    const result = await this.model.findUserByPasswordResetToken(token);
-    return result;
-  }
-
-  public async clearPasswordResetToken(token: string): Promise<void> {
-    await this.model.clearPasswordResetToken(token);
+    const user = await this.model.findUserByEmailAndPassword(email);
+    return user;
   }
 }
 
