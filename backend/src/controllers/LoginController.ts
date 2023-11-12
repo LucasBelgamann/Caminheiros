@@ -120,7 +120,7 @@ class LoginController {
         text: `Clique no link a seguir para redefinir sua senha: ${resetLink}`,
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
+      transporter.sendMail(mailOptions, (error: any, info: any) => {
         if (error) {
           console.error(error);
           return res.status(500).json({
