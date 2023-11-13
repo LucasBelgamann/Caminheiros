@@ -1,7 +1,7 @@
-DROP SCHEMA IF EXISTS caminheirosdb;
-CREATE SCHEMA IF NOT EXISTS caminheirosdb;
+DROP SCHEMA IF EXISTS railway;
+CREATE SCHEMA IF NOT EXISTS railway;
 
-CREATE TABLE caminheirosdb.Users (
+CREATE TABLE railway.Users (
   id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
   phone TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE caminheirosdb.Users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE caminheirosdb.Groups (
+CREATE TABLE railway.Groups (
   id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
@@ -20,51 +20,51 @@ CREATE TABLE caminheirosdb.Groups (
   hour TEXT,
   modality VARCHAR(255),
   userId INTEGER,
-  FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id),
+  FOREIGN KEY (userId) REFERENCES railway.Users (id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE caminheirosdb.Meetings (
+CREATE TABLE railway.Meetings (
   id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
   date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   groupId INTEGER,
-  FOREIGN KEY (groupId) REFERENCES caminheirosdb.Groups (id),
+  FOREIGN KEY (groupId) REFERENCES railway.Groups (id),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE caminheirosdb.Warnings (
+CREATE TABLE railway.Warnings (
   id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
   description TEXT,
   groupId INTEGER,
-  FOREIGN KEY (groupId) REFERENCES caminheirosdb.Groups (id),
+  FOREIGN KEY (groupId) REFERENCES railway.Groups (id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE caminheirosdb.Groups_has_users (
+CREATE TABLE railway.Groups_has_users (
   groupId INTEGER,
   userId INTEGER,
-  FOREIGN KEY (groupId) REFERENCES caminheirosdb.Groups (id),
-  FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id)
+  FOREIGN KEY (groupId) REFERENCES railway.Groups (id),
+  FOREIGN KEY (userId) REFERENCES railway.Users (id)
 );
 
-CREATE TABLE caminheirosdb.Meetings_has_users (
+CREATE TABLE railway.Meetings_has_users (
   meetingsId INTEGER,
   userId INTEGER,
   frequency BOOLEAN,
-  FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id),
+  FOREIGN KEY (userId) REFERENCES railway.Users (id),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE caminheirosdb.PasswordResetTokens (
+CREATE TABLE railway.PasswordResetTokens (
   id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
   userId INTEGER,
   token VARCHAR(255) NOT NULL,
   expiration DATETIME NOT NULL,
-  FOREIGN KEY (userId) REFERENCES caminheirosdb.Users (id),
+  FOREIGN KEY (userId) REFERENCES railway.Users (id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
