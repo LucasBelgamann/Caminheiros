@@ -11,7 +11,7 @@ class LoginModel {
 
   async getAllUsers(): Promise<IUser[]> {
     const [result] = await this.connection.execute(
-      `SELECT id, name, role FROM caminheirosdb.Users`
+      `SELECT id, name, role FROM railway.Users`
     );
 
     return result as any as IUser[];
@@ -19,7 +19,7 @@ class LoginModel {
 
   async getUserById(userId: number): Promise<IUser[]> {
     const [result] = await this.connection.execute(
-      `SELECT id, name, email, phone FROM caminheirosdb.Users WHERE id = ?`,
+      `SELECT id, name, email, phone FROM railway.Users WHERE id = ?`,
       [userId]
     );
 
@@ -32,15 +32,15 @@ class LoginModel {
   ): Promise<IUser[]> {
     const [result] = await this.connection.execute(
       `SELECT id, name
-      FROM caminheirosdb.Users
+      FROM railway.Users
       WHERE id NOT IN (
         SELECT userId
-        FROM caminheirosdb.Groups_has_users
+        FROM railway.Groups_has_users
         WHERE groupId = ?
       )
       AND id <> (
         SELECT userId
-        FROM caminheirosdb.Groups
+        FROM railway.Groups
         WHERE id = ?
       ) AND id <> ?`,
       [groupId, groupId, userId]
@@ -53,8 +53,8 @@ class LoginModel {
     const [result] = await this.connection.execute(
       `
       SELECT u.*
-      FROM caminheirosdb.Users u
-      INNER JOIN caminheirosdb.Groups_has_users gu ON u.id = gu.userId
+      FROM railway.Users u
+      INNER JOIN railway.Groups_has_users gu ON u.id = gu.userId
       WHERE gu.groupId = ?
     `,
       [groupId]
@@ -72,7 +72,7 @@ class LoginModel {
   ): Promise<void> {
     console.log(name);
     await this.connection.execute(
-      "INSERT INTO caminheirosdb.Users (name, phone, email, password, role) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO railway.Users (name, phone, email, password, role) VALUES (?, ?, ?, ?, ?)",
       [name, phone, email, password, role]
     );
   }
@@ -82,15 +82,15 @@ class LoginModel {
     userId: number
   ): Promise<void> {
     await this.connection.execute(
-      "INSERT INTO caminheirosdb.Groups_has_users (groupId, userId) VALUES (?, ?)",
+      "INSERT INTO railway.Groups_has_users (groupId, userId) VALUES (?, ?)",
       [groupId, userId]
     );
 
     const [rows] = await this.connection.execute(
       `
       SELECT M.*, G.name AS groupName
-      FROM caminheirosdb.Meetings AS M
-      JOIN caminheirosdb.Groups AS G ON M.groupId = G.id
+      FROM railway.Meetings AS M
+      JOIN railway.Groups AS G ON M.groupId = G.id
       WHERE M.groupId = ? AND M.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
       AND DATE(M.created_at) = DATE(NOW());
       `,
@@ -102,7 +102,7 @@ class LoginModel {
       const meetingId = firstMeeting.id;
 
       await this.connection.execute(
-        `INSERT INTO caminheirosdb.Meetings_has_users (meetingsId, userId, frequency) VALUES (?, ?, ?)`,
+        `INSERT INTO railway.Meetings_has_users (meetingsId, userId, frequency) VALUES (?, ?, ?)`,
         [meetingId, userId, false]
       );
     }
@@ -113,7 +113,7 @@ class LoginModel {
     userId: number
   ): Promise<void> {
     await this.connection.execute(
-      `DELETE FROM caminheirosdb.Groups_has_users
+      `DELETE FROM railway.Groups_has_users
       WHERE groupId = ? AND userId = ?;
       `,
       [groupId, userId]
@@ -122,8 +122,8 @@ class LoginModel {
     const [rows] = await this.connection.execute(
       `
       SELECT M.*, G.name AS groupName
-      FROM caminheirosdb.Meetings AS M
-      JOIN caminheirosdb.Groups AS G ON M.groupId = G.id
+      FROM railway.Meetings AS M
+      JOIN railway.Groups AS G ON M.groupId = G.id
       WHERE M.groupId = ? AND M.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
       AND DATE(M.created_at) = DATE(NOW());
       `,
@@ -135,7 +135,7 @@ class LoginModel {
       const meetingId = firstMeeting.id;
 
       await this.connection.execute(
-        `DELETE FROM caminheirosdb.Meetings_has_users WHERE meetingsId = ? AND userId = ?;`,
+        `DELETE FROM railway.Meetings_has_users WHERE meetingsId = ? AND userId = ?;`,
         [meetingId, userId]
       );
     }
@@ -146,7 +146,7 @@ class LoginModel {
   ): Promise<IUser | null> {
     const [result] = await this.connection.execute(
       `
-      SELECT * FROM caminheirosdb.Users
+      SELECT * FROM railway.Users
       WHERE email = ?;
       `,
       [email]
@@ -174,11 +174,11 @@ class LoginModel {
           u.phone AS user_phone,
           COUNT(*) AS missed_meetings_count
       FROM
-          caminheirosdb.Meetings_has_users AS mu
+          railway.Meetings_has_users AS mu
       JOIN
-          caminheirosdb.Groups_has_users AS gu ON mu.userId = gu.userId
+          railway.Groups_has_users AS gu ON mu.userId = gu.userId
       JOIN
-          caminheirosdb.Users AS u ON gu.userId = u.id
+          railway.Users AS u ON gu.userId = u.id
       WHERE
           gu.groupId = ?
           AND mu.created_at >= DATE_SUB(CURDATE(), INTERVAL 60 DAY)
@@ -203,7 +203,7 @@ class LoginModel {
   ): Promise<void> {
     try {
       await this.connection.execute(
-        "UPDATE caminheirosdb.Users SET phone = ?, email = ? WHERE id = ?",
+        "UPDATE railway.Users SET phone = ?, email = ? WHERE id = ?",
         [phone, email, userId]
       );
     } catch (error) {
@@ -218,7 +218,7 @@ class LoginModel {
   ): Promise<void> {
     try {
       await this.connection.execute(
-        "UPDATE caminheirosdb.Users SET password = ? WHERE id = ?",
+        "UPDATE railway.Users SET password = ? WHERE id = ?",
         [password, userId]
       );
     } catch (error) {
@@ -234,7 +234,7 @@ class LoginModel {
   ): Promise<void> {
     try {
       await this.connection.execute(
-        "INSERT INTO caminheirosdb.PasswordResetTokens (userId, token, expiration) VALUES (?, ?, ?) " +
+        "INSERT INTO railway.PasswordResetTokens (userId, token, expiration) VALUES (?, ?, ?) " +
         "ON DUPLICATE KEY UPDATE token = VALUES(token), expiration = VALUES(expiration)",
         [userId, token, expiration]
       );
@@ -249,9 +249,9 @@ class LoginModel {
   ): Promise<IUser | null> {
     try {
       const [rows] = await this.connection.execute(
-        `SELECT * FROM caminheirosdb.Users
+        `SELECT * FROM railway.Users
        WHERE id = (
-         SELECT userId FROM caminheirosdb.PasswordResetTokens
+         SELECT userId FROM railway.PasswordResetTokens
          WHERE token = ? AND NOW() <= expiration);`,
         [token]
       );
@@ -273,7 +273,7 @@ class LoginModel {
   public async clearPasswordResetToken(token: string): Promise<void> {
     try {
       await this.connection.execute(
-        `DELETE FROM caminheirosdb.PasswordResetTokens
+        `DELETE FROM railway.PasswordResetTokens
        WHERE token = ?;`,
         [token]
       );
