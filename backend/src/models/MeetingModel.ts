@@ -21,7 +21,7 @@ class MeetingModel {
     }
 
     const [result] = await this.connection.execute(
-      `INSERT INTO caminheirosdb.Meetings (groupId) VALUES (?)`,
+      `INSERT INTO railway.Meetings (groupId) VALUES (?)`,
       [groupId]
     );
 
@@ -31,7 +31,7 @@ class MeetingModel {
 
     const promises = users.map(async (user) => {
       await this.connection.execute(
-        `INSERT INTO caminheirosdb.Meetings_has_users (meetingsId, userId, frequency) VALUES (?, ?, ?)`,
+        `INSERT INTO railway.Meetings_has_users (meetingsId, userId, frequency) VALUES (?, ?, ?)`,
         [meetingId, user.id, false]
       );
     });
@@ -45,7 +45,7 @@ class MeetingModel {
     newFrequency: boolean
   ): Promise<void> {
     await this.connection.execute(
-      "UPDATE caminheirosdb.Meetings_has_users SET frequency = ? WHERE meetingsId = ? AND userId = ?",
+      "UPDATE railway.Meetings_has_users SET frequency = ? WHERE meetingsId = ? AND userId = ?",
       [newFrequency, meetingId, userId]
     );
   }
@@ -55,8 +55,8 @@ class MeetingModel {
     const [rows] = await this.connection.execute(
       `
       SELECT M.*, G.name AS groupName
-      FROM caminheirosdb.Meetings AS M
-      JOIN caminheirosdb.Groups AS G ON M.groupId = G.id
+      FROM railway.Meetings AS M
+      JOIN railway.Groups AS G ON M.groupId = G.id
       WHERE M.groupId = ? AND M.created_at >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
       AND DATE(M.created_at) = DATE(NOW());
       `,
@@ -77,8 +77,8 @@ class MeetingModel {
     const [rows] = await this.connection.execute(
       `
       SELECT U.id, U.name, MU.frequency
-      FROM caminheirosdb.Users AS U
-      JOIN caminheirosdb.Meetings_has_users AS MU ON U.id = MU.userId
+      FROM railway.Users AS U
+      JOIN railway.Meetings_has_users AS MU ON U.id = MU.userId
       WHERE MU.meetingsId = ?;
       `,
       [meetingId]
@@ -94,9 +94,9 @@ class MeetingModel {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
       SELECT u.id, u.name
-      FROM caminheirosdb.Users AS u
-      JOIN caminheirosdb.Meetings_has_users AS mu ON u.id = mu.userId
-      JOIN caminheirosdb.Meetings AS m ON mu.meetingsId = m.id
+      FROM railway.Users AS u
+      JOIN railway.Meetings_has_users AS mu ON u.id = mu.userId
+      JOIN railway.Meetings AS m ON mu.meetingsId = m.id
       WHERE DATE(m.created_at) = ? AND m.groupId = ? AND mu.frequency = true;          
   `,
       [meetingDate, groupId]
