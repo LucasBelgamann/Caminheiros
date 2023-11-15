@@ -4,7 +4,7 @@ const secretKey: Secret = process.env.JWT_SECRET || "defaultSecret";
 
 const tokenOptions = {
   algorithm: "HS256" as Algorithm, 
-  expiresIn: process.env.JWT_EXPIRES_IN || "2m",
+  expiresIn: process.env.JWT_EXPIRES_IN || "2h",
 };
 
 const createToken = (payload: any) => {

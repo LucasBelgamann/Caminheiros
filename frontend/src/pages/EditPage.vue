@@ -19,10 +19,10 @@
       <div class="cursor-pointer text-caption" style="margin-bottom: 10px">
         <q-icon name="mail" style="font-size: 25px; margin-right: 10px" />
         {{ data.email === '' ? user.email : data.email }}
-        <q-popup-edit v-model="user.email" class="" v-slot="scope">
+        <q-popup-edit v-model="user.email" class="">
           <q-input v-model="data.email" :rules="[
             (val) => isEmailValid(val) || 'Endereço de e-mail inválido',
-          ]" dense autofocus counter @vnode-before-unmount="handleEmailInput(scope)">
+          ]" dense autofocus counter @vnode-before-unmount="handleEmailInput(user.email)">
             <template v-slot:append>
               <q-icon name="edit" />
             </template>
@@ -32,10 +32,10 @@
       <div class="cursor-pointer text-caption">
         <q-icon name="phone_iphone" style="font-size: 25px; margin-right: 10px" />
         {{ data.phone === '' ? user.phone : data.phone }}
-        <q-popup-edit v-model="user.phone" class="" v-slot="scope">
+        <q-popup-edit v-model="user.phone" class="">
           <q-input v-model="data.phone" dense autofocus counter :rules="[
             (val) => isPhoneValid(val) || 'Número de telefone inválido',
-          ]" fill-mask mask="(##) #####-####" @vnode-before-unmount="handlePhoneInput(scope)">
+          ]" fill-mask mask="(##) #####-####" @vnode-before-unmount="handlePhoneInput(user.phone)">
             <template v-slot:append>
               <q-icon name="edit" />
             </template>
@@ -157,24 +157,19 @@ const isPhoneValid = (telefone: string) => {
   return telefoneRegex.test(telefone);
 };
 
-const handleEmailInput = (scope: any) => {
-  const { value } = scope;
-  const previousEmail = data.email;
-  if (isEmailValid(value)) {
-    data.email = value;
+const handleEmailInput = (email: string) => {
+  if (isEmailValid(data.email)) {
+    data.email;
   } else {
-    data.email = previousEmail;
+    data.email = email;
   }
 };
 
-const handlePhoneInput = (scope: any) => {
-  const { value } = scope;
-  const previousPhone = data.phone;
-  console.log(previousPhone)
-  if (isPhoneValid(value)) {
-    data.phone = value;
+const handlePhoneInput = (phone: string) => {
+  if (isPhoneValid(data.phone)) {
+    data.phone;
   } else {
-    data.phone = previousPhone;
+    data.phone = phone;
   }
 };
 

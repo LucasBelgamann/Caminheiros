@@ -14,7 +14,7 @@
         </template>
       </q-input>
 
-      <q-select v-if="data.role !== 'Administrador'" filled v-model="data.typeUser" :options="data.options"
+      <q-select v-if="data.role === 'Administrador'" filled v-model="data.typeUser" :options="data.options"
         label="Tipo do usuário" class="in-register"
         :class="mode ? 'default-input-color-dark' : 'default-input-color-ligth'" />
 

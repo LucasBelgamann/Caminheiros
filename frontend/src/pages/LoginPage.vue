@@ -157,7 +157,15 @@ const handleLogin = async () => {
 };
 
 const handleGroupSelection = (value: string) => {
-  data.modelChoice = value;
+  const userData = localStorage.getItem('userData');
+    if (userData !== null) {
+      const user = JSON.parse(userData);
+      if (user.role === 'Administrador' && value === 'Facilitador') {
+        data.modelChoice = 'Administrador'
+      }
+    } else {
+      data.modelChoice = value;
+    }
 };
 
 const handlePassword = () => {

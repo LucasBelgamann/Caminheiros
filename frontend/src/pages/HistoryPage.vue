@@ -95,9 +95,7 @@ const searchHistory = async () => {
       );
       historyData.value = response.data;
       if (response.status === 200) {
-        setTimeout(() => {
           data.submitting = false;
-        }, 3000);
       }
     } catch (error: any) {
       console.error('Error fetching history:', error);

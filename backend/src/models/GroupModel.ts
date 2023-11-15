@@ -12,8 +12,8 @@ class GroupModel {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
     SELECT g.*
-    FROM railway.Groups AS g
-    JOIN railway.Users AS u ON g.userId = u.id
+    FROM caminheirosdb.Groups AS g
+    JOIN caminheirosdb.Users AS u ON g.userId = u.id
     WHERE u.id = ?;
   `,
       [userId]
@@ -26,8 +26,8 @@ class GroupModel {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
     SELECT g.*
-    FROM railway.Groups AS g
-    JOIN railway.Groups_has_users AS gu ON g.id = gu.groupId
+    FROM caminheirosdb.Groups AS g
+    JOIN caminheirosdb.Groups_has_users AS gu ON g.id = gu.groupId
     WHERE gu.userId = ?;
   `,
       [userId]
@@ -40,8 +40,8 @@ class GroupModel {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
       SELECT *
-      FROM railway.Groups
-      WHERE id NOT IN (SELECT groupId FROM railway.Groups_has_users WHERE userId = ?);      
+      FROM caminheirosdb.Groups
+      WHERE id NOT IN (SELECT groupId FROM caminheirosdb.Groups_has_users WHERE userId = ?);      
   `,
       [userId]
     );
@@ -58,7 +58,7 @@ class GroupModel {
     userId: number
   ): Promise<void> {
     await this.connection.execute(
-      "INSERT INTO railway.Groups (name, description, studyDays, hour, modality, userId) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO caminheirosdb.Groups (name, description, studyDays, hour, modality, userId) VALUES (?, ?, ?, ?, ?, ?)",
       [name, description, studyDays, hour, modality, userId]
     );
   }
@@ -69,7 +69,7 @@ class GroupModel {
   ): Promise<any[]> {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
-      INSERT INTO railway.Warnings (description, groupId)
+      INSERT INTO caminheirosdb.Warnings (description, groupId)
       VALUES (?, ?);    
   `,
       [description, groupId]
@@ -81,7 +81,7 @@ class GroupModel {
   public async deleteWarning(id: number): Promise<void> {
     await this.connection.execute<RowDataPacket[]>(
       `
-      DELETE FROM railway.Warnings WHERE id = ?;      
+      DELETE FROM caminheirosdb.Warnings WHERE id = ?;      
   `,
       [id]
     );
@@ -90,7 +90,7 @@ class GroupModel {
   public async getWarnings(groupId: number): Promise<any[]> {
     const [result] = await this.connection.execute<RowDataPacket[]>(
       `
-      SELECT * FROM railway.Warnings WHERE groupId = ?;      
+      SELECT * FROM caminheirosdb.Warnings WHERE groupId = ?;      
   `,
       [groupId]
     );

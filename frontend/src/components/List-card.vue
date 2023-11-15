@@ -1,5 +1,6 @@
 <template>
-  <q-card @click="data.inception = true" :class="mode ? 'q-card-color-primary-dark-card' : 'q-card-color-primary-light-card'" flat
+  <q-card @click="data.inception = true"
+    :class="mode ? 'q-card-color-primary-dark-card' : 'q-card-color-primary-light-card'" flat
     class="q-card-list-class row justify-between items-center">
     <div class="">
       <q-icon name="list_alt" class="q-icon-list-class" />
@@ -12,33 +13,27 @@
         " />
     </div>
   </q-card>
-     <q-dialog v-model="data.inception">
-          <q-card>
-            <q-card-section>
-              <div class="text-h6">Atenção!</div>
-            </q-card-section>
+  <q-dialog v-model="data.inception">
+    <q-card>
+      <q-card-section>
+        <div class="text-h6">Atenção!</div>
+      </q-card-section>
 
-            <q-card-section class="q-pt-none">
-              Você gosrtaria de iniciar lançar uma lista de presença?
-            </q-card-section>
+      <q-card-section class="q-pt-none">
+        Gostaria de iniciar a lista de presença?
+      </q-card-section>
 
-            <q-card-actions align="right" class="text-primary">
-              <q-btn
-                flat
-                color="positive"
-                v-close-popup
-                label="Confirmar"
-                @click="handleCreateMeeting"
-              />
-              <q-btn flat color="primary" label="Cancelar" v-close-popup />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat color="positive" v-close-popup label="Confirmar" @click="handleCreateMeeting" />
+        <q-btn flat color="primary" label="Cancelar" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import {  inject, computed, reactive } from 'vue';
+import { inject, computed, reactive } from 'vue';
 import axios from 'axios';
 import Users from '../services/users';
 

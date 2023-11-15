@@ -55,9 +55,7 @@ export default class Users {
             (e) => e.frequency === 1
           ).length;
           if (response.status === 200) {
-            setTimeout(() => {
               this.data.submitting = false;
-            }, 1000);
           }
         } else {
           throw new Error('Data not found');
